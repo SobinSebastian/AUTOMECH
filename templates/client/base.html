@@ -91,7 +91,7 @@
                                 <div class="dropdown-menu">
                                     <a href="" class=" btn dropdown-item  {% if request.path == '/service' %}active {%endif%}">Availability</a>
                                     {% if  user.is_authenticated %}
-                                        <a href="{% url 'service_view' %}" class="btn dropdown-item {% if request.path == '/service_view' %}active {%endif%}">Service Orders</a>
+                                        <a href="" class="btn dropdown-item {% if request.path == '/service_view' %}active {%endif%}">Service Orders</a>
                                     {%endif%}
                                 </div>
                             </div>
@@ -99,12 +99,12 @@
                             <a href="" class="nav-item nav-link">Contact</a>
                             <a href="" class="nav-item nav-link {% if request.path == '/About' %}active {%endif%}">Roadside Assistance</a>
                             {% if not user.is_authenticated %}
-                            <a href="accounts/login/" class="nav-item nav-link">Sign In</a>
-                            <a href="/Register" class="nav-item nav-link">Sign Up</a>
+                            <a href="{% url 'account_login' %}" class="nav-item nav-link">Sign In</a>
+                            <a href="{% url 'account_signup' %}" class="nav-item nav-link">Sign Up</a>
                             {% endif%}
                             <!-- This link will be hidden on the 'my_page' page -->
                             {% if  user.is_authenticated %}
-                            <a href="{% url 'logout' %}" class="nav-item nav-link">Sign Out</a>
+                            <a href="{% url 'account_logout' %}" class="nav-item nav-link">Sign Out</a>
                             {%endif%}
                         </div>
                         <div class="ml-auto">
@@ -116,7 +116,7 @@
                         <div class="navbar-nav ml-auto">
                             {% if user.is_authenticated %}
                             <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="olaid">{{ user.username }}</a>
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="olaid">{{ user.first_name }}</a>
                                 <div class="dropdown-menu" id="olaidmenu">
                                     <a href="profileview" id="Profile" class="btn dropdown-item">Profile</a>
                                     <a href="bookings" class="btn dropdown-item">Bookings</a>
