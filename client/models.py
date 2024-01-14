@@ -48,3 +48,13 @@ class Mechanic(User):
     
     class Meta:
         proxy = True
+
+class UserInfo(models.Model):
+    client = models.OneToOneField(Client, on_delete=models.CASCADE)
+    contact_no = models.CharField(max_length=11)
+    address=models.CharField(max_length=100,null=True)
+    place = models.CharField(max_length=100)
+    city = models.CharField(max_length=100)
+    district = models.CharField(max_length=100)
+    pincode = models.CharField(max_length=6)
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
