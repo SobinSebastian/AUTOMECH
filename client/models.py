@@ -58,3 +58,12 @@ class UserInfo(models.Model):
     district = models.CharField(max_length=100)
     pincode = models.CharField(max_length=6)
     profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True)
+
+
+class CarMake(models.Model):
+    make_name = models.CharField(max_length=100,unique=True)
+
+class CarModel(models.Model):
+    model_name = models.CharField(max_length=100,unique=True)
+    make_company = models.ForeignKey(CarMake, on_delete=models.CASCADE)
+    model_Image = models.ImageField(upload_to='model_images/',blank=True, null=True)

@@ -1,0 +1,19 @@
+/* Change the background color of the sidebar */
+.sidebar-menu {
+    background-color: #3498db; /* Change to your preferred color */
+}
+
+/* Change the color of the sidebar links */
+.sidebar-menu .nav-item .nav-link {
+    color: #ffffff; /* Change to your preferred color */
+}
+
+/* Change the background color of the header */
+.navbar {
+    background-color: #2c3e50; /* Change to your preferred color */
+}
+
+/* Change the text color of the header */
+.navbar .navbar-brand {
+    color: #ffffff; /* Change to your preferred color */
+}

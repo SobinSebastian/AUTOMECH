@@ -6,41 +6,18 @@ from django.core.mail import send_mail
 from django.contrib import messages
 from django.conf import settings
 from .forms import *
+from .admin_views import *
+
 def index(request):
+    if request.user.is_authenticated:
+        if request.user.role == 'ADMIN':
+           return redirect('admin_home')
+        elif request.user.role == 'MECHANIC':
+           return redirect('/mechanic_index')
+        elif request.user.role == 'CLIENT':
+           return redirect('client/index.html')
     return render(request,'client/index.html')
-def customlogin(request):
-    if request.method == 'POST':
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            email = form.cleaned_data['email']
-            password = form.cleaned_data['password']
-            user = authenticate(request, email=email, password=password)
-            if user is not None:
-                login(request, user)
-                if user.role == 'ADMIN':
-                    u_admin = True
-                    return redirect('/admin_home',{'uadmin':u_admin})
-                elif user.role == 'MECHANIC':
-                    return redirect('mechanic')
-                else:
-                    messages.success(request, 'Sign in completed successfully!')
-                    # try:
-                    #     UserInfo.objects.get(user=user)
-                    # except UserInfo.DoesNotExist:
-                    #     messages.warning(request, 'Please Update Your Details!')
-                    return redirect('/')  # Replace 'dashboard' with the URL for your user dashboard
-            else:
-                user=''
-                form.add_error(None, 'Invalid username or password.')
-    else:
-        form = LoginForm()
-    return render(request,'client/signin.html',{'form':form})
-
-def signout(request):
-    logout(request)
-    request.session.flush()
-    return redirect('index')
-
+     
 class CustomSignupView(SignupView):
     template_name = 'account/signup.html'
     form_class = CustomSignupForm
