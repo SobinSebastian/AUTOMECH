@@ -65,3 +65,14 @@ class MakeForm(forms.ModelForm):
         model = CarMake
         fields = ['make_name']
 
+class AddVehicleForm(forms.ModelForm):
+    car_make = forms.ModelChoiceField(queryset=CarMake.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+    class Meta:
+        model = Vehicleinfo
+        fields = ['vehicle_Regno', 'car_make', 'car_model', 'year', 'fuel_type']
+        widgets = {
+           'vehicle_Regno': forms.TextInput(attrs={'class': 'form-control'}),
+           'car_model': forms.Select(attrs={'class': 'form-control'}),
+           'year': forms.NumberInput(attrs={'class': 'form-control'}),
+           'fuel_type': forms.Select(attrs={'class': 'form-control'}),
+        }

@@ -26,7 +26,7 @@ class User(AbstractUser):
         MECHANIC="MECHANIC",'Mechanic'
         CLIENT="CLIENT",'Client'
 
-    base_role = Role.ADMIN
+    base_role = Role.CLIENT
 
     role = models.CharField(max_length=50, choices=Role.choices)
     objects = CustomUserManager()
@@ -62,8 +62,32 @@ class UserInfo(models.Model):
 
 class CarMake(models.Model):
     make_name = models.CharField(max_length=100,unique=True)
+    def __str__(self):
+        return self.make_name
 
 class CarModel(models.Model):
     model_name = models.CharField(max_length=100,unique=True)
     make_company = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     model_Image = models.ImageField(upload_to='model_images/',blank=True, null=True)
+    def __str__(self):
+        return self.model_name
+
+
+FUEL_TYPES = (
+ ('petrol', 'Petrol'),
+ ('diesel', 'Diesel'),
+ ('ng', 'Natural Gas'),
+ ('electric', 'Electric'),
+ ('hybrid', 'Hybrid'),
+)
+
+class Vehicleinfo(models.Model):
+    client = models.OneToOneField(User, on_delete=models.CASCADE)
+    vehicle_Regno = models.CharField(max_length=20, unique=True)
+    car_model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
+    year = models.IntegerField()
+    fuel_type = models.CharField(
+        max_length=50,
+        choices=FUEL_TYPES,
+        default='petrol',
+    )

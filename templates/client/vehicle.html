@@ -1,0 +1,18 @@
+{% extends 'client/base.html' %}
+{%block content%}
+{% for vehicle in vehicles %}
+
+{{vehicle.vehicle_Regno}}
+{{vehicle.car_model}}
+{{vehicle.year}}
+{{vehicle.fuel_type}}
+{{vehicle.car_model.make_company}}
+{{vehicle.id}}
+<form action="{% url 'vehicle_edit' vehicle.id %}" method="post">
+    {% csrf_token %} 
+    <button type="submit">Add Vehicle</button>
+ </form>
+ 
+{% endfor %}
+ 
+{%endblock%}

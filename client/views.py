@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required,user_passes_test
 from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import render,redirect
 from django.core.mail import send_mail
+from django.http import JsonResponse
 from django.contrib import messages
 from django.conf import settings
 from .forms import *
@@ -14,8 +15,6 @@ def index(request):
            return redirect('admin_home')
         elif request.user.role == 'MECHANIC':
            return redirect('/mechanic_index')
-        elif request.user.role == 'CLIENT':
-           return redirect('client/index.html')
     return render(request,'client/index.html')
      
 class CustomSignupView(SignupView):
@@ -116,3 +115,37 @@ def profileview(request):
 
 
 
+def add_vehicle(request):
+   if request.method == "POST":
+       form = AddVehicleForm(request.POST)
+       form.instance.client = request.user
+       if form.is_valid():
+            form.save()
+   else:
+        form = AddVehicleForm()
+   return render(request, 'client/add_vehicle.html', {'form': form})
+
+def edit_vehicle(request, id):
+   vehicle = Vehicleinfo.objects.get(id=id)
+   if request.method == "POST":
+       form = AddVehicleForm(request.POST, instance=vehicle)
+       form.instance.client = request.user
+       if form.is_valid():
+           form.save()
+           return redirect('vehicle')
+   else:
+       form = AddVehicleForm(instance=vehicle)
+   return render(request, 'client/edit_vehicle.html', {'form': form})
+
+
+
+def vehicle(request):
+    vehicleinfo=Vehicleinfo.objects.filter(client=request.user)
+    print(vehicleinfo)
+    return render(request,'client/vehicle.html',{'vehicles':vehicleinfo})
+def get_car_models(request):
+    make_id = request.GET.get('make_id', None)
+    if make_id is not None:
+        car_models = CarModel.objects.filter(make_company_id=make_id).values('id', 'model_name')
+        return JsonResponse({'models': list(car_models)})
+    return JsonResponse({'models': []})
