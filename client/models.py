@@ -62,6 +62,7 @@ class UserInfo(models.Model):
 
 class CarMake(models.Model):
     make_name = models.CharField(max_length=100,unique=True)
+    make_Image = models.ImageField(upload_to='make_images/',blank=True, null=True)
     def __str__(self):
         return self.make_name
 
@@ -72,22 +73,25 @@ class CarModel(models.Model):
     def __str__(self):
         return self.model_name
 
+class Fueltype(models.Model):
+    fuel_name = models.CharField(max_length=50,unique=True)
+    def __str__(self):
+        return self.fuel_name
+    
+class ModelVariant(models.Model):
+    model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
+    fuel_type = models.ForeignKey(Fueltype, on_delete=models.CASCADE)
+    torque = models.CharField(max_length=50)
+    bhp = models.CharField(max_length=50)
+    engine = models.CharField(max_length=50)
+    transmission = models.CharField(max_length=50)
+    tyre_size = models.CharField(max_length=50)
 
-FUEL_TYPES = (
- ('petrol', 'Petrol'),
- ('diesel', 'Diesel'),
- ('ng', 'Natural Gas'),
- ('electric', 'Electric'),
- ('hybrid', 'Hybrid'),
-)
+    def __str__(self):
+        return f"{self.model.model_name} - {self.fuel_type.fuel_name}"
 
 class Vehicleinfo(models.Model):
     client = models.OneToOneField(User, on_delete=models.CASCADE)
+    model_variant = models.ForeignKey(ModelVariant, on_delete=models.CASCADE)
     vehicle_Regno = models.CharField(max_length=20, unique=True)
-    car_model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
     year = models.IntegerField()
-    fuel_type = models.CharField(
-        max_length=50,
-        choices=FUEL_TYPES,
-        default='petrol',
-    )

@@ -5,6 +5,9 @@ from django.contrib import messages
 from django.shortcuts import render,redirect
 from django.contrib.admin.models import LogEntry
 from django.contrib.admin.views import main as default_admin_index
+from django.views.generic import ListView
+from django.views.generic.edit import CreateView
+from django.urls import reverse_lazy
 
 
 def is_admin(user):
@@ -26,29 +29,51 @@ def admin_dashboard(request):
     #bookings=ServiceBooking.objects.all().order_by('booking_date')
     return render(request, 'admin/admin_dashboard.html', {'bookings':'','ucount': u_count, 'mcount': mcount, 'actions': recent_actions,'tbooking':bookings_today,'total':total,'per':percentage})
 
+class CarMakeCreateView(CreateView):
+    model = CarMake
+    form_class = CarMakeForm
+    template_name = 'admin/car_make_form.html'
+    success_url = reverse_lazy('admin:car_make_create')
 
-def vehicle_add (request):
-    search_query = request.GET.get('q') 
+class CarModelCreateView(CreateView):
+    model = CarModel
+    form_class = CarModelForm
+    template_name = 'admin/car_model_form.html'
+    success_url = reverse_lazy('admin:car_model_create')
 
-    if search_query:
-        models =CarModel.objects.filter(Model_Name__icontains=search_query).order_by('make_company', 'model_name')
-    else:
-        models = CarModel.objects.all().order_by('make_company', 'model_name')
-    form = ModelForm()
-    form1 = MakeForm()
+class FueltypeCreateView(CreateView):
+    model = Fueltype
+    form_class = FueltypeForm
+    template_name = 'admin/fueltype_form.html'
+    success_url = reverse_lazy('admin_home')
 
-    if request.method == 'POST':
-        if 'form' in request.POST:
-            form = ModelForm(request.POST, request.FILES)
-            if form.is_valid():
-                form.save()
-                messages.success(request, 'New Vehicle is added')
-                return redirect('vehicle_add')
-        elif 'form1' in request.POST:
-            form1 = MakeForm(request.POST)
-            if form1.is_valid():
-                form1.save()
-                messages.success(request, 'New Make is added')
-                return redirect('vehicle_add')
+class ModelVariantCreateView(CreateView):
+    model = ModelVariant
+    form_class = ModelVariantForm
+    template_name = 'admin/model_variant_form.html'
+    success_url = reverse_lazy('admin:model_variant_create')
 
-    return render(request, 'admin/vehicle_add.html', {'form': form, 'form1': form1, 'models': models})
+class CarMakeListView(ListView):
+    model = CarMake
+    template_name = 'admin/car_make_list.html'
+    context_object_name = 'car_makes'
+
+class CarModelListView(ListView):
+    model = CarModel
+    template_name = 'admin/car_model_list.html'
+    context_object_name = 'car_models'
+
+class FueltypeListView(ListView):
+    model = Fueltype
+    template_name = 'admin/fueltype_list.html'
+    context_object_name = 'fueltypes'
+
+class ModelVariantListView(ListView):
+    model = ModelVariant
+    template_name = 'admin/model_variant_list.html'
+    context_object_name = 'model_variants'
+
+class VehicleinfoListView(ListView):
+    model = Vehicleinfo
+    template_name = 'admin/vehicleinfo_list.html'
+    context_object_name = 'vehicleinfos'

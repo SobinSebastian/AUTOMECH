@@ -38,41 +38,22 @@ class ProfileImage(forms.Form):
 
 # ////////////////// Admin Form //////////////////////
 
-class ModelForm(forms.ModelForm):
-    model_name = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control'})
-    )
-    model_Image = forms.ImageField(
-        widget=forms.FileInput(attrs={'class': 'form-control file-upload-info'})
-    )
+class CarMakeForm(forms.ModelForm):
+    class Meta:
+        model = CarMake
+        fields = ['make_name', 'make_Image']
+
+class CarModelForm(forms.ModelForm):
     class Meta:
         model = CarModel
         fields = ['model_name', 'make_company', 'model_Image']
-    def __init__(self, *args, **kwargs):
-        super(ModelForm, self).__init__(*args, **kwargs)
 
-        # Customize the 'Make' field widget
-        self.fields['make_company'].widget = forms.Select(
-            attrs={'class': 'form-control'},
-            choices=[(make.pk, make.make_name) for make in CarMake.objects.all()]
-        )
-class MakeForm(forms.ModelForm):
-    make_name = forms.CharField(
-        widget=forms.TextInput(attrs={'class': 'form-control', 'oninput': 'validateMakeName(this)'})
-    )
-
+class FueltypeForm(forms.ModelForm):
     class Meta:
-        model = CarMake
-        fields = ['make_name']
+        model = Fueltype
+        fields = ['fuel_name']
 
-class AddVehicleForm(forms.ModelForm):
-    car_make = forms.ModelChoiceField(queryset=CarMake.objects.all(), widget=forms.Select(attrs={'class': 'form-control'}))
+class ModelVariantForm(forms.ModelForm):
     class Meta:
-        model = Vehicleinfo
-        fields = ['vehicle_Regno', 'car_make', 'car_model', 'year', 'fuel_type']
-        widgets = {
-           'vehicle_Regno': forms.TextInput(attrs={'class': 'form-control'}),
-           'car_model': forms.Select(attrs={'class': 'form-control'}),
-           'year': forms.NumberInput(attrs={'class': 'form-control'}),
-           'fuel_type': forms.Select(attrs={'class': 'form-control'}),
-        }
+        model = ModelVariant
+        fields = ['model', 'fuel_type', 'torque', 'bhp', 'engine', 'transmission', 'tyre_size']

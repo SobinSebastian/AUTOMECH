@@ -1,5 +1,6 @@
 {% extends 'client/base.html' %}
 {%block content%}
+{% load static %}
 <div class="page-header">
     <div class="container">
         <div class="row">
@@ -16,38 +17,38 @@
 <div class="container">
     <div class="row">
       <div class="col-md-6">
-        <!-- Content for the first column goes here -->
-        <h2>Column 1</h2>
-        <p>This is the content for the first column.</p>
+        <div class="image-container">
+            <img class="img-fluid zoom-image" src="{% static 'img/wwd4.jpeg' %}">
+          </div>
       </div>
-      <div class="col-md-6 border border-info rounded-25 pt-5">
+      <div class="col-md-6 border border-info rounded pt-5">
         <!-- Content for the second column goes here -->
-        <h2>Column 2</h2>
-        <p>This is the content for the second column.</p>
+        <h2>Add Vehicle</h2>
+        <p>Please Complete the Form with the Necessary Details to Register a New Vehicle.</p>
         <div class="col-md-12 mt-5 mb-27 mx-auto">
             <form method="post">
                 {% csrf_token %}    
                 <div class="form-row">
-                    <div class="form-group col-md-4 mx-auto">
+                    <div class="form-group col-md-6 mx-auto">
                     <label>Vehicle Registrtion Number</label>
                     {{form.vehicle_Regno}}
                     </div>
-                    <div class="form-group col-md-4 mx-auto">
+                    <div class="form-group col-md-6 mx-auto">
                         <label>Manufacturing Company</label>
                         {{ form.car_make}}
                     </div>
                 </div>
                 <div class="form-row">
-                    <div class="form-group col-md-4 mx-auto">
+                    <div class="form-group col-md-6 mx-auto">
                     <label >Vehicle Model</label>
                     {{ form.car_model}}
                     </div>
-                    <div class="form-group col-md-4 mx-auto">
+                    <div class="form-group col-md-6 mx-auto">
                         <label >Year</label>
                         {{ form.year}}
                     </div>
                 </div>
-                    <div class="form-group col-md-6 mx-auto ">
+                    <div class="form-group col-md-14 ">
                     <label>Fuel Type</label>
                     {{ form.fuel_type}}
                     </div>
