@@ -8,6 +8,8 @@ from django.contrib.admin.views import main as default_admin_index
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
+from .models import CarMake
+from .forms import CarMakeForm
 
 
 def is_admin(user):
@@ -29,11 +31,7 @@ def admin_dashboard(request):
     #bookings=ServiceBooking.objects.all().order_by('booking_date')
     return render(request, 'admin/admin_dashboard.html', {'bookings':'','ucount': u_count, 'mcount': mcount, 'actions': recent_actions,'tbooking':bookings_today,'total':total,'per':percentage})
 
-class CarMakeCreateView(CreateView):
-    model = CarMake
-    form_class = CarMakeForm
-    template_name = 'admin/car_make_form.html'
-    success_url = reverse_lazy('admin:car_make_create')
+
 
 class CarModelCreateView(CreateView):
     model = CarModel
@@ -53,10 +51,6 @@ class ModelVariantCreateView(CreateView):
     template_name = 'admin/model_variant_form.html'
     success_url = reverse_lazy('admin:model_variant_create')
 
-class CarMakeListView(ListView):
-    model = CarMake
-    template_name = 'admin/car_make_list.html'
-    context_object_name = 'car_makes'
 
 class CarModelListView(ListView):
     model = CarModel
@@ -77,3 +71,18 @@ class VehicleinfoListView(ListView):
     model = Vehicleinfo
     template_name = 'admin/vehicleinfo_list.html'
     context_object_name = 'vehicleinfos'
+
+
+class CarMake(CreateView, ListView):
+    model = CarMake
+    form_class = CarMakeForm
+    template_name = 'admin/car_make_form.html'
+    success_url = reverse_lazy('car_make')
+    context_object_name = 'car_makes'
+
+class CarModel(CreateView, ListView):
+    model = CarModel
+    form_class = CarModelForm
+    template_name = 'admin/car_model.html'
+    success_url = reverse_lazy('car_model')
+    context_object_name = 'car_models'

@@ -1,0 +1,27 @@
+<!-- car_make_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Makes List</title>
+</head>
+<body>
+
+
+
+<h2>Car Makes List</h2>
+
+<ul>
+    {% for car_make in car_makes %}
+        <li>
+            {{ car_make.make_name }}
+            {% if car_make.make_Image %}
+                <img src="{{ car_make.make_Image.url }}" alt="{{ car_make.make_name }} Image" style="max-width: 100px; max-height: 100px;">
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+
+</body>
+</html>

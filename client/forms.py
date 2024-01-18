@@ -42,6 +42,14 @@ class CarMakeForm(forms.ModelForm):
     class Meta:
         model = CarMake
         fields = ['make_name', 'make_Image']
+        labels = {
+            'make_name': 'Manufacture Name',
+            'make_Image': ' Image',
+        }
+        widgets = {
+            'make_name': forms.TextInput(attrs={'placeholder': 'Enter the manufacturer name','class': 'form-control'}),
+            'make_Image': forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
+        }
 
 class CarModelForm(forms.ModelForm):
     class Meta:

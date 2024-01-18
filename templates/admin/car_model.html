@@ -41,13 +41,13 @@
             </div>
 
 <ul>
-    {% for car_make in car_makes %}
+    {% for car_model in car_models %}
     <div class="col-md-6 grid-margin stretch-card">
         {% if car_make.make_Image %}
-        <img class="card-img-top" src="{{ car_make.make_Image.url }}" alt="{{ car_make.make_name }} Image" style="max-width: 100px; max-height: 100px;">
+        <img class="card-img-top" src="{{ car_model.model_Image.url }}" alt="{{ car_model.make_name }} Image" style="max-width: 100px; max-height: 100px;">
         {% endif %}
         <div class="card-body">
-          <h5 class="card-title"> {{ car_make.make_name }}</h5>
+          <h5 class="card-title"> {{ car_model.model_name }}</h5>
           <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
           <a href="#" class="btn btn-primary">Go somewhere</a>
         </div>
