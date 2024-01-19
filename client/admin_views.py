@@ -1,10 +1,13 @@
 from . forms import *
 from . models import *
+from django.views import View
 from django.utils import timezone
 from django.contrib import messages
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.admin.models import LogEntry
 from django.contrib.admin.views import main as default_admin_index
+from django.contrib.admin.views.decorators import staff_member_required
+from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
@@ -15,6 +18,7 @@ from .forms import CarMakeForm
 def is_admin(user):
     return user.is_staff
 
+@staff_member_required
 def admin_dashboard(request):
     u_count = User.objects.filter(is_active=True).count()
     mcount = User.objects.filter(role=User.Role.MECHANIC).count()
@@ -32,7 +36,7 @@ def admin_dashboard(request):
     return render(request, 'admin/admin_dashboard.html', {'bookings':'','ucount': u_count, 'mcount': mcount, 'actions': recent_actions,'tbooking':bookings_today,'total':total,'per':percentage})
 
 
-
+@staff_member_required
 class CarModelCreateView(CreateView):
     model = CarModel
     form_class = CarModelForm
@@ -72,17 +76,34 @@ class VehicleinfoListView(ListView):
     template_name = 'admin/vehicleinfo_list.html'
     context_object_name = 'vehicleinfos'
 
-
-class CarMake(CreateView, ListView):
+class CarMakes(CreateView, ListView):
     model = CarMake
     form_class = CarMakeForm
     template_name = 'admin/car_make_form.html'
     success_url = reverse_lazy('car_make')
     context_object_name = 'car_makes'
 
-class CarModel(CreateView, ListView):
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+       return super().dispatch(*args, **kwargs)
+
+class CarModels(CreateView, ListView):
     model = CarModel
     form_class = CarModelForm
     template_name = 'admin/car_model.html'
     success_url = reverse_lazy('car_model')
     context_object_name = 'car_models'
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+       return super().dispatch(*args, **kwargs)
+    
+
+@staff_member_required
+def ModelsMake(request):
+    if request.method == 'POST':
+        make_id = request.POST.get('make_id')
+        make = get_object_or_404(CarMake, id=make_id)
+        models_list=CarModel.objects.filter(make_company=make)
+        VariantForm = ModelVariantForm()
+        context = {'car_models':models_list,'make':make,'form':VariantForm}
+    return render(request, "admin/car_makes_model.html",context)

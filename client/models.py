@@ -86,9 +86,12 @@ class ModelVariant(models.Model):
     engine = models.CharField(max_length=50)
     transmission = models.CharField(max_length=50)
     tyre_size = models.CharField(max_length=50)
+    variant_name = models.CharField(max_length=50,default='Normal')
 
     def __str__(self):
-        return f"{self.model.model_name} - {self.fuel_type.fuel_name}"
+        return f"{self.model.model_name} - {self.variant_name}"
+    class Meta:
+        unique_together = ('model', 'variant_name')
 
 class Vehicleinfo(models.Model):
     client = models.OneToOneField(User, on_delete=models.CASCADE)

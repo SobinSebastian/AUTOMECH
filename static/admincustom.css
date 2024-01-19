@@ -1,0 +1,14 @@
+.image-model-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Style for the image inside the container */
+  .zoom-modimage {
+    transition: transform 0.3s ease;
+  }
+
+  /* Zoom effect on hover */
+  .image-model-container:hover .zoom-modimage {
+    transform: scale(1.2); /* Adjust the zoom level as needed */
+  }

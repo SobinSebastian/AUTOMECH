@@ -22102,6 +22102,14 @@ code {
 .card.card-light-blue:hover {
   background: #8f8eed;
 }
+.card.card-light-custom {
+  background: #E5E1DA;
+  color: #ffffff;
+}
+
+.card.card-light-custom:hover {
+  background: #FBF9F1;
+}
 
 .card.card-light-danger {
   background: #F3797E;
@@ -30593,3 +30601,19 @@ div.tagsinput span.tag a {
 }
 
 /*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */
+.image-container {
+  position: relative;
+  overflow: hidden;
+  width: 391px; /* Adjust the width as needed */
+  height: 391px; /* Adjust the height as needed */
+}
+
+/* Style for the image inside the container */
+.zoom-image {
+  transition: transform 0.3s ease;
+}
+
+/* Zoom effect on hover */
+.image-container:hover .zoom-image {
+  transform: scale(1.2); /* Adjust the zoom level as needed */
+}

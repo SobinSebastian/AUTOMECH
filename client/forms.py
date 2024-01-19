@@ -39,6 +39,7 @@ class ProfileImage(forms.Form):
 # ////////////////// Admin Form //////////////////////
 
 class CarMakeForm(forms.ModelForm):
+    template_name = "form_snippet.html"
     class Meta:
         model = CarMake
         fields = ['make_name', 'make_Image']
@@ -55,6 +56,11 @@ class CarModelForm(forms.ModelForm):
     class Meta:
         model = CarModel
         fields = ['model_name', 'make_company', 'model_Image']
+        widgets = {
+            'model_name': forms.TextInput(attrs={'placeholder': 'Enter the Model name','class': 'form-control'}),
+            'make_company': forms.Select(attrs={'class': 'form-control'}, choices=[]),
+            'model_Image': forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
+        }
 
 class FueltypeForm(forms.ModelForm):
     class Meta:
@@ -64,4 +70,20 @@ class FueltypeForm(forms.ModelForm):
 class ModelVariantForm(forms.ModelForm):
     class Meta:
         model = ModelVariant
-        fields = ['model', 'fuel_type', 'torque', 'bhp', 'engine', 'transmission', 'tyre_size']
+        fields = ['variant_name','model', 'fuel_type', 'torque', 'bhp', 'engine', 'transmission', 'tyre_size']
+        widgets = {
+            'variant_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'model': forms.Select(attrs={'class': 'form-control'}),
+            'fuel_type': forms.Select(attrs={'class': 'form-control'}, choices=[]),
+            'torque': forms.TextInput(attrs={'class': 'form-control'}), 
+            'bhp' : forms.TextInput(attrs={'class': 'form-control'}), 
+            'engine' : forms.TextInput(attrs={'class': 'form-control'}),
+            'transmission' : forms.TextInput(attrs={'class': 'form-control'}),
+            'tyre_size' : forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+class NewVariantForm(forms.ModelForm):
+    class Meta:
+        model = ModelVariant
+        fields = ['fuel_type', 'torque', 'bhp', 'engine', 'transmission', 'tyre_size']

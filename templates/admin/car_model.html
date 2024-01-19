@@ -5,9 +5,9 @@
     <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">Total Number of Manufacturers: {{ car_makes.count }}</h4>
+                <h4 class="card-title"> Add New Car Model</h4>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    Add New Manufacturer
+                    Add New Car Model
                 </button>
             </div>
         </div>
@@ -43,7 +43,7 @@
 <ul>
     {% for car_model in car_models %}
     <div class="col-md-6 grid-margin stretch-card">
-        {% if car_make.make_Image %}
+        {% if car_model.model_Image %}
         <img class="card-img-top" src="{{ car_model.model_Image.url }}" alt="{{ car_model.make_name }} Image" style="max-width: 100px; max-height: 100px;">
         {% endif %}
         <div class="card-body">
