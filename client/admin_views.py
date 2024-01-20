@@ -107,3 +107,7 @@ def ModelsMake(request):
         VariantForm = ModelVariantForm()
         context = {'car_models':models_list,'make':make,'form':VariantForm}
     return render(request, "admin/car_makes_model.html",context)
+
+@staff_member_required
+def Car_variant(requset):
+    return render(requset,"admin/car_variant.html")

@@ -12,3 +12,15 @@
   .image-model-container:hover .zoom-modimage {
     transform: scale(1.2); /* Adjust the zoom level as needed */
   }
+
+  .image-divback-container {
+    height: 120px; /* Full height of the viewport */
+    background-image: url('img/divback.png'); /* Replace with the actual path to your image */
+    background-size: cover; /* Cover the entire container with the background image */
+    background-position: top right; /* Position the background image at the top right corner */
+    background-repeat: no-repeat; /* Do not repeat the background image */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff; /* Set text color to white or any color that contrasts well with your background */
+}
