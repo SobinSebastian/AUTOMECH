@@ -5,22 +5,197 @@
     <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-                <h4 class="card-title">    {{ make.make_name }}</h4>
-                    {% if make.make_Image %}
-                        <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 100px; max-height: 100px;">
-                    {% endif %}
-                    Total Number {{make.make_name}} Models : {{car_models.count}} 
+                <h4 class="card-title "> {{ make.make_name }}</h4>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-4 ">
+                            <div class="card ">
+                                {% if make.make_Image %}
+                                    <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 200px; max-height: 200px;">
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body mt-5">
+                                    <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
+                                        Add Model
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <!-- Content for the third column -->
+                            <div class="card">
+                                <div class="card-body">
+                                    <ul class="list-star">
+                                        <li> Number Of Models : {{car_models.count}}
+                                        </li>
+                                    <ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div> 
+                <!-- Button trigger modal -->
+                
+                
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title -primary" id="exampleModalLabel">
+                                    Add {{make.make_name}} Car Model 
+                                </h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <form method="post" enctype="multipart/form-data" id="modelForm">
+                                    {% csrf_token %}
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label >{{ form1.model_name.label }} </label>
+                                            {{ form1.model_name }} 
+                                            <div id="model_nameError" class="text-danger"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label>{{ form1.make_company.label }} </label>
+                                            <select name="make_company" class="form-control" required="" id="id_make_company">
+                                                <option value="{{make.id}}"> {{make.make_name}} </option>
+                                              </select>
+                                            <div id="make_companyError" class="text-danger"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-row">
+                                        <div class="form-group col">
+                                            <label >{{ form1.model_Image.label }} </label>
+                                            {{ form1.model_Image }} 
+                                            <div id="model_ImageError" class="text-danger"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                <button  type="submit" name="form" class="btn btn-primary btn-sm"> Add New Model</button>
+                            </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
-   
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var modelForm = document.querySelector('#modelForm');
+            var modelNameInput = document.querySelector('#id_model_name');
+            var makeSelect = document.querySelector('#id_make_company');
+            var modelImageInput = document.querySelector('#id_model_Image');
+        
+            // Add input event listeners for real-time validation
+            modelNameInput.addEventListener('input', function () {
+                validateModelName(modelNameInput);
+            });
+        
+            makeSelect.addEventListener('change', function () {
+                validateMake(makeSelect);
+            });
+        
+            modelImageInput.addEventListener('change', function () {
+                validateModelImage(modelImageInput);
+            });
+        
+            modelForm.addEventListener('submit', function (event) {
+                // Validate Model_Name
+                if (!validateModelName(modelNameInput)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+        
+                // Validate Make
+                if (!validateMake(makeSelect)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+        
+                // Validate Model_Image
+                if (!validateModelImage(modelImageInput)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+        
+                //modelForm.classList.add('was-validated');
+            });
+        
+            function validateModelName(input) {
+                var value = input.value.trim();
+                var errorContainer = document.getElementById('model_nameError');
+        
+                // Check if the value is empty or doesn't match the pattern
+                if (value === '' || !/^[a-zA-Z0-9-]+$/.test(value)) {
+                    errorContainer.textContent = "Model Name can only contain letters, numbers, and hyphens.";
+                    input.classList.remove('is-valid');
+                    input.classList.add('is-invalid');
+                    return false;
+                } else {
+                    errorContainer.textContent = "";
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                    return true;
+                }
+            }
+        
+            function validateMake(select) {
+                var value = select.options[select.selectedIndex].value;
+                var errorContainer = document.getElementById('make_companyError');
+        
+                // Check if the value is empty
+                if (value === '') {
+                    errorContainer.textContent = "Please select a Make.";
+                    select.classList.remove('is-valid');
+                    select.classList.add('is-invalid');
+                    return false;
+                } else {
+                    errorContainer.textContent = "";
+                    select.classList.remove('is-invalid');
+                    select.classList.add('is-valid');
+                    return true;
+                }
+            }
+        
+            function validateModelImage(file) {
+                var value = file.files[0];
+                var errorContainer = document.getElementById('model_ImageError');
+        
+                // Check if the value is empty
+                if (value === undefined) {
+                    errorContainer.textContent = "Please select a Model Image.";
+                    file.classList.remove('is-valid');
+                    file.classList.add('is-invalid');
+                    return false;
+                } else {
+                    errorContainer.textContent = "";
+                    file.classList.remove('is-invalid');
+                    file.classList.add('is-valid');
+                    return true;
+                }
+            }
+        });
+        </script>
+
 <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
             <h4 class="card-title mx-atuo">{{make}} Car Models</h4>
-            <div class="image-divback-container">
+            {% comment %} <div class="image-divback-container">
                 hello
-            </div>
+            </div> {% endcomment %}
             {% if car_models %}
             <div class="row mt-5">
                 {% for car_model in car_models %}
@@ -123,7 +298,7 @@
                                 <!-- Repeat for other fields -->
                                 <input type="submit" value="Submit">
                               </form>
-
+                            
                         </div>
                         <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -131,11 +306,14 @@
                         </div>
                     </div>
                     </div>
-              
+                </div>
+                
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
                         var myForm = document.querySelector('#myForm');
-                        var fuelTypeInput = document.querySelector('#id_fuel_type');
+                        var variantNameInput = document.querySelector('#id_variant_name');
+                        var modelSelect = document.querySelector('#id_model');
+                        var fuelTypeSelect = document.querySelector('#id_fuel_type');
                         var torqueInput = document.querySelector('#id_torque');
                         var bhpInput = document.querySelector('#id_bhp');
                         var engineInput = document.querySelector('#id_engine');
@@ -143,63 +321,83 @@
                         var tyreSizeInput = document.querySelector('#id_tyre_size');
                 
                         // Add input event listeners for real-time validation
-                        fuelTypeInput.addEventListener('input', function () {
-                            validateField(fuelTypeInput, 'fuelTypeError', 'Fuel Type is required.');
+                        variantNameInput.addEventListener('input', function () {
+                            validateVariantName(variantNameInput);
+                        });
+                
+                        modelSelect.addEventListener('change', function () {
+                            validateModel(modelSelect);
+                        });
+                
+                        fuelTypeSelect.addEventListener('change', function () {
+                            validateFuelType(fuelTypeSelect);
                         });
                 
                         torqueInput.addEventListener('input', function () {
-                            validateField(torqueInput, 'torqueError', 'Torque is required.');
+                            validateTorque(torqueInput);
                         });
                 
                         bhpInput.addEventListener('input', function () {
-                            validateField(bhpInput, 'bhpError', 'BHP is required.');
+                            validateBhp(bhpInput);
                         });
                 
                         engineInput.addEventListener('input', function () {
-                            validateField(engineInput, 'engineError', 'Engine is required.');
+                            validateEngine(engineInput);
                         });
                 
                         transmissionInput.addEventListener('input', function () {
-                            validateField(transmissionInput, 'transmissionError', 'Transmission is required.');
+                            validateTransmission(transmissionInput);
                         });
                 
                         tyreSizeInput.addEventListener('input', function () {
-                            validateField(tyreSizeInput, 'tyre_sizeError', 'Tyre Size is required.');
+                            validateTyreSize(tyreSizeInput);
                         });
                 
                         myForm.addEventListener('submit', function (event) {
-                            // Validate Fuel Type
-                            if (!validateField(fuelTypeInput, 'fuelTypeError', 'Fuel Type is required.')) {
+                            // Validate Variant_Name
+                            if (!validateVariantName(variantNameInput)) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                
+                            // Validate Model
+                            if (!validateModel(modelSelect)) {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }
+                
+                            // Validate Fuel_Type
+                            if (!validateFuelType(fuelTypeSelect)) {
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
                 
                             // Validate Torque
-                            if (!validateField(torqueInput, 'torqueError', 'Torque is required.')) {
+                            if (!validateTorque(torqueInput)) {
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
                 
                             // Validate BHP
-                            if (!validateField(bhpInput, 'bhpError', 'BHP is required.')) {
+                            if (!validateBhp(bhpInput)) {
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
                 
                             // Validate Engine
-                            if (!validateField(engineInput, 'engineError', 'Engine is required.')) {
+                            if (!validateEngine(engineInput)) {
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
                 
                             // Validate Transmission
-                            if (!validateField(transmissionInput, 'transmissionError', 'Transmission is required.')) {
+                            if (!validateTransmission(transmissionInput)) {
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
                 
-                            // Validate Tyre Size
-                            if (!validateField(tyreSizeInput, 'tyre_sizeError', 'Tyre Size is required.')) {
+                            // Validate Tyre_Size
+                            if (!validateTyreSize(tyreSizeInput)) {
                                 event.preventDefault();
                                 event.stopPropagation();
                             }
@@ -207,27 +405,118 @@
                             myForm.classList.add('was-validated');
                         });
                 
-                        function validateField(input, errorId, errorMessage) {
+                        function validateVariantName(input) {
                             var value = input.value.trim();
-                            var errorContainer = document.getElementById(errorId);
+                            var errorContainer = document.getElementById('variant_nameError');
                 
-                            // Check if the value is empty
-                            if (value === '') {
-                                errorContainer.textContent = errorMessage;
+                            // Check if the value is empty or doesn't match the pattern
+                            if (value === '' || !/^[a-zA-Z0-9-]+$/.test(value)) {
+                                errorContainer.textContent = "Variant Name can only contain letters, numbers, and hyphens.";
                                 input.classList.remove('is-valid');
                                 input.classList.add('is-invalid');
                                 return false;
                             } else {
-                                errorContainer.textContent = '';
+                                errorContainer.textContent = "";
                                 input.classList.remove('is-invalid');
                                 input.classList.add('is-valid');
                                 return true;
                             }
                         }
+                
+                        function validateModel(select) {
+                            var value = select.options[select.selectedIndex].value;
+                            var errorContainer = document.getElementById('modelError');
+                
+                            // Check if the value is empty
+                            if (value === '') {
+                                errorContainer.textContent = "Please select a Model.";
+                                select.classList.remove('is-valid');
+                                select.classList.add('is-invalid');
+                                return false;
+                            } else {
+                                errorContainer.textContent = "";
+                                select.classList.remove('is-invalid');
+                                select.classList.add('is-valid');
+                                return true;
+                            }
+                        }
+                
+                        function validateFuelType(select) {
+                            var value = select.options[select.selectedIndex].value;
+                            var errorContainer = document.getElementById('fuleTypeError');
+                
+                            // Check if the value is empty
+                            if (value === '') {
+                                errorContainer.textContent = "Please select a Fuel Type.";
+                                select.classList.remove('is-valid');
+                                select.classList.add('is-invalid');
+                                return false;
+                            } else {
+                                errorContainer.textContent = "";
+                                select.classList.remove('is-invalid');
+                                select.classList.add('is-valid');
+                                return true;
+                            }
+                        }
+                
+                        function validateTorque(input) {
+                            var value = input.value.trim();
+                            var errorContainer = document.getElementById('torqueError');
+                
+                            // Check if the value is empty or doesn't match the pattern
+                            if (value === '' || !/^\d+Nm$/.test(value)) {
+                                errorContainer.textContent = "Torque should be a number ending with 'Nm'.";
+                                input.classList.remove('is-valid');
+                                input.classList.add('is-invalid');
+                                return false;
+                            } else {
+                                errorContainer.textContent = "";
+                                input.classList.remove('is-invalid');
+                                input.classList.add('is-valid');
+                                return true;
+                            }
+                        }
+                        function validateTyreSize(input) {
+                            var value = input.value.trim();
+                            var errorContainer = document.getElementById('tyre_sizeError');
+                        
+                            // Check if the value is empty or doesn't match the pattern
+                            if (value === '' || !/\d{2,3}\/\d{2,3} R\d{1,2}/.test(value)) {
+                                errorContainer.textContent = "Provide Correct format e.g.: 145/70 R12";
+                                input.classList.remove('is-valid');
+                                input.classList.add('is-invalid');
+                                return false;
+                            } else {
+                                errorContainer.textContent = "";
+                                input.classList.remove('is-invalid');
+                                input.classList.add('is-valid');
+                                return true;
+                            }
+                        }
+                        
+                        function validateBhp(input) {
+                            var value = input.value.trim();
+                            var errorContainer = document.getElementById('bhpError');
+                        
+                            // Check if the value is empty or doesn't match the pattern
+                            if (value === '' || !/(\d*\.\d+|\d+) Bhp/.test(value)) {
+                                errorContainer.textContent = "Provide Correct format e.g.: '125 Bhp', '125.5 Bhp'";
+                                input.classList.remove('is-valid');
+                                input.classList.add('is-invalid');
+                                return false;
+                            } else {
+                                errorContainer.textContent = "";
+                                input.classList.remove('is-invalid');
+                                input.classList.add('is-valid');
+                                return true;
+                            }
+                        }
+                        
+                
+                        // Add similar validation functions for the rest of the fields
+                
                     });
                 </script>
-                
-                </div>
                 {% endfor %}
                 </div>
               </div>

@@ -105,7 +105,8 @@ def ModelsMake(request):
         make = get_object_or_404(CarMake, id=make_id)
         models_list=CarModel.objects.filter(make_company=make)
         VariantForm = ModelVariantForm()
-        context = {'car_models':models_list,'make':make,'form':VariantForm}
+        form1 = CarModelForm()
+        context = {'car_models':models_list,'make':make,'form':VariantForm,'form1':form1}
     return render(request, "admin/car_makes_model.html",context)
 
 @staff_member_required
