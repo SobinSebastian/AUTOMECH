@@ -41,23 +41,33 @@
             </div>
 
 <ul>
-    {% for car_make in car_makes %}
-    <div class="col-md-6 grid-margin stretch-card">
-        {% if car_make.make_Image %}
-        <img class="card-img-top" src="{{ car_make.make_Image.url }}" alt="{{ car_make.make_name }} Image" style="max-width: 100px; max-height: 100px;">
-        {% endif %}
+    <div class="col-md-12 grid-margin stretch-card">
         <div class="card-body">
-          <h5 class="card-title"> {{ car_make.make_name }}</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <form action="{% url 'car_make_model' %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="make_id" value="{{ car_make.id }}">
-            <input type="submit">
-          </form>
+            <div class="row mt-5">
+                {% for car_make in car_makes %}
+                <div class="col-md-3 grid-margin stretch-card">
+                    <div class="card  card-light-custom border border-info">
+                        <div class="card-body">
+                            <div class="image-model-container">
+                                {% if car_make.make_Image %}
+                                    <img class="img-fluid zoom-modimage" src="{{ car_make.make_Image.url }}" alt="{{ car_make.make_name }} Image" style="max-width: 200px; max-height: 200px;">
+                                {% endif %}
+                              </div>
+                              <div class="col text-center">
+                                 <h4 class="card-title">{{ car_make.make_name }} </h4>
+                              </div>
+                              <form action="{% url 'car_make_model' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="make_id" value="{{ car_make.id }}">
+                                <input type="submit">
+                              </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
           
         </div>
       </div>
-    {% endfor %}
         </div>
     </div>
 </div>

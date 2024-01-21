@@ -216,9 +216,13 @@
                             <button  type="button" class="btn btn-success  btn-sm">
                                 View 
                             </button>
-                            <button  type="button" class="btn btn-danger  btn-sm">
+                            <form method="post" action="{% url "car_variant" %}">
+                                {%csrf_token%}
+                                <input type="hidden" name="model_id" value="{{car_model.id}}">
+                                <button  type="submit" class="btn btn-danger  btn-sm">
                                 View 
-                            </button>
+                                </button>
+                            </form>
                             
                         </div>
                     </div>
@@ -562,7 +566,7 @@
                   <h2 class="text-danger"><strong>Oops! No car models found.</strong></h2>
                   <p class="lead">It seems there are no car models available in the system.</p>
                   <p class="text-muted">Please take the following actions:</p>
-                  <a href="#" class="btn btn-primary">Add New Car Model</a>
+                  <a href="#" class="btn btn-primary"><i class="icon-circle-plus menu-icon"></i>Add New Car Model</a>
                 </div>
               </div>
 

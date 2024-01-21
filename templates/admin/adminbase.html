@@ -314,8 +314,8 @@
               <span class="menu-title">Mechanic</span>
             </a>
           </li>
-          <li class="nav-item {% if request.path == '/admin_vehicle' %}active {%endif%}">
-            <a class="nav-link" href="" id="vidadd">
+          <li class="nav-item {% if request.path == '/customadmin/car_make/' %}active {%endif%}">
+            <a class="nav-link" href="{%url 'car_make'%}" id="vidadd">
               <i class="icon-circle-plus menu-icon" ></i>
               <span class="menu-title">Vehicle</span>
             </a>
@@ -375,6 +375,7 @@
   <!-- container-scroller -->
 
   <!-- plugins:js -->
+  <script src="{% static 'js/formvalidation.js'%}"></script>
   <script src="{% static 'panel/vendors/js/vendor.bundle.base.js'%}"></script>
   <!-- endinject -->
   <!-- Plugin js for this page -->

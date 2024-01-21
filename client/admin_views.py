@@ -110,7 +110,6 @@ def ModelsMake(request):
             if form.is_valid():
                 form.save()    
                 model=form.cleaned_data['model']
-                print(model)
                 car_model = CarModel.objects.get(model_name=model)
                 manu = car_model.make_company
                 make = manu
@@ -128,5 +127,22 @@ def ModelsMake(request):
 
 
 @staff_member_required
-def Car_variant(requset):
-    return render(requset,"admin/car_variant.html")
+def Car_variant_view(request):
+    model =None
+    if request.method == 'POST':
+        model_id = request.POST.get('model_id')
+        if model_id :
+            model = get_object_or_404(CarModel, id=model_id)
+        if request.method == "POST":
+            form = ModelVariantForm (request.POST)
+            if form.is_valid():
+                form.save()    
+                m=form.cleaned_data['model']
+                model = get_object_or_404(CarModel, model_name = m)
+        else:
+            form = ModelVariantForm()
+       
+        variants = ModelVariant.objects.filter(model = model)
+        context ={'variants': variants,'model':model,'form':form}
+        
+    return render(request,"admin/car_variant.html",context)

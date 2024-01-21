@@ -6,11 +6,89 @@
 <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-          <h4 class="card-title">Striped Table</h4>
+          <h4 class="card-title">{{model.make_company}} {{model.model_name}}</h4>
           <p class="card-description">
             Add class <code>.table-striped</code>
+            <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-target="#exampleModalLong_{{ car_model.id }}">
+              <i class="icon-circle-plus menu-icon"></i> Add Variant
+          </button>
           </p>
+           <!-- Modal -->
+          <div class="modal fade" id="exampleModalLong_{{ car_model.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form method="post" id="#myForm" action="">
+                    {% csrf_token %}
+                    <div class="form-row">
+                      <div class="form-group col">
+                        <label for="inputEmail4">{{ form.variant_name.label }} </label>
+                        {{ form.variant_name }} 
+                        <div id="variant_nameError" class="text-danger"></div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col">
+                        <label for="inputEmail4">{{ form.model.label }} </label>
+                        <select name="model" class="form-control" required="" id="id_model">
+                          <option value="{{model.id}}">{{model}}</option>          
+                        </select>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="inputEmail4">{{ form.fuel_type.label}} </label>
+                        {{ form.fuel_type }} 
+                        <div id="fuleTypeError" class="text-danger"></div>
+                      </div>
+                      <div class="form-group col-md-6">
+                        <label for="inputPassword4">{{ form.torque.label }} </label>
+                        {{ form.torque }}
+                        <div id="torqueError" class="text-danger"></div>
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group col-md-6">
+                        <label for="inputEmail4"> {{ form.bhp.label }} </label>
+                        {{ form.bhp }} 
+                        <div id="bhpError" class="text-danger"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label for="inputPassword4"> {{ form.engine.label }}   </label>
+                          {{ form.engine }} 
+                          <div id="engineError" class="text-danger"></div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label for="inputEmail4">{{ form.transmission.label }}  </label>
+                          {{ form.transmission }}  
+                          <div id="transmissionError" class="text-danger"></div>
+                        </div>
+                        <div class="form-group col-md-6">
+                                  <label for="inputPassword4">{{form.tyre_size.label}} </label>
+                                  {{form.tyre_size}}
+                                  <div id="tyre_sizeError" class="text-danger"></div>
+                                </div>
+                              </div>                
+                              </p>  
+                            </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button  type="submit"class="btn btn-primary">Save changes</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
           <div class="table-responsive">
+            {% if  variants%}
             <table class="table table-striped">
               <thead>
                 <tr>
@@ -44,27 +122,28 @@
                 </tr>
               </thead>
               <tbody>
+                {% for variant in variants %}
                 <tr>
                   <td class="py-1">
-                    LXI
+                    {{variant.variant_name}}
                   </td>
                   <td>
-                    Manual
+                    {{variant.transmission}}
                   </td>
                   <td>
-                    petrol
+                    {{variant.fuel_type}}
                   </td>
                   <td>
-                    1999c
+                    {{variant.engine}}
                   </td>
                   <td>
-                    13
+                    {{variant.bhp}}
                   </td>
                   <td>
-                    2024nm
+                    {{variant.torque}}
                   </td>
                   <td>
-                    May 15, 2015
+                    {{variant.tyre_size}}
                   </td>
                   <td>
                     May 15, 2015
@@ -73,222 +152,23 @@
                     May 15, 2015
                   </td>
                 </tr>
+                {% endfor %}
               </tbody>
             </table>
           </div>
+              {% else%}
+                <div class="container mt-4">
+                  <div class="error-message text-center p-4 bg-light rounded">
+                    <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 200px; height: auto;">
+                    <h2 class="text-danger"><strong>Oops! No car Variant found.</strong></h2>
+                    <p class="lead">It seems there are no car Variants available in the system.</p>
+                    <p class="text-muted">Please take the following actions:</p>
+                    <a href="#" class="btn btn-primary">Add New Car Model Variant</a>
+                  </div>
+                </div>
+              {%endif%}
         </div>
       </div>
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title mx-atuo">{{ fsd}} Variants</h4>                
-            <div class="row mt-5">
-                {% comment %} {% for car_model in car_models %} {% endcomment %}
-                <div class="col-md-6 grid-margin stretch-card">
-                    <div class="card  card-light-custom border border-info">
-                        <div class="card-body">
-                            <div class="image-model-container">
-                              </div>
-                              <div class="col text-center">
-                            <h4 class="card-title">Vdi</h4>
-                              </div>
-                            <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-target="#exampleModalLong_{{ car_model.id }}">
-                                <i class="mdi mdi-plus-circle-outline "></i> Add Variant
-                            </button>
-                            <button  type="button" class="btn btn-success  btn-sm">
-                                View 
-                            </button>
-                            <button  type="button" class="btn btn-danger  btn-sm">
-                                View 
-                            </button>
-                            
-                        </div>
-                    </div>
-                </div>
-
-
-
-
-        
-                    <!-- Button trigger modal -->
-                <!-- Modal -->
-                    <div class="modal fade" id="exampleModalLong_{{ car_model.id }}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
-                    <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                        </div>
-                        <div class="modal-body">
-                            <form method="post" id="#myForm" action="">
-                                {% csrf_token %}
-                                    <div class="form-row">
-                                        <div class="form-group col">
-                                            <label for="inputEmail4">{{ form.variant_name.label }} </label>
-                                            {{ form.variant_name }} 
-                                            <div id="variant_nameError" class="text-danger"></div>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col">
-                                            <label for="inputEmail4">{{ form.model.label }} </label>
-                                            <select name="model" class="form-control" required="" id="id_model">
-                                                <option value="{{car_model.id}}">{{car_model}}</option>          
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                          <label for="inputEmail4">{{ form.fuel_type.label}} </label>
-                                          {{ form.fuel_type }} 
-                                          <div id="fuleTypeError" class="text-danger"></div>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                          <label for="inputPassword4">{{ form.torque.label }} </label>
-                                          {{ form.torque }}
-                                          <div id="torqueError" class="text-danger"></div>
-                                        </div>
-                                    </div>
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                          <label for="inputEmail4"> {{ form.bhp.label }} </label>
-                                          {{ form.bhp }} 
-                                          <div id="bhpError" class="text-danger"></div>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                          <label for="inputPassword4"> {{ form.engine.label }}   </label>
-                                          {{ form.engine }} 
-                                          <div id="engineError" class="text-danger"></div>
-                                        </div>
-                                    </div>
-                                   
-                                    <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                          <label for="inputEmail4">{{ form.transmission.label }}  </label>
-                                          {{ form.transmission }}  
-                                          <div id="transmissionError" class="text-danger"></div>
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                          <label for="inputPassword4">{{form.tyre_size.label}} </label>
-                                          {{form.tyre_size}}
-                                          <div id="tyre_sizeError" class="text-danger"></div>
-                                        </div>
-                                      </div>                
-                                </p>
-                                <!-- Repeat for other fields -->
-                                <input type="submit" value="Submit">
-                              </form>
-
-                        </div>
-                        <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
-                    </div>
-                    </div>
-              
-                <script>
-                    document.addEventListener('DOMContentLoaded', function () {
-                        var myForm = document.querySelector('#myForm');
-                        var fuelTypeInput = document.querySelector('#id_fuel_type');
-                        var torqueInput = document.querySelector('#id_torque');
-                        var bhpInput = document.querySelector('#id_bhp');
-                        var engineInput = document.querySelector('#id_engine');
-                        var transmissionInput = document.querySelector('#id_transmission');
-                        var tyreSizeInput = document.querySelector('#id_tyre_size');
-                
-                        // Add input event listeners for real-time validation
-                        fuelTypeInput.addEventListener('input', function () {
-                            validateField(fuelTypeInput, 'fuelTypeError', 'Fuel Type is required.');
-                        });
-                
-                        torqueInput.addEventListener('input', function () {
-                            validateField(torqueInput, 'torqueError', 'Torque is required.');
-                        });
-                
-                        bhpInput.addEventListener('input', function () {
-                            validateField(bhpInput, 'bhpError', 'BHP is required.');
-                        });
-                
-                        engineInput.addEventListener('input', function () {
-                            validateField(engineInput, 'engineError', 'Engine is required.');
-                        });
-                
-                        transmissionInput.addEventListener('input', function () {
-                            validateField(transmissionInput, 'transmissionError', 'Transmission is required.');
-                        });
-                
-                        tyreSizeInput.addEventListener('input', function () {
-                            validateField(tyreSizeInput, 'tyre_sizeError', 'Tyre Size is required.');
-                        });
-                
-                        myForm.addEventListener('submit', function (event) {
-                            // Validate Fuel Type
-                            if (!validateField(fuelTypeInput, 'fuelTypeError', 'Fuel Type is required.')) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                
-                            // Validate Torque
-                            if (!validateField(torqueInput, 'torqueError', 'Torque is required.')) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                
-                            // Validate BHP
-                            if (!validateField(bhpInput, 'bhpError', 'BHP is required.')) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                
-                            // Validate Engine
-                            if (!validateField(engineInput, 'engineError', 'Engine is required.')) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                
-                            // Validate Transmission
-                            if (!validateField(transmissionInput, 'transmissionError', 'Transmission is required.')) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                
-                            // Validate Tyre Size
-                            if (!validateField(tyreSizeInput, 'tyre_sizeError', 'Tyre Size is required.')) {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }
-                
-                            myForm.classList.add('was-validated');
-                        });
-                
-                        function validateField(input, errorId, errorMessage) {
-                            var value = input.value.trim();
-                            var errorContainer = document.getElementById(errorId);
-                
-                            // Check if the value is empty
-                            if (value === '') {
-                                errorContainer.textContent = errorMessage;
-                                input.classList.remove('is-valid');
-                                input.classList.add('is-invalid');
-                                return false;
-                            } else {
-                                errorContainer.textContent = '';
-                                input.classList.remove('is-invalid');
-                                input.classList.add('is-valid');
-                                return true;
-                            }
-                        }
-                    });
-                </script>
-                
-                </div>
-                {% comment %} {% endfor %} {% endcomment %}
-                </div>
-              </div>
-
-        </div>
     </div>
 </div>
 {%endblock%}
