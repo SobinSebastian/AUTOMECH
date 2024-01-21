@@ -100,14 +100,31 @@ class CarModels(CreateView, ListView):
 
 @staff_member_required
 def ModelsMake(request):
+    make=None
     if request.method == 'POST':
         make_id = request.POST.get('make_id')
-        make = get_object_or_404(CarMake, id=make_id)
-        models_list=CarModel.objects.filter(make_company=make)
-        VariantForm = ModelVariantForm()
-        form1 = CarModelForm()
-        context = {'car_models':models_list,'make':make,'form':VariantForm,'form1':form1}
+        if(make_id):
+            make = get_object_or_404(CarMake, id=make_id)
+        if request.method == "POST":
+            form =ModelVariantForm (request.POST)
+            if form.is_valid():
+                form.save()    
+                model=form.cleaned_data['model']
+                print(model)
+                car_model = CarModel.objects.get(model_name=model)
+                manu = car_model.make_company
+                make = manu
+            form1 = CarModelForm(request.POST, request.FILES)
+            if form1.is_valid():
+                form1.save()
+                make = form1.cleaned_data['make_company']
+        else:
+            form = ModelVariantForm()
+            form1 = ModelVariantForm()
+        models_list=CarModel.objects.filter(make_company = make)
+        context = {'car_models':models_list,'make':make,'form':form,'form1':form1}
     return render(request, "admin/car_makes_model.html",context)
+
 
 
 @staff_member_required

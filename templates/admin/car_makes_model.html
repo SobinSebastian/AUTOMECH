@@ -240,7 +240,7 @@
                         </button>
                         </div>
                         <div class="modal-body">
-                            <form method="post" id="#myForm" action="">
+                            <form method="post" id="#myForm{{car_model.model_name}}" action="">
                                 {% csrf_token %}
                                     <div class="form-row">
                                         <div class="form-group col">
@@ -310,7 +310,7 @@
                 
                 <script>
                     document.addEventListener('DOMContentLoaded', function () {
-                        var myForm = document.querySelector('#myForm');
+                        var myForm = document.querySelector('#myForm{{car_model.model_name}}');
                         var variantNameInput = document.querySelector('#id_variant_name');
                         var modelSelect = document.querySelector('#id_model');
                         var fuelTypeSelect = document.querySelector('#id_fuel_type');
