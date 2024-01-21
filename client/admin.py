@@ -7,4 +7,4 @@ admin.site.register(CarModel)
 admin.site.register(Fueltype)
 admin.site.register(ModelVariant)
 admin.site.register(Vehicleinfo)
-
+admin.site.register(transmissionType)

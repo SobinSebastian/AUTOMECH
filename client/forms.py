@@ -78,7 +78,7 @@ class ModelVariantForm(forms.ModelForm):
             'torque': forms.TextInput(attrs={'class': 'form-control'}), 
             'bhp' : forms.TextInput(attrs={'class': 'form-control'}), 
             'engine' : forms.TextInput(attrs={'class': 'form-control'}),
-            'transmission' : forms.TextInput(attrs={'class': 'form-control'}),
+            'transmission' : forms.Select(attrs={'class': 'form-control'}),
             'tyre_size' : forms.TextInput(attrs={'class': 'form-control'}),
         }
 

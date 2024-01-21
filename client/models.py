@@ -77,21 +77,26 @@ class Fueltype(models.Model):
     fuel_name = models.CharField(max_length=50,unique=True)
     def __str__(self):
         return self.fuel_name
-    
+
+class transmissionType(models.Model):
+    transmission_name = models.CharField(max_length=50,unique=True)
+    def __str__(self):
+        return self.transmission_name
+
 class ModelVariant(models.Model):
     model = models.ForeignKey(CarModel, on_delete=models.CASCADE)
     fuel_type = models.ForeignKey(Fueltype, on_delete=models.CASCADE)
     torque = models.CharField(max_length=50)
     bhp = models.CharField(max_length=50)
     engine = models.CharField(max_length=50)
-    transmission = models.CharField(max_length=50)
+    transmission = models.ForeignKey( transmissionType , on_delete=models.CASCADE)
     tyre_size = models.CharField(max_length=50)
     variant_name = models.CharField(max_length=50)
 
     def __str__(self):
         return f"{self.model.model_name} - {self.variant_name}"
     class Meta:
-        unique_together = ('model', 'variant_name')
+        unique_together = ('model', 'variant_name',)
 
 class Vehicleinfo(models.Model):
     client = models.OneToOneField(User, on_delete=models.CASCADE)

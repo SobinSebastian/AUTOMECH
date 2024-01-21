@@ -296,13 +296,13 @@
                                       </div>                
                                 </p>
                                 <!-- Repeat for other fields -->
-                                <input type="submit" value="Submit">
-                              </form>
+                               
                             
                         </div>
                         <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <button  type="submit"class="btn btn-primary">Save changes</button>
+                        </form>
                         </div>
                     </div>
                     </div>
@@ -325,11 +325,11 @@
                             validateVariantName(variantNameInput);
                         });
                 
-                        modelSelect.addEventListener('change', function () {
+                        modelSelect.addEventListener('input', function () {
                             validateModel(modelSelect);
                         });
                 
-                        fuelTypeSelect.addEventListener('change', function () {
+                        fuelTypeSelect.addEventListener('input', function () {
                             validateFuelType(fuelTypeSelect);
                         });
                 
@@ -440,24 +440,7 @@
                                 return true;
                             }
                         }
-                
-                        function validateFuelType(select) {
-                            var value = select.options[select.selectedIndex].value;
-                            var errorContainer = document.getElementById('fuleTypeError');
-                
-                            // Check if the value is empty
-                            if (value === '') {
-                                errorContainer.textContent = "Please select a Fuel Type.";
-                                select.classList.remove('is-valid');
-                                select.classList.add('is-invalid');
-                                return false;
-                            } else {
-                                errorContainer.textContent = "";
-                                select.classList.remove('is-invalid');
-                                select.classList.add('is-valid');
-                                return true;
-                            }
-                        }
+                        
                 
                         function validateTorque(input) {
                             var value = input.value.trim();
@@ -512,8 +495,59 @@
                             }
                         }
                         
+                        function validateEngine(input) {
+                            var value = input.value.trim();
+                            var errorContainer = document.getElementById('engineError');
+                        
+                            // Check if the value is empty or doesn't match the pattern
+                            if (value === '' || !/^\d+(\.\d+)?cc$/.test(value)) {
+                                errorContainer.textContent = "Engine should be a number or a decimal number ending with 'cc'.";
+                                input.classList.remove('is-valid');
+                                input.classList.add('is-invalid');
+                                return false;
+                            } else {
+                                errorContainer.textContent = "";
+                                input.classList.remove('is-invalid');
+                                input.classList.add('is-valid');
+                                return true;
+                            }
+                        }
+                        function validateTransmission(select) {
+                            var value = select.options[select.selectedIndex].value;
+                            var errorContainer = document.getElementById('transmissionError');
+                        
+                            // Check if the value is empty
+                            if (value === '') {
+                                errorContainer.textContent = "Please select a Transmission.";
+                                select.classList.remove('is-valid');
+                                select.classList.add('is-invalid');
+                                return false;
+                            } else {
+                                errorContainer.textContent = "";
+                                select.classList.remove('is-invalid');
+                                select.classList.add('is-valid');
+                                return true;
+                            }
+                        }
+                        
+                        function validateFuelType(select) {
+                            var value = select.options[select.selectedIndex].value;
+                            var errorContainer = document.getElementById('fuleTypeError');
+                            // Check if the value is empty
+                            if (value === '') {
+                                errorContainer.textContent = "Please select a Fuel Type.";
+                                select.classList.remove('is-valid');
+                                select.classList.add('is-invalid');
+                                return false;
+                            } else {
+                                errorContainer.textContent = "";
+                                select.classList.remove('is-invalid');
+                                select.classList.add('is-valid');
+                                return true;
+                            }
+                        }
                 
-                        // Add similar validation functions for the rest of the fields
+                        
                 
                     });
                 </script>
