@@ -46,11 +46,11 @@
             <div class="row mt-5">
                 {% for car_make in car_makes %}
                 <div class="col-md-3 grid-margin stretch-card">
-                    <div class="card  card-light-custom border border-info">
+                    <div class="card   border border-info">
                         <div class="card-body">
                             <div class="image-model-container">
                                 {% if car_make.make_Image %}
-                                    <img class="img-fluid zoom-modimage" src="{{ car_make.make_Image.url }}" alt="{{ car_make.make_name }} Image" style="max-width: 200px; max-height: 200px;">
+                                    <img class="img-fluid zoom-modimage" src="{{ car_make.make_Image.url }}" alt="{{ car_make.make_name }} Image" style="max-width: 100px; max-height: 100px;">
                                 {% endif %}
                               </div>
                               <div class="col text-center">

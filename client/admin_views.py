@@ -146,3 +146,15 @@ def Car_variant_view(request):
         context ={'variants': variants,'model':model,'form':form}
         
     return render(request,"admin/car_variant.html",context)
+
+def service_category(request):
+    cat = ServiceCategory.objects.all()
+    if request.method == 'POST' :
+        form = ServiceCategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('service_category')
+    else:
+        form = ServiceCategoryForm()
+    context={'form':form,'Categories':cat}
+    return render (request,'admin/servicecategory.html',context)

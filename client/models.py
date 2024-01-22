@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser,BaseUserManager
 
 class CustomUserManager(BaseUserManager):
@@ -103,3 +104,32 @@ class Vehicleinfo(models.Model):
     model_variant = models.ForeignKey(ModelVariant, on_delete=models.CASCADE)
     vehicle_Regno = models.CharField(max_length=20, unique=True)
     year = models.IntegerField()
+
+class ServiceCategory(models.Model):
+    category_name = models.CharField(max_length=100,unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.category_name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.category_name
+
+class ServiceList(models.Model):
+    service_name = models.CharField(max_length=255,unique=True)
+    service_category = models.ForeignKey('ServiceCategory', on_delete=models.CASCADE)
+    description = models.TextField(null=True, blank=True)
+    service_Image = models.ImageField(upload_to='service_images/',blank=True, null=True)
+
+    def __str__(self):
+        return self.service_name
+    
+class ServiceCenter(models.Model):
+    place = models.CharField(max_length=100)
+    city = models.CharField(max_length=50)
+    pincode = models.CharField(max_length=6)
+    phone_number = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.place

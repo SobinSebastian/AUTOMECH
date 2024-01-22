@@ -87,3 +87,11 @@ class NewVariantForm(forms.ModelForm):
     class Meta:
         model = ModelVariant
         fields = ['fuel_type', 'torque', 'bhp', 'engine', 'transmission', 'tyre_size']
+
+class ServiceCategoryForm(forms.ModelForm):
+    class Meta:
+        model = ServiceCategory
+        fields = ['category_name']
+        widgets = {
+            'category_name': forms.TextInput(attrs={'placeholder': 'Enter the Model name','class': 'form-control'}),
+        }

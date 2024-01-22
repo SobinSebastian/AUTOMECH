@@ -1,0 +1,55 @@
+{% extends 'admin/adminbase.html' %}
+{%block content%}
+{% load static %}
+<div class="row">
+
+<div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <h4 class="card-title mx-atuo">{{make}} Service Categories </h4>
+            <form method="post" >
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Submit</button>
+            </form>
+            {% if Categories %}
+            <div class="row mt-5">
+                {% for Category in Categories %}
+                <div class="col-md-3 grid-margin stretch-card">
+                    <div class="card  card-light-custom border border-info">
+                        <div class="card-body">
+                            <div class="col text-center">
+                            <h4 class="card-title">{{ Category.category_name }} </h4>
+                              </div>
+                            <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-target="#exampleModalLong_{{ car_model.id }}">
+                                <i class="mdi mdi-plus-circle-outline "></i> Add Variant
+                            </button>
+                            <button  type="button" class="btn btn-success  btn-sm">
+                                View 
+                            </button>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                {% endfor %}
+                </div>
+              </div>
+            {% else %}
+
+              <div class="container mt-4">
+                <div class="error-message text-center p-4 bg-light rounded">
+                  <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 200px; height: auto;">
+                  <h2 class="text-danger"><strong>Oops! No Service Categories found.</strong></h2>
+                  <p class="lead">It seems there are no Service Categories available in the system.</p>
+                  <p class="text-muted">Please take the following actions:</p>
+                  <a href="#" class="btn btn-primary"><i class="icon-circle-plus menu-icon"></i>Add Service Category</a>
+                </div>
+              </div>
+
+            {% endif %}
+        
+            </div>
+    </div>
+</div>
+{%endblock%}
