@@ -147,14 +147,24 @@ def Car_variant_view(request):
         
     return render(request,"admin/car_variant.html",context)
 
-def service_category(request):
+
+def service_category(request, slug=None):
     cat = ServiceCategory.objects.all()
-    if request.method == 'POST' :
-        form = ServiceCategoryForm(request.POST)
+    
+    if slug:
+        instance = get_object_or_404(ServiceCategory, slug=slug)
+        button_text = 'Update'
+    else:
+        instance = ServiceCategory()
+        button_text = 'Add'
+        
+    if request.method == 'POST':
+        form = ServiceCategoryForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
             return redirect('service_category')
     else:
-        form = ServiceCategoryForm()
-    context={'form':form,'Categories':cat}
-    return render (request,'admin/servicecategory.html',context)
+        form = ServiceCategoryForm(instance=instance)
+    
+    context = {'form': form, 'Categories': cat,'buttontext':button_text}
+    return render(request, 'admin/servicecategory.html', context)

@@ -93,5 +93,5 @@ class ServiceCategoryForm(forms.ModelForm):
         model = ServiceCategory
         fields = ['category_name']
         widgets = {
-            'category_name': forms.TextInput(attrs={'placeholder': 'Enter the Model name','class': 'form-control'}),
+            'category_name': forms.TextInput(attrs={'placeholder': 'Enter the Category name','class': 'form-control'}),
         }

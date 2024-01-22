@@ -7,10 +7,11 @@
     <div class="card">
         <div class="card-body">
             <h4 class="card-title mx-atuo">{{make}} Service Categories </h4>
+            {{buttontext}} Service Category
             <form method="post" >
                 {% csrf_token %}
                 {{ form.as_p }}
-                <button type="submit">Submit</button>
+                <button type="submit" class="btn btn-suscess">{{buttontext}}</button>
             </form>
             {% if Categories %}
             <div class="row mt-5">
@@ -20,14 +21,9 @@
                         <div class="card-body">
                             <div class="col text-center">
                             <h4 class="card-title">{{ Category.category_name }} </h4>
-                              </div>
-                            <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-target="#exampleModalLong_{{ car_model.id }}">
-                                <i class="mdi mdi-plus-circle-outline "></i> Add Variant
-                            </button>
-                            <button  type="button" class="btn btn-success  btn-sm">
-                                View 
-                            </button>
-                            
+                            <a href="{% url 'service_category' slug=Category.slug %}" class="btn btn-primary">Update</a>
+                            </div>
+                          
                         </div>
                     </div>
                 </div>
