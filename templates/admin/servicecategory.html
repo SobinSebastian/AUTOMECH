@@ -21,7 +21,8 @@
                         <div class="card-body">
                             <div class="col text-center">
                             <h4 class="card-title">{{ Category.category_name }} </h4>
-                            <a href="{% url 'service_category' slug=Category.slug %}" class="btn btn-primary">Update</a>
+                            <a href="{% url 'service_category' slug=Category.slug %}" class="btn btn-primary btn-sm">Update</a>
+                            <a href="{% url 'service_category_list' slug=Category.slug %}" class="btn btn-primary">view</a>
                             </div>
                           
                         </div>

@@ -1,0 +1,101 @@
+{% extends 'admin/adminbase.html' %}
+{%block content%}
+{% load static %}
+<div class="row">
+
+<div class="col-md-12 grid-margin stretch-card ">
+    <div class="card">
+        <div class="card-body">
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="#">Home</a></li>
+              <li class="breadcrumb-item"><a href="#">Library</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Data</li>
+            </ol>
+          </nav>
+          <h3 class="">{{service}} </h3>
+          <!-- Button trigger modal -->
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Edit {{service}}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post" >
+                      {%csrf_token%}
+                      <div class="form-row">
+                        <div class="form-group col">
+                            <label >{{ form.service_name.label }} </label>
+                            {{ form.service_name }} 
+                            <div id="service_name" class="text-danger"></div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col">
+                            <label >{{ form.service_category.label }} </label>
+                            <select name="service_category" class="form-control" required="" id="id_service_category">
+                              <option value="{{service_category.id}}">{{service_category}}</option>
+                            </select>
+                            <div id="service_category" class="text-danger"></div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col">
+                            <label >{{ form.description.label }} </label>
+                            {{ form.description }} 
+                            <div id="description" class="text-danger"></div>
+                        </div>
+                      </div>
+                      <div class="form-row">
+                        <div class="form-group col">
+                            <label >{{ form.service_Image.label }} </label>
+                            {{ form.service_Image }} 
+                            <div id="service_Image" class="text-danger"></div>
+                        </div>
+                      </div>
+              
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
+              Add Service  <i class="icon-circle-plus menu-icon">  </i>
+            </button>
+            <a href="{%url 'service_category'%}" class="btn btn-primary btn-sm" >
+              Go Back <i class="bi bi-arrow-left-square-fill"></i>
+            </a>
+            <i class="bi bi-arrow-left-square-fill"></i>
+            <div class="row mt-5">
+                <div class="col-md-10 grid-margin stretch-card">
+                    <div class="card   border border-info">
+                        <div class="card-body">
+                          <div class="image-model-container">
+                            {% if service.service_Image %}
+                                <img class="img-fluid zoom-modimage" src="{{ service.service_Image.url }}" alt="{{ service.service_name }} Image" style="max-width: 200px; max-height: 200px;">
+                            {% endif %}
+                          </div>
+                            <div class="col text-center">
+                            <h4 class="card-title">{{ service.service_name }} </h4>
+                            <a href="" class="btn btn-primary btn-sm">Update</a>
+                            </div>
+                          
+                        </div>
+                    </div>
+                </div>
+                </div>
+              </div>
+        
+            </div>
+    </div>
+</div>
+{%endblock%}

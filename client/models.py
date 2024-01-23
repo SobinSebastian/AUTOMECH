@@ -121,7 +121,12 @@ class ServiceList(models.Model):
     service_category = models.ForeignKey('ServiceCategory', on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
     service_Image = models.ImageField(upload_to='service_images/',blank=True, null=True)
-
+    slug = models.SlugField(unique=True, blank=True)
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.service_name )
+        super().save(*args, **kwargs)
+        
     def __str__(self):
         return self.service_name
     

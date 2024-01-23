@@ -95,3 +95,14 @@ class ServiceCategoryForm(forms.ModelForm):
         widgets = {
             'category_name': forms.TextInput(attrs={'placeholder': 'Enter the Category name','class': 'form-control'}),
         }
+
+class ServiceListForm(forms.ModelForm):
+    class Meta:
+        model = ServiceList
+        fields = [ 'service_name','service_category','description' ,'service_Image']
+        widgets = {
+             'service_name': forms.TextInput(attrs={'placeholder': 'Enter the Service name','class': 'form-control'}),
+             'service_category': forms.Select(attrs={'class': 'form-control'}),
+             'description' : forms.TextInput(attrs={'class': 'form-control'}),
+             'service_Image' : forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
+        }

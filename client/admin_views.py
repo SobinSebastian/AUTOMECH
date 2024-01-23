@@ -168,3 +168,20 @@ def service_category(request, slug=None):
     
     context = {'form': form, 'Categories': cat,'buttontext':button_text}
     return render(request, 'admin/servicecategory.html', context)
+
+def service_category_list(request, slug=None):
+    cat= get_object_or_404(ServiceCategory, slug=slug)
+    serviceList = ServiceList.objects.filter(service_category=cat.id)
+    if request.method == 'POST':
+        form = ServiceListForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+    else:
+        form = ServiceListForm()
+    context={'ServiceLists':serviceList,'service_category':cat,'form':form}
+    return render(request, 'admin/servicecategorylist.html', context)
+
+def service_category_view(request, slug=None):
+    service = get_object_or_404(ServiceList, slug=slug)
+    context = {'service':service}
+    return render(request, 'admin/serviceview.html', context)
