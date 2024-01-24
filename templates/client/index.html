@@ -56,10 +56,46 @@
   </div>
 </div>
 <!-- Carousel End -->
+<script>
+  
+  $(document).ready(function() {
+      $('.category-link').on('click', function(e) {
+          e.preventDefault();
+          var categorySlug = $(this).data('category-slug');
+          loadServices(categorySlug);
+      });
 
+      function loadServices(categorySlug) {
+          $.ajax({
+              url: `/ajax/load-services/${categorySlug}/`,
+              success: function(data) {
+                  $('#service-list').empty();
+                  for (var i = 0; i < data.services.length; i++) {
+                      var imageUrl = data.services[i].image_url ? `<div class="col-md-3">
+                        <div class="image-model-container">
+                        <img src="${data.services[i].image_url}" class="img-fluid zoom-modimage" alt="Service Image" style="max-width: 200px; max-height: 200px;"> </div></div>` : '';
+                      $('#service-list').append(`<div class="row">${imageUrl} <h3 class="text-danger">${data.services[i].name}</h3> ${data.services[i].description} </div>`);
+                  }
+              },
+              error: function(error) {
+                  console.log(error);
+              }
+          });
+      }
+  });
+</script>
 <!-- Price Start -->
 <div class="price">
     <div class="container">
+      {% for category in categories %}
+            <li><a href="#" class="category-link" data-category-slug="{{ category.slug }}">{{ category.category_name }}</a></li>
+      {% endfor %}
+
+      <h2>Service List</h2>
+      <ul id="service-list">
+        <!-- Services will be loaded dynamically using AJAX -->
+      </ul>
+
         <div class="section-header text-center">
             <p>What We Do?</p>
             <h2>We offer full service auto repair <br>& maintenance</h2>

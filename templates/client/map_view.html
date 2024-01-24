@@ -1,0 +1,22 @@
+{% extends 'client/base.html' %}
+{%block content%}
+<div id="map" style="height : 600px; width :600px;"></div>
+<script>
+        var map = L.map('map').setView([9.594028186637212,76.52316793636903], 13);
+
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        var place1 = L.latLng(40.7128, -74.0060); // New York
+            var place2 = L.latLng(34.0522, -118.2437); // Los Angeles
+
+            // Array of coordinates for the path
+            var pathCoordinates = [place1, place2];
+
+            // Creating a Polyline with the path coordinates
+            var path = L.polyline(pathCoordinates, { color: 'red' }).addTo(map);
+
+            // Zoom the map to fit the polyline
+            map.fitBounds(path.getBounds());
+</script>
+{%endblock%}

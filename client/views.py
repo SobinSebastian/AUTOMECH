@@ -15,7 +15,9 @@ def index(request):
            return redirect('admin_home')
         elif request.user.role == 'MECHANIC':
            return redirect('/mechanic_index')
-    return render(request,'client/index.html')
+    categories = ServiceCategory.objects.all()
+    context={'categories':categories}
+    return render(request,'client/index.html',context)
      
 class CustomSignupView(SignupView):
     template_name = 'account/signup.html'
@@ -149,3 +151,31 @@ def get_car_models(request):
         car_models = CarModel.objects.filter(make_company_id=make_id).values('id', 'model_name')
         return JsonResponse({'models': list(car_models)})
     return JsonResponse({'models': []})
+
+def map_view(request):
+    return render (request,'client/map_view.html')
+
+# def ajax_load_services(request, category_slug):
+#     category = get_object_or_404(ServiceCategory, slug=category_slug)
+#     services = ServiceList.objects.filter(service_category=category)
+#     data = {'services': [{'name': service.service_name, 'description': service.description} for service in services]}
+#     return JsonResponse(data)
+
+
+def ajax_load_services(request, category_slug):
+    try:
+        category = get_object_or_404(ServiceCategory, slug=category_slug)
+        services = ServiceList.objects.filter(service_category=category)
+
+        data = {'services': []}
+        for service in services:
+            service_data = {
+                'name': service.service_name,
+                'description': service.description,
+                'image_url': service.service_Image.url if service.service_Image else None
+            }
+            data['services'].append(service_data)
+
+        return JsonResponse(data)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)

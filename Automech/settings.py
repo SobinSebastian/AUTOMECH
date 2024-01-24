@@ -167,3 +167,4 @@ EMAIL_HOST_PASSWORD = 'hsmn jnws qxxo zrey'
 ACCOUNT_FORMS = {
    'signup': 'client.forms.CustomSignupForm',
 }
+
