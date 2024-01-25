@@ -185,3 +185,9 @@ def service_category_view(request, slug=None):
     service = get_object_or_404(ServiceList, slug=slug)
     context = {'service':service}
     return render(request, 'admin/serviceview.html', context)
+
+@staff_member_required
+def client_list_view(request):
+    users = User.objects.filter(role=User.Role.CLIENT)
+    userinfo=UserInfo
+    return render(request,'admin/clientlist.html',{'users': users,'userinfo':userinfo})
