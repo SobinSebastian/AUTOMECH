@@ -296,14 +296,14 @@
       <!-- partial:partials/_sidebar.html -->
       <nav class="sidebar sidebar-offcanvas" id="sidebar">
         <ul class="nav">
-          <li class="nav-item {% if request.path == '/admin_home' %}active {%endif%}">
+          <li class="nav-item {% if request.path == '/customadmin/home/' %}active {%endif%}">
             <a class="nav-link" href="{% url 'admin_home' %}">
               <i class="icon-grid menu-icon"></i>
              <span class="menu-title">Dashboard</span>
             </a>
           </li>
-          <li class="nav-item {% if request.path == '/admin_user' %}active {%endif%}">
-            <a class="nav-link" href="admin_user">
+          <li class="nav-item {% if request.path == '/clients/list' %}active {%endif%}">
+            <a class="nav-link" href="{%url 'client_list'%}">
               <i class="icon-head menu-icon"></i>
               <span class="menu-title">Users</span>
             </a>

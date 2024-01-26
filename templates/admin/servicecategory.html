@@ -2,33 +2,40 @@
 {%block content%}
 {% load static %}
 <div class="row">
-
 <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-            <h4 class="card-title mx-atuo">{{make}} Service Categories </h4>
+            <h2 class="card-title text-danger"> Service Categories </h2>
             {{buttontext}} Service Category
-            <form method="post" >
-                {% csrf_token %}
+            <form method="post" id="categoryForm">
+              {% csrf_token %}
+              <div class="col-md-6">
                 {{ form.as_p }}
-                <button type="submit" class="btn btn-suscess">{{buttontext}}</button>
-            </form>
+                <div id="category_nameError" class="text-danger"></div>
+              </div>
+              <div class="col-md-6">
+                <button type="submit" class="btn btn-primary btn-sm">{{buttontext}}</button>
+              </div>
+              </form>
+           
             {% if Categories %}
             <div class="row mt-5">
                 {% for Category in Categories %}
                 <div class="col-md-3 grid-margin stretch-card">
-                    <div class="card  card-light-custom border border-info">
+                    <div class="card  border border-success">
+                      <img class="card-img-top" src="{% static 'img/serv.png'%}" alt="Card image cap">
                         <div class="card-body">
                             <div class="col text-center">
                             <h4 class="card-title">{{ Category.category_name }} </h4>
-                            <a href="{% url 'service_category' slug=Category.slug %}" class="btn btn-primary btn-sm">Update</a>
-                            <a href="{% url 'service_category_list' slug=Category.slug %}" class="btn btn-primary">view</a>
-                            </div>
-                          
+                            </div>      
+                        </div>
+                        <div class="card-footer">
+                          {% comment %} <a href="{% url 'service_category' slug=Category.slug %}" class="btn btn-primary btn-sm">Update</a> {% endcomment %}
+                          <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Update</a>
+                          <a href="{% url 'service_category_list' slug=Category.slug %}" class="btn btn-success btn-sm">view</a>
                         </div>
                     </div>
                 </div>
-
                 {% endfor %}
                 </div>
               </div>
@@ -49,4 +56,39 @@
             </div>
     </div>
 </div>
+<script>
+  
+document.addEventListener('DOMContentLoaded', function () {
+  var categoryForm = document.querySelector('#categoryForm');
+  var categoryNameInput = document.querySelector('#id_category_name');
+
+  categoryForm.addEventListener('submit', function (event) {
+      // Validate Category Name
+      if (!validateCategoryName(categoryNameInput)) {
+          event.preventDefault();
+          event.stopPropagation();
+      }
+
+      categoryForm.classList.add('was-validated');
+  });
+
+  function validateCategoryName(input) {
+      var value = input.value.trim();
+      var errorContainer = document.getElementById('category_nameError');
+
+      // Check if the value is empty or doesn't match the pattern
+      if (value.length <= 3 || !/^[a-zA-Z]+$/.test(value)) {
+          errorContainer.textContent = "Category name should be alphabetic and have a length greater than 3.";
+          input.classList.remove('is-valid');
+          input.classList.add('is-invalid');
+          return false;
+      } else {
+          errorContainer.textContent = "";
+          input.classList.remove('is-invalid');
+          input.classList.add('is-valid');
+          return true;
+      }
+  }
+});
+</script>
 {%endblock%}
