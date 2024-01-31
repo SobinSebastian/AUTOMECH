@@ -18,7 +18,7 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                    <form method="post" >
+                    <form method="post" enctype="multipart/form-data" >
                       {%csrf_token%}
                       <div class="form-row">
                         <div class="form-group col">
@@ -31,7 +31,7 @@
                         <div class="form-group col">
                             <label >{{ form.service_category.label }} </label>
                             <select name="service_category" class="form-control" required="" id="id_service_category">
-                              <option value="{{service_category.id}}">{{service_category}}</option>
+                              <option value="{{service.service_category.id}}">{{service.service_category}}</option>
                             </select>
                             <div id="service_category" class="text-danger"></div>
                         </div>
@@ -97,7 +97,7 @@
                                   {{service.description}}
                                   <div class="mt-5">
                                     <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
-                                      Add Service  <i class="icon-circle-plus menu-icon">  </i>
+                                      Edit Service  <i class="icon-circle-plus menu-icon">  </i>
                                     </button>
                                     <a href="{% url 'service_category_list' slug=service.service_category.slug %}" class="btn btn-primary btn-sm" >
                                       Go Back <i class="bi bi-arrow-left-square-fill"></i>

@@ -1,0 +1,76 @@
+{% extends 'admin/adminbase.html' %}
+{%block content%}
+{% load static %}
+<div class="col-lg-14 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title">Add Service Center</h4>
+        <p class="card-description">
+          Add <code>New Service Center</code>
+        </p>
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>
+                    {% if user.userinfo.profile_picture %}
+                    <img src="{{ user.userinfo.profile_picture.url }}"
+                      alt="user-avatar"
+                    />
+                    {% elif user.socialaccount_set.all.0.get_avatar_url %}
+                      <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="Google Profile">
+                    {% else %}
+                      <img src="/media/profile_pictures/default.png" alt="Default Profile">
+                    {% endif %}  
+                    </td>
+                    <td>{{ user.first_name }}&nbsp;{{ user.last_name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{% if user.is_active %}
+                        <p class="text-success" >Active</p>
+                     {% else %}
+                        <p class="text-danger" >Suspended</p>
+                     {% endif %}
+                    </td>
+                    <td>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <input type="submit" {% if user.is_active %}
+                               value="Suspend" class="btn btn-danger btn-rounded btn-sm"
+                            {% else %}
+                                value="Activate"  class="btn btn-success btn-rounded btn-sm"
+                            {% endif %}>
+                        </form>
+                    </td>
+                    <td>
+
+                      <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal{{user.id}}">
+                        Info
+                      </button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <form>
+          {%csrf_token%}
+          {{form.as_p}}
+        </form>
+
+
+      
+      </div>
+    </div>
+  </div>
+{%endblock%}

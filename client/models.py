@@ -25,6 +25,7 @@ class User(AbstractUser):
     class Role(models.TextChoices):
         ADMIN="ADMIN",'Admin'
         MECHANIC="MECHANIC",'Mechanic'
+        MANAGER="MANAGER",'Manager'
         CLIENT="CLIENT",'Client'
 
     base_role = Role.CLIENT
@@ -135,6 +136,8 @@ class ServiceCenter(models.Model):
     city = models.CharField(max_length=50)
     pincode = models.CharField(max_length=6)
     phone_number = models.CharField(max_length=15)
-
+    latitude = models.DecimalField(max_digits=9, decimal_places=6,default=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6,default=4)
+    
     def __str__(self):
         return self.place

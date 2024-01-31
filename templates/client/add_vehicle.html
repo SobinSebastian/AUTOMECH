@@ -27,7 +27,8 @@
         <p>Please Complete the Form with the Necessary Details to Register a New Vehicle.</p>
         <div class="col-md-12 mt-5 mb-27 mx-auto">
             <form method="post">
-                {% csrf_token %}    
+                {% csrf_token %}  
+                {% comment %} {{form.as_p}} {% endcomment %}
                 <div class="form-row">
                     <div class="form-group col-md-6 mx-auto">
                     <label>Vehicle Registrtion Number</label>
@@ -35,23 +36,21 @@
                     </div>
                     <div class="form-group col-md-6 mx-auto">
                         <label>Manufacturing Company</label>
-                        {{ form.car_make}}
+                        {{ form.make_company}}
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6 mx-auto">
                     <label >Vehicle Model</label>
-                    {{ form.car_model}}
+                    {{ form.model_name}}
                     </div>
                     <div class="form-group col-md-6 mx-auto">
-                        <label >Year</label>
-                        {{ form.year}}
+                        <label >Modal Variant</label>
+                        {{ form.model_variant}}
                     </div>
                 </div>
-                    <div class="form-group col-md-14 ">
-                    <label>Fuel Type</label>
-                    {{ form.fuel_type}}
-                    </div>
+
+
                     <div class="form-group col-md-4 mx-auto">
                         <button type="submit">Add Vehicle</button>
                     </div>     
@@ -63,26 +62,37 @@
   </div>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script>
-    $(document).ready(function () {
-        $('#id_car_make').change(function () {
-            var makeId = $(this).val();
-            $.ajax({
-                url: '/get_car_models/',  // Replace with the actual URL for fetching car models
-                method: 'GET',
-                data: {make_id: makeId},
-                success: function (data) {
-                    var carModelsSelect = $('#id_car_model');
-                    carModelsSelect.empty();
-                    carModelsSelect.append('<option value="" selected="">---------</option>');
-                    $.each(data.models, function (key, value) {
-                        carModelsSelect.append('<option value="' + value.id + '">' + value.model_name + '</option>');
-                    });
-                },
-                error: function (error) {
-                    console.log(error);
-                }
-            });
+    $('#id_make_company').change(function () {
+        var makeCompanyId = $(this).val();
+    
+        $.ajax({
+            url: '/get_car_models/' + makeCompanyId + '/',
+            success: function (response) {
+                var data = JSON.parse(response);
+                $('#id_model_name').empty();
+                $('#id_model_name').prepend($('<option></option>').attr('value', '').text(''));
+                $.each(data, function (index, item) {
+                    $('#id_model_name').append($('<option></option>').attr('value', item.pk).text(item.fields.model_name));
+                });
+            }
         });
     });
+   
+    $('#id_model_name').change(function () {
+        var modelId = $(this).val();
+    
+        $.ajax({
+            url: '/get_car_variants/' + modelId + '/',
+            success: function (response) {
+                var data = JSON.parse(response);
+                $('#id_model_variant').empty();
+                $('#id_model_variant').prepend($('<option></option>').attr('value', '').text(''));
+                $.each(data, function (index, item) {
+                    $('#id_model_variant').append($('<option>  </option>').attr('value', item.pk).text(item.fields.variant_name));
+                });
+            }
+        });
+    }); 
+
 </script>
 {%endblock%}

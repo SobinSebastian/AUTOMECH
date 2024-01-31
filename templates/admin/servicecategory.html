@@ -56,39 +56,4 @@
             </div>
     </div>
 </div>
-<script>
-  
-document.addEventListener('DOMContentLoaded', function () {
-  var categoryForm = document.querySelector('#categoryForm');
-  var categoryNameInput = document.querySelector('#id_category_name');
-
-  categoryForm.addEventListener('submit', function (event) {
-      // Validate Category Name
-      if (!validateCategoryName(categoryNameInput)) {
-          event.preventDefault();
-          event.stopPropagation();
-      }
-
-      categoryForm.classList.add('was-validated');
-  });
-
-  function validateCategoryName(input) {
-      var value = input.value.trim();
-      var errorContainer = document.getElementById('category_nameError');
-
-      // Check if the value is empty or doesn't match the pattern
-      if (value.length <= 3 || !/^[a-zA-Z]+$/.test(value)) {
-          errorContainer.textContent = "Category name should be alphabetic and have a length greater than 3.";
-          input.classList.remove('is-valid');
-          input.classList.add('is-invalid');
-          return false;
-      } else {
-          errorContainer.textContent = "";
-          input.classList.remove('is-invalid');
-          input.classList.add('is-valid');
-          return true;
-      }
-  }
-});
-</script>
 {%endblock%}

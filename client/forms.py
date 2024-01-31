@@ -106,3 +106,28 @@ class ServiceListForm(forms.ModelForm):
              'description' : forms.TextInput(attrs={'class': 'form-control'}),
              'service_Image' : forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
         }
+
+
+   
+
+class VehicleinfoForm(forms.ModelForm):
+    make_company = forms.ModelChoiceField(queryset=CarMake.objects.all(), required=False)
+    model_name = forms.ModelChoiceField(queryset=CarModel.objects.all(), required=False)
+    model_variant = forms.ModelChoiceField(queryset=ModelVariant.objects.none(), required=False)
+
+    class Meta:
+        model = Vehicleinfo
+        fields = ['vehicle_Regno','make_company','model_name', 'model_variant']
+
+
+
+class ServiceCenterForm(forms.ModelForm):
+     class Meta:
+            model =ServiceCenter
+            fields =[ 'place','city','pincode','phone_number' ]
+            widgets = {
+            'place': forms.TextInput(attrs={'placeholder': 'Enter the Place ','class': 'form-control'}),
+            'city': forms.TextInput(attrs={'placeholder': 'Enter the City ','class': 'form-control'}),
+            'pincode': forms.TextInput(attrs={'placeholder': 'Enter the Pincode ','class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'placeholder': 'Enter the Phone Number ','class': 'form-control'}),
+        }

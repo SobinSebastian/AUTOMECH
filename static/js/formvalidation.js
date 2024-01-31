@@ -1,5 +1,36 @@
+ 
+ document.addEventListener('DOMContentLoaded', function () {
+    var categoryForm = document.querySelector('#categoryForm');
+    var categoryNameInput = document.querySelector('#id_category_name');
 
+    categoryForm.addEventListener('submit', function (event) {
+        // Validate Category Name
+        if (!validateCategoryName(categoryNameInput)) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
 
+        categoryForm.classList.add('was-validated');
+    });
+
+    function validateCategoryName(input) {
+        var value = input.value.trim();
+        var errorContainer = document.getElementById('category_nameError');
+
+        // Check if the value is empty or doesn't match the pattern
+        if (value.length <= 3 || !/^[a-zA-Z]+$/.test(value)) {
+            errorContainer.textContent = "Category name should be alphabetic and have a length greater than 3.";
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+            return false;
+        } else {
+            errorContainer.textContent = "";
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+            return true;
+        }
+    }
+});
 
 
 //#################### FORM VALIDATION FOR MODEL VARIANT #############################
@@ -240,6 +271,106 @@ document.addEventListener('DOMContentLoaded', function () {
             return true;
         }
     }
+
+//server category add form////////////////////////////////////////////////////////////////////////////
+
+var serviceForm = document.querySelector('#serviceForm');
+        var serviceNameInput = document.querySelector('#id_service_name');
+        var serviceCategorySelect = document.querySelector('#id_service_category');
+        var descriptionInput = document.querySelector('#id_description');
+        var serviceImageInput = document.querySelector('#id_service_Image');
+
+        serviceForm.addEventListener('submit', function (event) {
+            // Validate Service Name
+            if (!validateServiceName(serviceNameInput)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate Service Category
+            if (!validateServiceCategory(serviceCategorySelect)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate Description
+            if (!validateDescription(descriptionInput)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate Service Image
+            if (!validateServiceImage(serviceImageInput)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            serviceForm.classList.add('was-validated');
+        });
+
+        function validateServiceName(input) {
+            var value = input.value.trim();
+            var errorContainer = document.getElementById('service_nameError');
+
+            // Check if the value is empty
+            if (value === '') {
+                errorContainer.textContent = "Service name is required.";
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                errorContainer.textContent = "";
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+
+        function validateServiceCategory(select) {
+            var value = select.options[select.selectedIndex].value;
+            var errorContainer = document.getElementById('service_categoryError');
+
+            // Check if the value is empty
+            if (value === '') {
+                errorContainer.textContent = "Please select a service category.";
+                select.classList.remove('is-valid');
+                select.classList.add('is-invalid');
+                return false;
+            } else {
+                errorContainer.textContent = "";
+                select.classList.remove('is-invalid');
+                select.classList.add('is-valid');
+                return true;
+            }
+        }
+
+        function validateDescription(input) {
+            // You can add validation for the description if needed.
+            // This function is currently empty as an example.
+            return true;
+        }
+
+        function validateServiceImage(input) {
+            var value = input.value.trim();
+            var errorContainer = document.getElementById('service_ImageError');
+
+            // Check if the value is empty
+            if (value === '') {
+                errorContainer.textContent = "Please select a service image.";
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                errorContainer.textContent = "";
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+
+
+
+
 });
 
 

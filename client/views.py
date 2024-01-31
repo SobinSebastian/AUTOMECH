@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate,login,logout
 from django.shortcuts import render,redirect
 from django.core.mail import send_mail
 from django.http import JsonResponse
+from django.core import serializers
 from django.contrib import messages
 from django.conf import settings
 from .forms import *
@@ -16,7 +17,8 @@ def index(request):
         elif request.user.role == 'MECHANIC':
            return redirect('/mechanic_index')
     categories = ServiceCategory.objects.all()
-    context={'categories':categories}
+    make = CarMake.objects.all()
+    context={'categories':categories,'makes':make}
     return render(request,'client/index.html',context)
      
 class CustomSignupView(SignupView):
@@ -119,12 +121,12 @@ def profileview(request):
 
 def add_vehicle(request):
    if request.method == "POST":
-       form = AddVehicleForm(request.POST)
+       form = VehicleinfoForm(request.POST)
        form.instance.client = request.user
        if form.is_valid():
             form.save()
    else:
-        form = AddVehicleForm()
+        form = VehicleinfoForm()
    return render(request, 'client/add_vehicle.html', {'form': form})
 
 def edit_vehicle(request, id):
@@ -145,21 +147,11 @@ def vehicle(request):
     vehicleinfo=Vehicleinfo.objects.filter(client=request.user)
     print(vehicleinfo)
     return render(request,'client/vehicle.html',{'vehicles':vehicleinfo})
-def get_car_models(request):
-    make_id = request.GET.get('make_id', None)
-    if make_id is not None:
-        car_models = CarModel.objects.filter(make_company_id=make_id).values('id', 'model_name')
-        return JsonResponse({'models': list(car_models)})
-    return JsonResponse({'models': []})
+
 
 def map_view(request):
     return render (request,'client/map_view.html')
 
-# def ajax_load_services(request, category_slug):
-#     category = get_object_or_404(ServiceCategory, slug=category_slug)
-#     services = ServiceList.objects.filter(service_category=category)
-#     data = {'services': [{'name': service.service_name, 'description': service.description} for service in services]}
-#     return JsonResponse(data)
 
 
 def ajax_load_services(request, category_slug):
@@ -179,3 +171,15 @@ def ajax_load_services(request, category_slug):
         return JsonResponse(data)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+    
+
+def get_car_models(request, make_id):
+    car_models = CarModel.objects.filter(make_company__pk=make_id)
+    data = serializers.serialize('json', car_models)
+    return JsonResponse(data, safe=False)
+
+def get_car_variants(request, model_id):
+    car_variants = ModelVariant.objects.filter(model__pk=model_id)
+    data = serializers.serialize('json', car_variants)
+    return JsonResponse(data, safe=False)
+

@@ -6,8 +6,13 @@
 <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-          
-          <h3 class="">{{service_category}} Service List</h3>
+          <h3 class="text-danger">Details of {{service_category}}  </h3>
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{%url 'service_category'%}">Service Category</a></li>
+                <li class="breadcrumb-item"><a href=>{{service_category}}</a></li>
+              </ol>
+            </nav>
           <!-- Button trigger modal -->
             <!-- Modal -->
             <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -20,7 +25,7 @@
                     </button>
                   </div>
                   <div class="modal-body">
-                    <form method="post" enctype="multipart/form-data" >
+                    <form method="post" enctype="multipart/form-data"  id="serviceForm">
                       {%csrf_token%}
                       <div class="form-row">
                         <div class="form-group col">

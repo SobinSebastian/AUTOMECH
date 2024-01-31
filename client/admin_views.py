@@ -2,6 +2,8 @@ from . forms import *
 from . models import *
 from django.views import View
 from django.utils import timezone
+import os
+from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import render,redirect, get_object_or_404
 from django.contrib.admin.models import LogEntry
@@ -171,7 +173,7 @@ def service_category(request, slug=None):
 
 def service_category_list(request, slug=None):
     cat= get_object_or_404(ServiceCategory, slug=slug)
-    serviceList = ServiceList.objects.filter(service_category=cat.id)
+    serviceList = ServiceList.objects.filter(service_category=cat.id).order_by('service_name')
     if request.method == 'POST':
         form = ServiceListForm(request.POST,request.FILES)
         if form.is_valid():
@@ -183,7 +185,14 @@ def service_category_list(request, slug=None):
 
 def service_category_view(request, slug=None):
     service = get_object_or_404(ServiceList, slug=slug)
-    context = {'service':service}
+    if request.method == 'POST':
+        form = ServiceListForm(request.POST,request.FILES,instance = service)
+        if form.is_valid():
+            print(form.errors) 
+            form.save()
+    else:
+        form = ServiceListForm(instance = service )
+    context = {'service':service,'form': form}
     return render(request, 'admin/serviceview.html', context)
 
 @staff_member_required
@@ -191,3 +200,9 @@ def client_list_view(request):
     users = User.objects.filter(role=User.Role.CLIENT)
     userinfo=UserInfo
     return render(request,'admin/clientlist.html',{'users': users,'userinfo':userinfo})
+
+@staff_member_required
+def service_center(request):
+    form =ServiceCenterForm()
+    context ={'form':form}
+    return render(request,'admin/service_center.html',context)
