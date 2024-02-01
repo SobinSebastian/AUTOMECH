@@ -203,6 +203,23 @@ def client_list_view(request):
 
 @staff_member_required
 def service_center(request):
-    form =ServiceCenterForm()
+    if request.method == 'POST':
+        form = ServiceCenterForm(request.POST)
+        if form.is_valid():
+            form.save()
+    else:
+        form = ServiceCenterForm()
     context ={'form':form}
     return render(request,'admin/service_center.html',context)
+
+@staff_member_required
+def service_center_view(request):
+    ServiceCenters = ServiceCenter.objects.all()
+    context ={'ServiceCenters':ServiceCenters}
+    return render(request,'admin/service_center_view.html',context)
+
+@staff_member_required
+def cervice_center_manager(request):
+    context ={
+        'form' : MangaerAddFrom()
+    }

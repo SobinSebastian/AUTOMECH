@@ -1,0 +1,54 @@
+{% extends 'admin/adminbase.html' %}
+{% block conhead%}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+{% endblock %}
+{%block content%}
+{% load static %}
+  <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <p class="card-title">Service Centers</p>
+          <div class="row">
+            <div class="col-12">
+              <div class="table-responsive">
+                <table id="myDataTable" class="display expandable-table dataTable no-footer">
+                  <thead>
+                      <tr>
+                          <th>Place</th>
+                          <th>City</th>
+                          <th>Pincode</th>
+                          <th>Phone Number</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      {% for Servicecenter in ServiceCenters %}
+                      <tr>
+                          <td>{{ Servicecenter.place }}</td>
+                          <td>{{ Servicecenter.city }}</td>
+                          <td>{{ Servicecenter.pincode }}</td>
+                          <td>{{ Servicecenter.phone_number }}</td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+              <script>
+                  $(document).ready(function() {
+                      $('#myDataTable').DataTable({
+                          searching: true,
+                          ordering: true,
+                          
+                          // Add other options as needed
+                      });
+                  });
+              </script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{%endblock%}

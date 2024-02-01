@@ -18,7 +18,7 @@
         var errorContainer = document.getElementById('category_nameError');
 
         // Check if the value is empty or doesn't match the pattern
-        if (value.length <= 3 || !/^[a-zA-Z]+$/.test(value)) {
+        if (value.length <= 3 || !/^[a-zA-Z\s]+$/.test(value)) {
             errorContainer.textContent = "Category name should be alphabetic and have a length greater than 3.";
             input.classList.remove('is-valid');
             input.classList.add('is-invalid');
@@ -368,9 +368,155 @@ var serviceForm = document.querySelector('#serviceForm');
             }
         }
 
+        /// ####################### Service Center Add Form #############################
+        var locationForm = document.querySelector('#locationForm');
+        var placeInput = document.querySelector('#id_place');
+        var cityInput = document.querySelector('#id_city');
+        var pincodeInput = document.querySelector('#id_pincode');
+        var phoneNumberInput = document.querySelector('#id_phone_number');
+        var latitudeInput = document.querySelector('#id_latitude');
+        var longitudeInput = document.querySelector('#id_longitude');
+
+        // Add input event listeners for real-time validation
+        placeInput.addEventListener('input', function () {
+            validateText(placeInput, 'Place');
+        });
+
+        cityInput.addEventListener('input', function () {
+            validateText(cityInput, 'City');
+        });
+
+        pincodeInput.addEventListener('input', function () {
+            validatePincode(pincodeInput);
+        });
+
+        phoneNumberInput.addEventListener('input', function () {
+            validatePhoneNumber(phoneNumberInput);
+        });
+
+        latitudeInput.addEventListener('input', function () {
+            validateDecimal(latitudeInput, 'Latitude');
+        });
+
+        longitudeInput.addEventListener('input', function () {
+            validateDecimal(longitudeInput, 'Longitude');
+        });
+
+        locationForm.addEventListener('submit', function (event) {
+            // Validate Place
+            if (!validateText(placeInput, 'Place')) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate City
+            if (!validateText(cityInput, 'City')) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate Pincode
+            if (!validatePincode(pincodeInput)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate Phone Number
+            if (!validatePhoneNumber(phoneNumberInput)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate Latitude
+            if (!validateDecimal(latitudeInput, 'Latitude')) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate Longitude
+            if (!validateDecimal(longitudeInput, 'Longitude')) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Perform any additional form submission logic here
+
+            locationForm.classList.add('was-validated');
+        });
+
+        function validateText(input, fieldName) {
+            var value = input.value.trim();
+            var errorContainer = document.getElementById(input.id + 'Error');
+
+            // Check if the value is empty or contains non-alphabetic characters
+            if (value === '' || !/^[a-zA-Z\s]+$/.test(value)) {
+                errorContainer.textContent = fieldName + ' should contain only alphabetic characters.';
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                errorContainer.textContent = "";
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+
+        function validatePincode(input) {
+            var value = input.value.trim();
+            var errorContainer = document.getElementById('pincodeError');
+
+            // Check if the value is empty or not a 6-digit number
+            if (value === '' || !/^\d{6}$/.test(value)) {
+                errorContainer.textContent = "Pincode should be a 6-digit number.";
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                errorContainer.textContent = "";
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+
+        function validatePhoneNumber(input) {
+            var value = input.value.trim();
+            var errorContainer = document.getElementById('phoneNumberError');
+
+            // Check if the value is empty or not a 10-digit number
+            if (value === '' || !/^\d{10}$/.test(value)) {
+                errorContainer.textContent = "Phone number should be a 10-digit number.";
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                errorContainer.textContent = "";
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+
+        function validateDecimal(input, fieldName) {
+            var value = input.value.trim();
+            var errorContainer = document.getElementById(input.id + 'Error');
+
+            // Check if the value is empty or a valid decimal number
+            if (value === '' || !/^\d+(\.\d+)?$/.test(value)) {
+                errorContainer.textContent = fieldName + ' should be a decimal number.';
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                errorContainer.textContent = "";
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+    });
 
 
-
-});
 
 

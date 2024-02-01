@@ -124,10 +124,22 @@ class VehicleinfoForm(forms.ModelForm):
 class ServiceCenterForm(forms.ModelForm):
      class Meta:
             model =ServiceCenter
-            fields =[ 'place','city','pincode','phone_number' ]
+            fields =[ 'place','city','pincode','phone_number','latitude','longitude' ]
             widgets = {
             'place': forms.TextInput(attrs={'placeholder': 'Enter the Place ','class': 'form-control'}),
             'city': forms.TextInput(attrs={'placeholder': 'Enter the City ','class': 'form-control'}),
             'pincode': forms.TextInput(attrs={'placeholder': 'Enter the Pincode ','class': 'form-control'}),
             'phone_number': forms.TextInput(attrs={'placeholder': 'Enter the Phone Number ','class': 'form-control'}),
+            'latitude': forms.TextInput(attrs={'class': 'form-control'}),
+            'longitude': forms.TextInput(attrs={'class': 'form-control'}),
         }
+            
+
+class MangaerAddFrom(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email') 
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['role'].initial = User.Role.MANAGER 

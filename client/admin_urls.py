@@ -26,4 +26,5 @@ path('model_variant/', ModelVariantListView.as_view(), name='model_variant_list'
 path('vehicleinfo/', VehicleinfoListView.as_view(), name='vehicleinfo_list'),
 path('clients/list', views.client_list_view, name='client_list'),
 path('service/center/', views.service_center, name='service_center'),
+path('service/center_view/', views.service_center_view, name='service_center_view'),
 ]

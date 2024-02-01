@@ -1,6 +1,8 @@
 {% extends 'admin/adminbase.html' %}
 {%block content%}
 {% load static %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <div class="col-lg-14 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
@@ -8,66 +10,79 @@
         <p class="card-description">
           Add <code>New Service Center</code>
         </p>
-        <div class="table-responsive">
-          <table class="table">
-            <thead>
-              <tr>
-                <th>User</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr>
-                    <td>
-                    {% if user.userinfo.profile_picture %}
-                    <img src="{{ user.userinfo.profile_picture.url }}"
-                      alt="user-avatar"
-                    />
-                    {% elif user.socialaccount_set.all.0.get_avatar_url %}
-                      <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="Google Profile">
-                    {% else %}
-                      <img src="/media/profile_pictures/default.png" alt="Default Profile">
-                    {% endif %}  
-                    </td>
-                    <td>{{ user.first_name }}&nbsp;{{ user.last_name }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{% if user.is_active %}
-                        <p class="text-success" >Active</p>
-                     {% else %}
-                        <p class="text-danger" >Suspended</p>
-                     {% endif %}
-                    </td>
-                    <td>
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            <input type="submit" {% if user.is_active %}
-                               value="Suspend" class="btn btn-danger btn-rounded btn-sm"
-                            {% else %}
-                                value="Activate"  class="btn btn-success btn-rounded btn-sm"
-                            {% endif %}>
-                        </form>
-                    </td>
-                    <td>
-
-                      <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#exampleModal{{user.id}}">
-                        Info
-                      </button>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-          </table>
+        <div class="container">
+          <div class="row">
+            <div class="col-md-5">          
+              <form method="post" id="locationForm">
+                {%csrf_token%}
+                <div class="form-group">
+                  {{form.place.label}}
+                  {{form.place}}
+                  <div id="placeError" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                  {{form.city.label}}
+                  {{form.city}}
+                  <div id="cityError" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                  {{form.pincode.label}}
+                  {{form.pincode}}
+                  <div id="pincodeError" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                  {{form.phone_number.label}}
+                  {{form.phone_number}}
+                  <div id="phoneNumberError" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                  {{form.latitude.label}}
+                  {{form.latitude}}
+                  <div id="latitudeError" class="text-danger"></div>
+                </div>
+                <div class="form-group">
+                  {{form.longitude.label}}
+                  {{form.longitude}}
+                  <div id="longitudeError" class="text-danger"></div>
+                </div>
+                <div class="form-row">
+                  <div class="form-group col">
+                      <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                  </div>
+                  {{form.errors}}
+                </div>
+                <div id="mapid" style="height: 400px;"></div>
+              </form>
+            </div>
+          </div>
         </div>
+        <script>
+          var map = L.map('mapid').setView([9.9312, 76.2673], 13);
 
-        <form>
-          {%csrf_token%}
-          {{form.as_p}}
-        </form>
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }).addTo(map);
+          var marker = L.marker([9.9312, 76.2673]).addTo(map);
+    
+          map.on('click', function(e) {
+              marker.setLatLng(e.latlng);
+              var lat = parseFloat(e.latlng.lat).toFixed(6);
+              var lng = parseFloat(e.latlng.lng).toFixed(6);
+              document.getElementById("id_latitude").value = lat;
+              document.getElementById("id_longitude").value = lng;
+          });
 
+          var searchControl = new L.Control.Search({
+            url: 'https://nominatim.openstreetmap.org/search?format=json&q={s}',
+            jsonpParam: 'json_callback',
+            propertyName: 'display_name',
+            propertyLoc: ['lat','lon'],
+            marker: false,
+            autoCollapse: true,
+            minLength: 2
+        }).addTo(map);
+
+        </script>
 
       
       </div>
