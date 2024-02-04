@@ -26,6 +26,9 @@
         <!-- Template Stylesheet -->
         <link href="{% static 'css/style.css' %}" rel="stylesheet">
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        {% comment %} sweetify {% endcomment %}
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
 
         
     </head>
@@ -260,5 +263,7 @@
                 });
             });
         </script>
+        {% load sweetify %}
+        {% sweetify %}
     </body>
 </html>

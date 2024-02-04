@@ -21,6 +21,8 @@
   <link rel="stylesheet" href="{% static 'admincustom.css'%}">
   <!-- endinject -->
   <link rel="shortcut icon" href="{% static 'panel/images/favicon.png'%}" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.6.5/sweetalert2.all.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
   {% block conhead%}
   {% endblock %}
 </head>
@@ -318,7 +320,7 @@
           </li>
           <li class="nav-item {% if request.path == '/customadmin/car_make/' %}active {%endif%}">
             <a class="nav-link" href="{%url 'car_make'%}" id="vidadd">
-              <i class="icon-circle-plus menu-icon" ></i>
+              <i class="icon-taxi menu-icon" ></i>
               <span class="menu-title">Vehicle</span>
             </a>
           </li>
@@ -326,6 +328,12 @@
             <a class="nav-link" href="">
               <i class="icon-grid-2 menu-icon"></i>
               <span class="menu-title">Bookings</span>
+            </a>
+          </li>
+          <li class="nav-item {% if request.path == '/customadmin/service_center/view/' %}active {%endif%}">
+            <a class="nav-link" href="{% url 'service_center_view'%}">
+              <i class="icon-grid-2 menu-icon"></i>
+              <span class="menu-title">Service Centers</span>
             </a>
           </li>
           <li class="nav-item {% if request.path == '/customadmin/service/category/' %}active {%endif%}">
@@ -398,6 +406,9 @@
   <script src="{% static 'panel/js/dashboard.js'%}"></script>
   <script src="{% static 'panel/js/Chart.roundedBarCharts.js'%}"></script>
   <!-- End custom js for this page-->
+  
+{% load sweetify %}
+{% sweetify %}
 </body>
 
 </html>

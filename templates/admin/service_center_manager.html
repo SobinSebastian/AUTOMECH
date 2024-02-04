@@ -1,0 +1,196 @@
+{% extends 'admin/adminbase.html' %}
+{% block conhead%}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+{% endblock %}
+{%block content%}
+{% load static %}
+  <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <p class="card-title">Service Centers Manager</p>
+          <div class="row">
+            <div class="col-12">
+             
+             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+                Launch demo modal
+              </button>
+              
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLabel">Add New Manager</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" id="myForm">
+                            {% csrf_token %}
+                            <div class="form-group">
+                              {{form.email.label}}
+                              {{form.email}}
+                              <div id="emailError" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                              {{form.first_name.label}}
+                              {{form.first_name}}
+                              <div id="firstNameError" class="text-danger"></div>
+                            </div>
+                            <div class="form-group">
+                              {{form.last_name.label}}
+                              {{form.last_name}}
+                              <div id="lastNameError" class="text-danger"></div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-sm"> Add Manager </button>
+                           </form>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+             <script>
+                 document.addEventListener('DOMContentLoaded', function () {
+                     var myForm = document.querySelector('#myForm');
+                     var emailInput = document.querySelector('#id_email');
+                     var firstNameInput = document.querySelector('#id_first_name');
+                     var lastNameInput = document.querySelector('#id_last_name');
+             
+                     // Add input event listeners for real-time validation
+                     emailInput.addEventListener('input', function () {
+                         validateEmail(emailInput);
+                     });
+             
+                     firstNameInput.addEventListener('input', function () {
+                         validateName(firstNameInput, 'first');
+                     });
+             
+                     lastNameInput.addEventListener('input', function () {
+                         validateName(lastNameInput, 'last');
+                     });
+             
+                     myForm.addEventListener('submit', function (event) {
+                         // Validate Email
+                         if (!validateEmail(emailInput)) {
+                             event.preventDefault();
+                             event.stopPropagation();
+                         }
+             
+                         // Validate First Name
+                         if (!validateName(firstNameInput, 'first')) {
+                             event.preventDefault();
+                             event.stopPropagation();
+                         }
+             
+                         // Validate Last Name
+                         if (!validateName(lastNameInput, 'last')) {
+                             event.preventDefault();
+                             event.stopPropagation();
+                         }
+             
+                         // Perform any additional form submission logic here
+             
+                         myForm.classList.add('was-validated');
+                     });
+             
+                     function validateEmail(input) {
+                         var value = input.value.trim();
+                         var errorContainer = document.getElementById('emailError');
+             
+                         // Check if the value is empty
+                         if (value === '') {
+                             errorContainer.textContent = 'Email cannot be empty.';
+                             input.classList.remove('is-valid');
+                             input.classList.add('is-invalid');
+                             return false;
+                         }
+             
+                         // Check if the value is a valid email address
+                         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                             errorContainer.textContent = 'Enter a valid email address.';
+                             input.classList.remove('is-valid');
+                             input.classList.add('is-invalid');
+                             return false;
+                         } else {
+                             errorContainer.textContent = '';
+                             input.classList.remove('is-invalid');
+                             input.classList.add('is-valid');
+                             return true;
+                         }
+                     }
+             
+                     function validateName(input, fieldName) {
+                         var value = input.value.trim();
+                         var errorContainer = document.getElementById(fieldName + 'NameError');
+             
+                         // Check if the value is empty
+                         if (value === '') {
+                             errorContainer.textContent = capitalizeFirstLetter(fieldName) + ' name cannot be empty.';
+                             input.classList.remove('is-valid');
+                             input.classList.add('is-invalid');
+                             return false;
+                         }
+             
+                         // Check if the value contains only alphabetic characters and has a minimum length of 3
+                         if (!/^[a-zA-Z]{3,}$/.test(value)) {
+                             errorContainer.textContent = capitalizeFirstLetter(fieldName) + ' name should contain only alphabetic characters and have a minimum length of 3.';
+                             input.classList.remove('is-valid');
+                             input.classList.add('is-invalid');
+                             return false;
+                         } else {
+                             errorContainer.textContent = '';
+                             input.classList.remove('is-invalid');
+                             input.classList.add('is-valid');
+                             return true;
+                         }
+                     }
+             
+                     function capitalizeFirstLetter(string) {
+                         return string.charAt(0).toUpperCase() + string.slice(1);
+                     }
+                 });
+             </script>
+    
+
+             <div class="table-responsive mt-4">
+                <table id="myDataTable" class="display expandable-table dataTable no-footer">
+                  <thead>
+                      <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                    {% for manager in managers%}
+                      <tr>
+                          <td> {{manager.first_name}}{{manager.last_name}}</td>
+                          <td>{{manager.email}}</td>
+                      </tr>
+                      {% endfor %}
+                  </tbody>
+              </table>
+              <script>
+                  $(document).ready(function() {
+                      $('#myDataTable').DataTable({
+                          searching: true,
+                          ordering: true,
+                          
+                          // Add other options as needed
+                      });
+                  });
+              </script>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{%endblock%}

@@ -15,6 +15,8 @@ from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from .models import CarMake
 from .forms import CarMakeForm
+from .email_content import *
+import sweetify
 
 
 def is_admin(user):
@@ -207,6 +209,7 @@ def service_center(request):
         form = ServiceCenterForm(request.POST)
         if form.is_valid():
             form.save()
+            sweetify.success(request, 'New Service Ceneter Is Added')
     else:
         form = ServiceCenterForm()
     context ={'form':form}
@@ -218,8 +221,23 @@ def service_center_view(request):
     context ={'ServiceCenters':ServiceCenters}
     return render(request,'admin/service_center_view.html',context)
 
+
+
+
+
+
+# Example usage:
+#employee_mail(['sobinolickal1936@gmail.com'])
+
 @staff_member_required
 def cervice_center_manager(request):
-    context ={
-        'form' : MangaerAddFrom()
-    }
+    if request.method == 'POST':
+        form = MangaerAddFrom(request.POST)
+        if form.is_valid():
+            form.save()
+            sweetify.success(request, 'New Manager', text= f'is successfully Added',timer=5000, persistent=False,)
+    else:
+        form = MangaerAddFrom()
+    managers = Manager.objects.filter( role = 'MANAGER')
+    context = {'form':form,'managers': managers}
+    return render(request,'admin/service_center_manager.html',context)

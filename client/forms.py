@@ -2,6 +2,7 @@ from django import forms
 from .models import *
 from django.utils import timezone
 from datetime import datetime, time
+from django.contrib.auth.hashers import make_password
 class LoginForm(forms.Form):
     email=forms.EmailField(label="email" ,max_length=100)
     password = forms.CharField(widget=forms.PasswordInput)
@@ -135,11 +136,28 @@ class ServiceCenterForm(forms.ModelForm):
         }
             
 
+import random
+import string
+
+def generate_password(length=8):
+    characters = string.ascii_letters + string.digits + string.punctuation
+    password = ''.join(random.choice(characters) for _ in range(length))
+    return password
+
 class MangaerAddFrom(forms.ModelForm):
     class Meta:
-        model = User
-        fields = ('first_name', 'last_name', 'email') 
+        model = Manager
+        fields = ('email','first_name', 'last_name') 
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['role'].initial = User.Role.MANAGER 
+        widgets = {
+            'email': forms.TextInput(attrs={'placeholder': 'Enter the Place ','class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'Enter the City ','class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Enter the Pincode ','class': 'form-control'}),
+            }
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.password = make_password(generate_password())
+        instance.username = instance.email
+        if commit:
+            instance.save()
+        return instance

@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    'sweetify',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -168,3 +169,5 @@ ACCOUNT_FORMS = {
    'signup': 'client.forms.CustomSignupForm',
 }
 
+# possible options: 'sweetalert', 'sweetalert2' - default is 'sweetalert2'
+SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'

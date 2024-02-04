@@ -51,6 +51,13 @@ class Mechanic(User):
     class Meta:
         proxy = True
 
+class Manager(User):
+
+    base_role = User.Role.MANAGER
+    
+    class Meta:
+        proxy = True
+
 class UserInfo(models.Model):
     client = models.OneToOneField(Client, on_delete=models.CASCADE)
     contact_no = models.CharField(max_length=11)
@@ -141,3 +148,7 @@ class ServiceCenter(models.Model):
     
     def __str__(self):
         return self.place
+    
+class ServiceManagers(models.Model):
+    service_manager = models.OneToOneField(User, on_delete=models.CASCADE)
+    service_center = models.ForeignKey('ServiceCenter', on_delete=models.CASCADE)
