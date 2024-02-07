@@ -1,0 +1,167 @@
+{% extends 'manager/managerbase.html' %}
+{%block content%}
+{% load static %}
+
+  <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card-body">
+          <h3 class="text-danger mt-3">Details of Mechanic </h3>
+          <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
+            Add New Mechanic
+          </button>
+          
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Add Mechanic</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="myForm">
+                        {% csrf_token %}
+                        <div class="form-group">
+                          {{form.email.label}}
+                          {{form.email}}
+                          <div id="emailError" class="text-danger"></div>
+                        </div>
+                        <div class="form-group">
+                          {{form.first_name.label}}
+                          {{form.first_name}}
+                          <div id="firstNameError" class="text-danger"></div>
+                        </div>
+                        <div class="form-group">
+                          {{form.last_name.label}}
+                          {{form.last_name}}
+                          <div id="lastNameError" class="text-danger"></div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary btn-sm"> Add Mechanic </button>
+                </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+         <script>
+             document.addEventListener('DOMContentLoaded', function () {
+                 var myForm = document.querySelector('#myForm');
+                 var emailInput = document.querySelector('#id_email');
+                 var firstNameInput = document.querySelector('#id_first_name');
+                 var lastNameInput = document.querySelector('#id_last_name');
+         
+                 emailInput.addEventListener('input', function () {
+                     validateEmail(emailInput);
+                 });
+         
+                 firstNameInput.addEventListener('input', function () {
+                     validateName(firstNameInput, 'first');
+                 });
+         
+                 lastNameInput.addEventListener('input', function () {
+                     validateName(lastNameInput, 'last');
+                 });
+         
+                 myForm.addEventListener('submit', function (event) {
+ 
+                     if (!validateEmail(emailInput)) {
+                         event.preventDefault();
+                         event.stopPropagation();
+                     }
+         
+                     if (!validateName(firstNameInput, 'first')) {
+                         event.preventDefault();
+                         event.stopPropagation();
+                     }
+         
+                     if (!validateName(lastNameInput, 'last')) {
+                         event.preventDefault();
+                         event.stopPropagation();
+                     }
+         
+         
+                     myForm.classList.add('was-validated');
+                 });
+         
+                 function validateEmail(input) {
+                     var value = input.value.trim();
+                     var errorContainer = document.getElementById('emailError');
+         
+                     if (value === '') {
+                         errorContainer.textContent = 'Email cannot be empty.';
+                         input.classList.remove('is-valid');
+                         input.classList.add('is-invalid');
+                         return false;
+                     }
+         
+                     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+                         errorContainer.textContent = 'Enter a valid email address.';
+                         input.classList.remove('is-valid');
+                         input.classList.add('is-invalid');
+                         return false;
+                     } else {
+                         errorContainer.textContent = '';
+                         input.classList.remove('is-invalid');
+                         input.classList.add('is-valid');
+                         return true;
+                     }
+                 }
+         
+                 function validateName(input, fieldName) {
+                     var value = input.value.trim();
+                     var errorContainer = document.getElementById(fieldName + 'NameError');
+         
+                     if (value === '') {
+                         errorContainer.textContent = capitalizeFirstLetter(fieldName) + ' name cannot be empty.';
+                         input.classList.remove('is-valid');
+                         input.classList.add('is-invalid');
+                         return false;
+                     }
+                     if (!/^[a-zA-Z]{3,}$/.test(value)) {
+                         errorContainer.textContent = capitalizeFirstLetter(fieldName) + ' name should contain only alphabetic characters and have a minimum length of 3.';
+                         input.classList.remove('is-valid');
+                         input.classList.add('is-invalid');
+                         return false;
+                     } else {
+                         errorContainer.textContent = '';
+                         input.classList.remove('is-invalid');
+                         input.classList.add('is-valid');
+                         return true;
+                     }
+                 }
+                 function capitalizeFirstLetter(string) {
+                     return string.charAt(0).toUpperCase() + string.slice(1);
+                 }
+             });
+
+         </script>
+         {%for mechanic in mechanics%}
+            {{mechanic.first_name}}
+            {{mechanic.last_name}}
+            {{mechanic}}
+         {% endfor %}
+
+          <div class="container mt-4">
+            <div class="error-message text-center p-4 bg-light rounded">
+              <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 200px; height: auto;">
+              <h2 class="text-danger"><strong>Oops! No Mechanic  found.</strong></h2>
+              <p class="lead">It seems there are no Mechanic  available in Your Service Center.</p>
+              <p class="text-muted">Please take the following actions:</p>
+              <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
+                Add New Mechanic
+                <i class="icon-circle-plus menu-icon">  </i>
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+ {%endblock%}

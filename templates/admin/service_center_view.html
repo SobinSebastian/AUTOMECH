@@ -1,5 +1,7 @@
 {% extends 'admin/adminbase.html' %}
 {% block conhead%}
+  <!-- Bootstrap CSS -->
+
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
   <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
@@ -10,10 +12,30 @@
     <div class="col-md-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <p class="card-title">Service Centers</p>
+          <h3 class="text-danger">Service Centers </h3>
+          <div class="row mt-4">
+            <div class="col-md-6 mb-4 stretch-card transparent">
+              <div class="card card-tale">
+                <div class="card-body">
+                  <p class="mb-4">Add New Service Center</p>
+                  <p class="fs-30 mb-2">  <a href="{%url 'service_center'%}" class="btn btn-success btn-sm">New Service Center</a></p>
+                  <p>Expand The Service Center</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6 mb-4 stretch-card transparent">
+              <div class="card card-dark-blue">
+                <div class="card-body">
+                  <p class="mb-4">Total Service Centers</p>
+                  <p class="fs-30 mb-2">{{count}}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        
           <div class="row">
             <div class="col-12">
-              <div class="table-responsive">
+              <div class="table-responsive mt-4">
                 <table id="myDataTable" class="display expandable-table dataTable no-footer">
                   <thead>
                       <tr>
@@ -21,6 +43,8 @@
                           <th>City</th>
                           <th>Pincode</th>
                           <th>Phone Number</th>
+                          <th>Manager</th>
+                          <th>Action</th>
                       </tr>
                   </thead>
                   <tbody>
@@ -30,21 +54,67 @@
                           <td>{{ Servicecenter.city }}</td>
                           <td>{{ Servicecenter.pincode }}</td>
                           <td>{{ Servicecenter.phone_number }}</td>
+                          <td>{% if Servicecenter.manager %}
+                                {{ Servicecenter.manager }}
+                              {% else %}
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal{{Servicecenter.slug}}">
+                                  Assign
+                                </button>
+                              {% endif %}
+                          </td>
+                          <td>
+                            <a href="{%url 'service_center_details' slug=Servicecenter.slug %}" class="btn btn-success btn-sm">View</a>
+                          </td>
+                          <div class="modal fade" id="myModal{{Servicecenter.slug}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel">Assign Mechanic In {{ Servicecenter.place }} Center</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                      <form method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-row">
+                                          <div class="form-group col">
+                                              <label >{{ form.manager.label }} </label>
+                                              {{ form.manager }} 
+                                              <div id="managerError" class="text-danger"></div>
+                                          </div>
+                                        </div>
+                                        <input type="hidden" name="service_center_slug" value="{{ Servicecenter.slug }}">
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="submit" class="btn btn-success btn-sm">Update Manager</button>
+                                        <button type="button" class="btn btn-danger btn-sm" data-dismiss="modal">Close</button>
+                                      </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                       </tr>
                       {% endfor %}
                   </tbody>
               </table>
+              
               <script>
                   $(document).ready(function() {
                       $('#myDataTable').DataTable({
                           searching: true,
                           ordering: true,
+                          responsive: true,
                           
                           // Add other options as needed
                       });
+                      $('#myDataTable tbody').on('click', 'tr', function () {
+                        var rowData = table.row(this).data();
+                        // You may need to populate the form fields based on rowData here
+                        $('#updateManagerModal').modal('show');
+                    });
                   });
-              </script>
-              </div>
+              </script>      
             </div>
           </div>
         </div>

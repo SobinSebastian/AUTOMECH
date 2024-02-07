@@ -204,7 +204,7 @@ def client_list_view(request):
     return render(request,'admin/clientlist.html',{'users': users,'userinfo':userinfo})
 
 @staff_member_required
-def service_center(request):
+def service_center_add(request):
     if request.method == 'POST':
         form = ServiceCenterForm(request.POST)
         if form.is_valid():
@@ -213,14 +213,35 @@ def service_center(request):
     else:
         form = ServiceCenterForm()
     context ={'form':form}
-    return render(request,'admin/service_center.html',context)
+    return render(request,'admin/service_center_add.html',context)
 
 @staff_member_required
 def service_center_view(request):
+    form = ServiceCenterUpdateForm()
+    if request.method == 'POST':
+        slug = request.POST.get('service_center_slug')
+        man_id= request.POST.get('manager')
+        manager = Manager.objects.get(id = man_id)
+        center = ServiceCenter.objects.get(slug=slug)
+        center.manager = manager
+        center.save()        
+        sweetify.success(request, 'New Manager is Assigned')
+        return redirect('service_center_view')
+
     ServiceCenters = ServiceCenter.objects.all()
-    context ={'ServiceCenters':ServiceCenters}
+    count = ServiceCenters.count()
+    context ={'ServiceCenters':ServiceCenters,'form' : form,'count' : count}
     return render(request,'admin/service_center_view.html',context)
 
+
+@staff_member_required
+def service_center_details(request, slug):
+    if slug :
+        center = ServiceCenter.objects.get(slug=slug)
+    else :
+        center = None
+    context= { 'center' : center}
+    return render (request,'admin/service_center_details.html',context)
 
 
 
@@ -230,7 +251,7 @@ def service_center_view(request):
 #employee_mail(['sobinolickal1936@gmail.com'])
 
 @staff_member_required
-def cervice_center_manager(request):
+def service_center_manager(request):
     if request.method == 'POST':
         form = MangaerAddFrom(request.POST)
         if form.is_valid():

@@ -27,7 +27,7 @@ class User(AbstractUser):
         MECHANIC="MECHANIC",'Mechanic'
         MANAGER="MANAGER",'Manager'
         CLIENT="CLIENT",'Client'
-
+    slug = models.SlugField(unique=True,blank=True)
     base_role = Role.CLIENT
 
     role = models.CharField(max_length=50, choices=Role.choices)
@@ -36,7 +36,17 @@ class User(AbstractUser):
     def save(self, *args, **kwargs):
         if not self.pk:
             self.role = self.base_role
-            return super().save(*args, **kwargs)
+
+        if not self.slug:
+            base_slug = slugify(self.first_name)  
+            unique_slug = base_slug
+            counter = 1
+            while User.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = unique_slug
+
+        return super().save(*args, **kwargs)
 
 class Client(User):
 
@@ -145,10 +155,28 @@ class ServiceCenter(models.Model):
     phone_number = models.CharField(max_length=15)
     latitude = models.DecimalField(max_digits=9, decimal_places=6)
     longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    manager = models.OneToOneField(Manager, on_delete=models.SET_NULL, null=True, blank=True, unique=True)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(f"{self.place}-{self.city}")
+            unique_slug = base_slug
+            counter = 1
+            while ServiceCenter.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = unique_slug
+
+        super().save(*args, **kwargs)
     
     def __str__(self):
         return self.place
     
-class ServiceManagers(models.Model):
-    service_manager = models.OneToOneField(User, on_delete=models.CASCADE)
-    service_center = models.ForeignKey('ServiceCenter', on_delete=models.CASCADE)
+
+class mechanicList(models.Model):
+    mechanic = models.OneToOneField(Client, on_delete=models.CASCADE)
+    service_center = models.ForeignKey(ServiceCenter, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return str(self.mechanic)

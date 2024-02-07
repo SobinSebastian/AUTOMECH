@@ -161,3 +161,31 @@ class MangaerAddFrom(forms.ModelForm):
         if commit:
             instance.save()
         return instance
+
+class MechanicAddFrom(forms.ModelForm):
+    class Meta:
+        model = Mechanic
+        fields = ('email','first_name', 'last_name') 
+
+        widgets = {
+            'email': forms.TextInput(attrs={'placeholder': 'Enter the Email','class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'placeholder': 'Enter the First Name ','class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'placeholder': 'Enter the Last Name ','class': 'form-control'}),
+            }
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        instance.password = make_password(generate_password())
+        instance.username = instance.email
+        if commit:
+            instance.save()
+        return instance
+    
+
+class ServiceCenterUpdateForm(forms.ModelForm):
+    manager = forms.ModelChoiceField(
+        queryset=User.objects.filter(role="MANAGER"),
+        widget=forms.Select(attrs={'class': 'form-control'}),)
+
+    class Meta:
+        model = ServiceCenter
+        fields = ['manager']

@@ -9,6 +9,7 @@ from django.contrib import messages
 from django.conf import settings
 from .forms import *
 from .admin_views import *
+from .manager_views import *
 
 def index(request):
     if request.user.is_authenticated:
@@ -16,6 +17,8 @@ def index(request):
            return redirect('admin_home')
         elif request.user.role == 'MECHANIC':
            return redirect('/mechanic_index')
+        elif request.user.role == 'MANAGER':
+           return redirect('manager_home')
     categories = ServiceCategory.objects.all()
     make = CarMake.objects.all()
     context={'categories':categories,'makes':make}

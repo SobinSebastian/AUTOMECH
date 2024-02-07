@@ -1,0 +1,29 @@
+{% extends 'manager/managerbase.html' %}
+{%block content%}
+{% load static %}
+  <div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+      <div class="card">
+        <div class="card">
+          <div class="card-body">
+            <h3 class="text-danger mt-3">Service Slots </h3>
+  
+            <div class="container mt-4">
+              <div class="error-message text-center p-4 bg-light rounded">
+                <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 200px; height: auto;">
+                <h2 class="text-danger"><strong>Oops! No Srvice Slot  found.</strong></h2>
+                <p class="lead">It seems there are no Service Slot  available in Your Service Center.</p>
+                <p class="text-muted">Please take the following actions:</p>
+                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
+                  Add Service Slot
+                  <i class="icon-circle-plus menu-icon">  </i>
+                </button>
+              </div>
+            </div>
+  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ {%endblock%}
