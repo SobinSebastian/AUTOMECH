@@ -1,4 +1,9 @@
 {% extends 'manager/managerbase.html' %}
+{% block conhead%}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+{% endblock %}
 {%block content%}
 {% load static %}
 
@@ -141,11 +146,41 @@
              });
 
          </script>
-         {%for mechanic in mechanics%}
-            {{mechanic.first_name}}
-            {{mechanic.last_name}}
-            {{mechanic}}
-         {% endfor %}
+         {%if mechanics%}
+              
+            <div class="table-responsive mt-4">
+              <table id="myDataTable" class="display expandable-table dataTable no-footer">
+                <thead>
+                    <tr>
+                        <th>Mechanic Name</th>
+                        <th> Mechanic Email</th>
+                        <th> Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {%for mech in mechanics%}
+                  <tr>
+                    <td> {{mech.mechanic.get_full_name}} </td>
+                    <td>{{mech}}</td>
+                    <td> {% if mech.mechanic.is_active == 1 %} Active {%else%} deactivate {%endif%}</td>
+                  </tr>
+                  {% endfor %}
+                    </tbody>
+              </table>
+              <script>
+                $(document).ready(function() {
+                    $('#myDataTable').DataTable({
+                        searching: true,
+                        ordering: true,
+                        
+                        // Add other options as needed
+                    });
+                });
+             </script>
+            </div>
+            
+            {%else%}
+       
 
           <div class="container mt-4">
             <div class="error-message text-center p-4 bg-light rounded">
@@ -159,6 +194,7 @@
               </button>
             </div>
           </div>
+          {%endif%}
 
         </div>
       </div>

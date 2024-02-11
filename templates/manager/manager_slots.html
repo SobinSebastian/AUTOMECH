@@ -1,4 +1,9 @@
 {% extends 'manager/managerbase.html' %}
+{% block conhead%}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+{% endblock %}
 {%block content%}
 {% load static %}
   <div class="row">
@@ -7,7 +12,226 @@
         <div class="card">
           <div class="card-body">
             <h3 class="text-danger mt-3">Service Slots </h3>
-  
+            {% if mcount == 0 %}
+            <div class="alert alert-warning" role="alert">
+              The <b>Add Slot function is currently unavailable </b>due to the absence of mechanics within this service center. <br>To proceed, please add a new mechanic
+            </div>
+            {% endif %}
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#slotModal" {% if mcount == 0 %}disabled{% endif %} >
+              Add Slot
+            </button>
+            <div class="modal fade" id="slotModal" tabindex="-1" role="dialog" aria-labelledby="slotModalLabel" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="slotModalLabel">Add New Slot</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form method="post" action="" id="myForm">
+                      {% csrf_token %}
+                      {{ form.slotname.label }}
+                      {{ form.slotname}}
+                      <div id="slotnameError" class="text-danger"></div>
+                      {{ form.allocated_mech.label }}
+                      {{ form.allocated_mech}}
+                      <div id="allocatedMechError" class="text-danger"></div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Add Slot</button>
+                  </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            
+            <script>
+              document.addEventListener('DOMContentLoaded', function () {
+                  var myForm = document.querySelector('#myForm');
+                  var slotnameInput = document.querySelector('#id_slotname');
+                  var allocatedMechSelect = document.querySelector('#id_allocated_mech');
+          
+                  // Add input event listener for real-time validation
+                  slotnameInput.addEventListener('input', function () {
+                      validateSlotname(slotnameInput);
+                  });
+          
+                  allocatedMechSelect.addEventListener('input', function () {
+                      validateAllocatedMech(allocatedMechSelect);
+                  });
+          
+                  myForm.addEventListener('submit', async function (event) {
+                      // Validate Slotname
+                      if (!(await validateSlotname(slotnameInput))) {
+                          event.preventDefault();
+                          event.stopPropagation();
+                      }
+          
+                      // Validate Allocated Mech
+                      if (!validateAllocatedMech(allocatedMechSelect)) {
+                          event.preventDefault();
+                          event.stopPropagation();
+                      }
+          
+                      // Perform any additional form submission logic here
+          
+                      myForm.classList.add('was-validated');
+                  });
+          
+                  async function validateSlotname(input) {
+                      var value = input.value.trim();
+                      var errorContainer = document.getElementById('slotnameError');
+          
+                      // Check if the value is empty or doesn't meet the length and pattern requirements
+                      if (value === '' || value.length <= 3 || !/^[a-zA-Z0-9]+$/.test(value)) {
+                          errorContainer.textContent = "Slotname Can't be empty, consisting of at least three alphabetic characters.";
+                          input.classList.remove('is-valid');
+                          input.classList.add('is-invalid');
+                          return false;
+                      } else {
+                          // Async validation
+                          var isUnique = await checkUniqueSlotname(value);
+                          if (isUnique) {
+                              errorContainer.textContent = "";
+                              input.classList.remove('is-invalid');
+                              input.classList.add('is-valid');
+                              return true;
+                          } else {
+                              errorContainer.textContent = "Slotname already exists in the same service center.";
+                              input.classList.remove('is-valid');
+                              input.classList.add('is-invalid');
+                              return false;
+                          }
+                      }
+                  }
+          
+                  function validateAllocatedMech(select) {
+                      var value = select.value.trim();
+                      var errorContainer = document.getElementById('allocatedMechError');
+          
+                      // Check if the value is empty
+                      if (value === '') {
+                          errorContainer.textContent = "Please select an Allocated Mech.";
+                          select.classList.remove('is-valid');
+                          select.classList.add('is-invalid');
+                          return false;
+                      } else {
+                          errorContainer.textContent = "";
+                          select.classList.remove('is-invalid');
+                          select.classList.add('is-valid');
+                          return true;
+                      }
+                  }
+          
+                  async function checkUniqueSlotname(slotname) {
+                      // Perform AJAX request to check uniqueness on the server
+                      return new Promise(resolve => {
+                          $.ajax({
+                              type: 'POST',
+                              url: '/manager/check_unique_slotname/',  // Update the URL to your Django view URL
+                              data: {
+                                  'slotname': slotname,
+                                  'service_center_id': $('#id_allocated_mech').val(),
+                                  csrfmiddlewaretoken: $('[name=csrfmiddlewaretoken]').val()
+                              },
+                              success: function (data) {
+                                  resolve(data.unique);
+                              },
+                              error: function (error) {
+                                  alert('Error checking slotname.');
+                                  resolve(false);
+                              }
+                          });
+                      });
+                  }
+              });
+          </script>
+          
+
+            {%if service_slots%}
+              
+            <div class="table-responsive mt-4">
+              <table id="myDataTable" class="display expandable-table dataTable no-footer">
+                <thead>
+                    <tr>
+                        <th>Slot Name</th>
+                        <th>Allocated Mechanic</th>
+                        <th>Status</th>
+                        <th>view</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {%for service_slot in service_slots %}
+                  <tr>
+                    <td>{{service_slot.slotname}} </td>
+                    <td>
+                      {%if service_slot.allocated_mech %}
+                        {{service_slot.allocated_mech.get_full_name}} ( {{service_slot.allocated_mech}})
+                        <a href="{% url 'remove_alloc_mech' solt_slug=service_slot.slug %}" class="btn btn-outline-danger btn-fw confirmation-link">remove</a>
+                      {%else%}
+                      None
+
+                      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#slotModal{{service_slot.slotname}}" {% if mcount == 0 %}disabled{% endif %} >
+                        Add Slot
+                      </button>
+                      <div class="modal fade" id="slotModal{{service_slot.slotname}}" tabindex="-1" role="dialog" aria-labelledby="slotModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="slotModalLabel">Add New Slot</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                            <div class="modal-body">
+                              <form method="post" action="" id="myForm">
+                                {% csrf_token %}
+                                <input type="hidden" name="slotslug" required="" aria-invalid="true" id="id_slotslug" value="{{service_slot.slug}}">
+                                {{ form1.Mechanic.label }}
+                                {{ form1.Mechanic}}
+                                <input type="hidden" name="form-services-slots-submit" value="true">
+                                <div id="allocatedMechError" class="text-danger"></div>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                              <button type="submit" class="btn btn-primary btn-sm">Add Slot</button>
+                            </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+          
+
+
+
+
+
+                      {%endif%}
+                    </td>
+                    <td>{{service_slot.status}} </td>
+                    <td class=" details-control"></td>
+                  </tr>
+                  {% endfor %}
+                    </tbody>
+              </table>
+              <script>
+                $(document).ready(function() {
+                    $('#myDataTable').DataTable({
+                        searching: true,
+                        ordering: true,
+                        
+                        // Add other options as needed
+                    });
+                });
+             </script>
+            </div>
+            
+            {%else%}
+
             <div class="container mt-4">
               <div class="error-message text-center p-4 bg-light rounded">
                 <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 200px; height: auto;">
@@ -20,7 +244,20 @@
                 </button>
               </div>
             </div>
-  
+            {% endif %}
+            <script type="text/javascript">
+                var confirmationLinks = document.querySelectorAll('.confirmation-link');
+                var confirmAction = function(e) {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to proceed?')) {
+                        window.location.href = this.href;
+                    }
+                };
+                confirmationLinks.forEach(function(link) {
+                    link.addEventListener('click', confirmAction);
+                });
+            </script>
+            
           </div>
         </div>
       </div>

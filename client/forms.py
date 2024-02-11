@@ -112,13 +112,12 @@ class ServiceListForm(forms.ModelForm):
    
 
 class VehicleinfoForm(forms.ModelForm):
-    make_company = forms.ModelChoiceField(queryset=CarMake.objects.all(), required=False)
-    model_name = forms.ModelChoiceField(queryset=CarModel.objects.all(), required=False)
-    model_variant = forms.ModelChoiceField(queryset=ModelVariant.objects.none(), required=False)
+
+    model_variant = forms.ModelChoiceField(queryset=ModelVariant.objects.all(), required=False)
 
     class Meta:
         model = Vehicleinfo
-        fields = ['vehicle_Regno','make_company','model_name', 'model_variant']
+        fields = ['vehicle_Regno','model_variant']
 
 
 
@@ -189,3 +188,93 @@ class ServiceCenterUpdateForm(forms.ModelForm):
     class Meta:
         model = ServiceCenter
         fields = ['manager']
+
+
+class AvailableMechanicChoiceField(forms.ModelChoiceField):
+    def __init__(self, *args, **kwargs):
+        kwargs['widget'] = forms.Select(attrs={'class': 'form-control'})
+        super().__init__(*args, **kwargs)
+    def label_from_instance(self, obj):
+        return obj.get_full_name()
+
+class ServicesSlotsForm(forms.ModelForm):
+    class Meta:
+        model = ServicesSlots
+        fields = ['slotname', 'allocated_mech']
+        widgets = {
+            'slotname': forms.TextInput(attrs={'placeholder': 'Enter the Slot Name','class': 'form-control'}),
+            'allocated_mech': forms.Select(attrs={'class': 'form-control'}),
+            }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+        self.fields['allocated_mech'] = AvailableMechanicChoiceField(queryset=self.get_available_mechanics())
+
+    
+    def get_available_mechanics(self):
+        service_center_instance = self.user.servicecenter
+        mechanic_list = mechanicList.objects.filter(service_center=service_center_instance).values_list('mechanic', flat=True)
+        existing_slot = ServicesSlots.objects.values_list('allocated_mech', flat=True)
+        allocated_mechanics = Client.objects.filter(pk__in=existing_slot)
+        available_mechanics = Client.objects.filter(pk__in=mechanic_list).exclude(pk__in=allocated_mechanics)
+        
+        return available_mechanics
+
+    def clean(self):
+        cleaned_data = super().clean()
+        service_center_instance = self.user.servicecenter
+        cleaned_data['service_center'] = service_center_instance
+        allocated_mech = cleaned_data.get('allocated_mech')
+        existing_slot = ServicesSlots.objects.filter(allocated_mech=allocated_mech, service_center=service_center_instance).exclude(pk=self.instance.pk).first()
+        if existing_slot:
+            raise forms.ValidationError("Mechanic is already associated with another slot in this service center.")
+
+        return cleaned_data
+    
+
+
+class SlotsMechAddForm(forms.Form):
+    slotslug = forms.CharField()
+    class Meta:
+        fields = ['Mechanic','slotslug']
+        widgets = {
+            'Mechanic': forms.Select(attrs={'class': 'form-control'}),
+            }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.user = user
+        self.fields['Mechanic'] = AvailableMechanicChoiceField(queryset=self.get_available_mechanics())
+
+    
+    def get_available_mechanics(self):
+        service_center_instance = self.user.servicecenter
+        mechanic_list = mechanicList.objects.filter(service_center=service_center_instance).values_list('mechanic', flat=True)
+        existing_slot = ServicesSlots.objects.values_list('allocated_mech', flat=True)
+        allocated_mechanics = Client.objects.filter(pk__in=existing_slot)
+        available_mechanics = Client.objects.filter(pk__in=mechanic_list).exclude(pk__in=allocated_mechanics)
+        
+        return available_mechanics
+
+class ServicePriceForm(forms.ModelForm):
+    class Meta:
+        model = ServicePrice
+        fields = ['variant', 'service', 'price']
+        widgets = {
+            'price': forms.TextInput(attrs={'placeholder': 'Enter the Price','class': 'form-control'}),
+            'service': forms.Select(attrs={'class': 'form-control'}),
+            'variant': forms.Select(attrs={'class': 'form-control'}),
+            }
+ 
+
+class VehicleaddForm(forms.ModelForm):
+    make_company = forms.ModelChoiceField(queryset=CarMake.objects.all(), required=False)
+    model_name = forms.ModelChoiceField(queryset=CarModel.objects.none(), required=False)
+    model_variant = forms.ModelChoiceField(queryset=ModelVariant.objects.none(), required=False)
+
+    class Meta:
+        model = Vehicleinfo
+        fields = ['vehicle_Regno','make_company','model_name', 'model_variant']
+
+    

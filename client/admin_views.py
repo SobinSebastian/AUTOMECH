@@ -262,3 +262,38 @@ def service_center_manager(request):
     managers = Manager.objects.filter( role = 'MANAGER')
     context = {'form':form,'managers': managers}
     return render(request,'admin/service_center_manager.html',context)
+
+
+
+def variant_service(request):        
+    context  = {'form' : ServicePriceForm()  }
+    return render(request,"admin/car_variant_service.html",context)
+
+def create_service_form(request):
+    if request.method == 'POST':
+        form =  ServicePriceForm(request.POST or None)
+        if form.is_valid():
+            form.save()
+    return render(request,"admin/partials/addserviceform.html",{'form' : ServicePriceForm()} )
+
+
+
+
+@staff_member_required
+def variant_serviceprice_view(request):
+    model =None
+    if request.method == 'POST':
+        variant_id = request.POST.get('variant_id')
+        if variant_id :
+            variant = get_object_or_404(ModelVariant, id=variant_id)
+        if request.method == "POST":
+            form = ServicePriceForm (request.POST)
+            if form.is_valid():
+                form.save()    
+        else:
+            form = ServicePriceForm()
+       
+        price_list = ServicePrice.objects.filter(variant = variant)
+        context ={'variant': variant,'price_list':price_list,'form':form}
+        
+    return render(request,"admin/variant_price.html",context)

@@ -836,8 +836,30 @@ a:focus {
     padding: 0 15px;
 }
 
-.price .col-md-4 {
-    padding: 0;
+.image-model-container {
+    position: relative;
+    overflow: hidden; /* Prevent overflow */
+}
+
+.image-model-container img {
+    width:  100%; /* Full width of the container */
+    height: auto; /* Auto height to maintain aspect ratio */
+    object-fit: contain; /* Ensures the image stays within the container */
+    transition: transform  0.3s ease; /* Smooth zoom effect */
+}
+
+.image-model-container:hover img {
+    transform: scale(1.1); /* Zoom in by  10% on hover */
+}
+
+.duration-container {
+    position: absolute;
+    top:  0; /* Aligns the top edge of the duration container with the top edge of the image */
+    right:  0; /* Aligns the right edge of the duration container with the right edge of the image */
+    background: rgba(168, 233, 16, 0.5); /* Optional: adds a semi-transparent background */
+    color: #fff; /* Optional: sets the text color to white */
+    padding:  5px; /* Optional: adds some padding around the text */
+    font-size:  20px; /* Optional: sets the font size of the text */
 }
 
 .price .price-item {
@@ -849,7 +871,7 @@ a:focus {
 }
 
 .price .featured-item {
-    box-shadow: 0 0 30px rgba(0, 0, 0, .2);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .2);
     z-index: 1;
 }
 
@@ -1451,12 +1473,12 @@ a:focus {
 /*******************************/
 .single {
     position: relative;
-    padding: 45px 0;
+    padding: 5px 0;
 }
 
 .single .single-content {
     position: relative;
-    margin-bottom: 30px;
+    margin-bottom: 10px;
     overflow: hidden;
 }
 
@@ -2138,3 +2160,37 @@ a:focus {
 .line-text {
     color: #555;
 }
+
+
+
+.open-button {
+    background-color: #555;
+    color: white;
+    padding: 16px 20px;
+    border: none;
+    cursor: pointer;
+    opacity: 0.8;
+    position: fixed;
+    bottom: 23px;
+    right: 28px;
+    width: 280px;
+  }
+  
+  /* The popup form - hidden by default */
+  .form-popup {
+    display: none;
+    position: fixed;
+    bottom: 25%;
+    right: 20px;
+    z-index: 9;
+    height: 50%;
+  }
+  
+  /* Add styles to the form container */
+  .form-container {
+
+    padding: 10px;
+    background-color: white;
+  }
+
+

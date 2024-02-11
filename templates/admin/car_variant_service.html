@@ -1,0 +1,27 @@
+{% extends 'admin/adminbase.html' %}
+{% block conhead%}
+<script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css"/>
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+{% endblock %}
+{%block content%}
+{% load static %}
+<div class="row">  
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <div id="service_price_forms">
+          {% include "admin/partials/addserviceform.html" %}
+        </div>
+        <div class="my-4">
+          <button type="button" class="btn btn-success btn-sm"
+            hx-get="{% url 'create_service_price' %}" hx-target="#service_price_forms"
+            hx-swap="beforeend"> + Add Form</button>
+            <button type="button" class="btn btn-success btn-sm" id="submit_all">Submit</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{%endblock%}

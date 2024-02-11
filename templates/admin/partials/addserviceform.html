@@ -1,0 +1,22 @@
+
+<form  
+hx-post="{% url 'create_service_price' %}"
+hx-on="htmx:after-request: this.remove"
+hx-trigger="click from #submit_all"
+>
+
+    <div class ="row">
+      <div class="col-4 col-md-3">
+        {{form.variant.label}}
+        {{form.variant}}
+      </div>
+      <div class="col-4 col-md-3">
+        {{form.service.label}}
+        {{form.service}}
+      </div>
+      <div class="col-4 col-md-3">
+        {{form.price.label}}
+        {{form.price}}
+      </div>
+    </div>
+  </form>

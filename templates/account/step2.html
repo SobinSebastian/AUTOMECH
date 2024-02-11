@@ -1,61 +1,8 @@
-{% extends 'client/base.html' %}
-{%block content%}
-{% load static %}
-<div class="page-header">
-    <div class="container">
-        <div class="row">
-            <div class="col-12">
-                <h2>Add Vehicle</h2>
-            </div>
-            <div class="col-12">
-                <a href="{% url 'vehicle' %}">Vehicle</a>
-                <a href="{%url 'vehicle_add'%}">add </a>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-      <div class="col-md-6">
-        <div class="image-container">
-            <img class="img-fluid zoom-image" src="{% static 'img/wwd4.jpeg' %}">
-          </div>
-      </div>
-      <div class="col-md-6 border border-info rounded pt-5">
-        <!-- Content for the second column goes here -->
-        <h2>Add Vehicle</h2>
-        <p>Please Complete the Form with the Necessary Details to Register a New Vehicle.</p>
-        <div class="col-md-12 mt-5 mb-27 mx-auto">
-            <form method="post">
-                {% csrf_token %}  
-                {% comment %} {{form.as_p}} {% endcomment %}
-                    {{form.as_p}}
-
-
-                    <div class="form-group col-md-4 mx-auto">
-                        <button type="submit">Add Vehicle</button>
-                    </div>     
-            </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="container mt-5">
-    <div class="row">
-        {% for make in all_car_makes %}
-            <div class="col-md-2">
-                <div class="card">
-                    <a href="">
-                        <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" class="card-img-top">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ make.make_name }}</h5>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-</div>
+<form hx-post="{% url 'step2_view' %}" hx-target="#form-container">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Next</button>
+</form>
 <script>
     // dependent_dropdown.js
 // dependent_dropdown.js
@@ -120,5 +67,3 @@ $(document).ready(function () {
 });
 
 </script>
-
-{%endblock%}

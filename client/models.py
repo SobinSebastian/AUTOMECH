@@ -121,7 +121,6 @@ class Vehicleinfo(models.Model):
     client = models.OneToOneField(User, on_delete=models.CASCADE)
     model_variant = models.ForeignKey(ModelVariant, on_delete=models.CASCADE)
     vehicle_Regno = models.CharField(max_length=20, unique=True)
-    year = models.IntegerField()
 
 class ServiceCategory(models.Model):
     category_name = models.CharField(max_length=100,unique=True)
@@ -180,3 +179,44 @@ class mechanicList(models.Model):
 
     def __str__(self):
         return str(self.mechanic)
+   
+class ServicesSlots(models.Model):
+    slotname = models.CharField(max_length=100)
+    service_center = models.ForeignKey(ServiceCenter, on_delete=models.CASCADE)
+    allocated_mech = models.ForeignKey(Client, on_delete=models.CASCADE, null=True, blank=True)  # Assuming Client is the correct model for the mechanic
+    STATUS_CHOICES = [('ACTIVE','Active'),('INACTIVE','Inactive')]
+    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default='INACTIVE')
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.slotname)
+            unique_slug = base_slug
+            counter = 1
+            while ServicesSlots.objects.filter(slug=unique_slug).exists():
+                unique_slug = f"{base_slug}-{counter}"
+                counter += 1
+            self.slug = unique_slug
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.slotname} - {self.service_center.name} - {self.allocated_mech.get_full_name()} - {self.status}"
+    
+
+
+class ServicePrice(models.Model):
+    variant = models.ForeignKey(ModelVariant, on_delete=models.CASCADE)
+    service = models.ForeignKey(ServiceList, on_delete=models.CASCADE)
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    slug = models.SlugField(unique=True, max_length=255, editable=False)
+
+    def save(self, *args, **kwargs):
+        if not self.id:
+            self.slug = slugify(f"{self.variant.variant_name}-{self.service.service_name}")
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.variant.variant_name} - {self.service.service_name}"
+
+    class Meta:
+        unique_together = ('variant', 'service',)

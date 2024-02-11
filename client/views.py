@@ -19,11 +19,17 @@ def index(request):
            return redirect('/mechanic_index')
         elif request.user.role == 'MANAGER':
            return redirect('manager_home')
+        if not UserInfo.objects.filter(client=request.user).exists():
+            return redirect('account_profile')
     categories = ServiceCategory.objects.all()
+    # services = ServiceList.objects.all()
     make = CarMake.objects.all()
-    context={'categories':categories,'makes':make}
+    context={'categories':categories,'makes':make }
     return render(request,'client/index.html',context)
-     
+    
+def profilesetup(request):
+   return render(request,'account/profilesetup.html') 
+
 class CustomSignupView(SignupView):
     template_name = 'account/signup.html'
     form_class = CustomSignupForm
@@ -123,14 +129,15 @@ def profileview(request):
 
 
 def add_vehicle(request):
-   if request.method == "POST":
-       form = VehicleinfoForm(request.POST)
+    if request.method == "POST":
+       form = VehicleaddForm(request.POST)
        form.instance.client = request.user
        if form.is_valid():
             form.save()
-   else:
-        form = VehicleinfoForm()
-   return render(request, 'client/add_vehicle.html', {'form': form})
+    else:
+        form = VehicleaddForm()
+    context =  {'form': form,'all_car_makes' : CarMake.objects.all()}
+    return render(request, 'client/add_vehicle.html', context)
 
 def edit_vehicle(request, id):
    vehicle = Vehicleinfo.objects.get(id=id)
@@ -155,34 +162,52 @@ def vehicle(request):
 def map_view(request):
     return render (request,'client/map_view.html')
 
+def get_category_data(request, category_slug):
+    category = get_object_or_404(ServiceCategory, slug=category_slug)
+    category_data = ServiceList.objects.filter(service_category=category)
+    return render(request, 'client/partials/servicecard.html', {'services': category_data})
 
-
-def ajax_load_services(request, category_slug):
-    try:
-        category = get_object_or_404(ServiceCategory, slug=category_slug)
-        services = ServiceList.objects.filter(service_category=category)
-
-        data = {'services': []}
-        for service in services:
-            service_data = {
-                'name': service.service_name,
-                'description': service.description,
-                'image_url': service.service_Image.url if service.service_Image else None
-            }
-            data['services'].append(service_data)
-
-        return JsonResponse(data)
-    except Exception as e:
-        return JsonResponse({'error': str(e)}, status=500)
-    
 
 def get_car_models(request, make_id):
     car_models = CarModel.objects.filter(make_company__pk=make_id)
     data = serializers.serialize('json', car_models)
     return JsonResponse(data, safe=False)
 
-def get_car_variants(request, model_id):
-    car_variants = ModelVariant.objects.filter(model__pk=model_id)
-    data = serializers.serialize('json', car_variants)
-    return JsonResponse(data, safe=False)
+def get_model_variants(request):
+    model_id = request.GET.get('model_id')
+    if model_id:
+        variants = ModelVariant.objects.filter(model_id=model_id)
+        data = [{'id': variant.id, 'name': variant.variant_name} for variant in variants]
+    else:
+        data = []
+    return JsonResponse({'variants': data})
 
+def get_models(request):
+    make_id = request.GET.get('make_id')
+    if make_id:
+        models = CarModel.objects.filter(make_company_id=make_id)
+        data = [{'id': model.id, 'name': model.model_name} for model in models]
+    else:
+        data = []
+    return JsonResponse({'models': data})
+
+
+def step1_view(request):
+    if request.method == 'POST':
+        form = ProfileEditForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            return redirect('step2_view')
+    else:
+        form = ProfileEditForm()
+    return render(request, 'account/step1.html', {'form': form})
+
+def step2_view(request):
+    if request.method == 'POST':
+        form = VehicleaddForm(request.POST)
+        if form.is_valid():
+            # Process the form data
+            return JsonResponse({'success': True})
+    else:
+        form = VehicleaddForm()
+    return render(request, 'account/step2.html', {'form': form})

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+{% load static %}
+{% load account %}
+{% load socialaccount %}
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>AutoMech</title>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport">
+        <meta content="Free Website Template" name="keywords">
+        <meta content="Free Website Template" name="description">
+
+        <!-- Favicon -->
+        <link href="img/favicon.ico" rel="icon">
+
+        <!-- Google Font -->
+        <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"> 
+        
+        <!-- CSS Libraries -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+        <link href="{% static 'lib/flaticon/font/flaticon.css' %}" rel="stylesheet">
+        <link href="{% static 'lib/animate/animate.min.css' %}" rel="stylesheet">
+        <link href="{% static 'lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
+
+        <!-- Template Stylesheet -->
+        <link href="{% static 'css/style.css' %}" rel="stylesheet">
+        <!-- Include htmx library (you can also use a CDN) -->
+        <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
+
+    </head>
+
+    <body>   
+        <div class="bgimg h-100">
+            <div class="container">
+                <div class="row mt-lg-n10 mt-md-n11 mt-n10">
+                  <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
+                    <br>
+                    <div class="card z-index-0">
+                        <a href="/"><span class="close-icon">&times;</span></a>
+                      <div class="card-header text-center pt-4">
+                        <div class="custom_logo pt-4">
+                            <a href="">
+                                <h1>Auto<span>Mech</span></h1>
+                                <!-- <img src="img/logo.jpg" alt="Logo"> -->
+                            </a>
+                        </div>
+                      </div> 
+                      <div class="card-body">
+                        <!-- main_template.html -->
+                      <div id="form-container">
+                        <form hx-get="{% url 'step1_view' %}" hx-target="#form-container">
+                          {% csrf_token %}
+                          plz complete these details to sign to the system
+                          <button type="submit">Next</button>
+                      </form>
+                      </div>
+
+                       
+                      </div>
+                    </div>
+                    <!--HELLO-->
+                    
+                    <!--hello-->
+                    <br><br><br>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const loginForm = document.getElementById("login-form");
+          
+                loginForm.addEventListener("submit", function (event) {
+                    if (!isFormValid()) {
+                        event.preventDefault(); // Prevent form submission
+                    }
+                });
+          
+                function isFormValid() {
+                    const username = document.getElementById("email").value;
+                    const password = document.getElementById("password").value;
+          
+                    if (username.trim() === "") {
+                        alert("Please enter your Emailid .");
+                        return false;
+                    }
+          
+                    if (password.trim() === "") {
+                        alert("Please enter your password.");
+                        return false;
+                    }
+          
+                    // You can add more validation logic here if needed
+          
+                    return true; // Form is valid
+                }
+            });
+          </script>
+                 
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+        <script src="{% static 'lib/easing/easing.min.js'%}"></script>
+        <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
+        <script src="{% static 'lib/waypoints/waypoints.min.js' %}"></script>
+        <script src="{% static 'lib/counterup/counterup.min.js' %}"></script>
+        <!-- Contact Javascript File -->
+        <script src="{% static 'mail/jqBootstrapValidation.min.js'%}"></script>
+        <script src="{% static 'mail/contact.js'%}"></script>
+        <!-- Template Javascript -->
+        <script src="{% static 'js/main.js'%}"></script>
+    </body>
+</html>

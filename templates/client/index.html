@@ -56,56 +56,149 @@
   </div>
 </div>
 <!-- Carousel End -->
+<div class="container mt-5">
+  <div class="row">
+    <div class="col text-right">
+      <button type="button" class="btn btn-primary" onclick="openForm()">Click me</button>
+    </div>
+  </div>
+</div>
+
+<div class="form-popup" id="myForm">
+  <div class="form-container">
+    <div class="row">
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <div class="col-md-6">
+              
+
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="container mt-4">
+                    <div class="row">
+                      {%for make in makes%}
+                      <div class="col-md-4 d-flex justify-content-center">
+                        <div class="card ">
+                          <div class="card-body">
+                            <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 100px; max-height: 100px;">
+                          </div>
+                        </div>
+                      </div>
+                      {%endfor%}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
+</div>
+</div>
+
 <script>
-  
-  $(document).ready(function() {
-    $(document).ready(function() {
-      // Then trigger the click event on the first .category-link element
-      $('.category-link').first().trigger('click');
-  });
+function openForm() {
+  document.getElementById("myForm").style.display = "block";
+}
 
-      $('.category-link').on('click', function(e) {
-          e.preventDefault();
-          var categorySlug = $(this).data('category-slug');
-          loadServices(categorySlug);
-      });
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+</script>
 
-      function loadServices(categorySlug) {
-          $.ajax({
-              url: `/ajax/load-services/${categorySlug}/`,
-              success: function(data) {
-                  $('#service-list').empty();
-                  for (var i = 0; i < data.services.length; i++) {
-                      var imageUrl = data.services[i].image_url ? `<div class="col-md-3">
-                        <div class="image-model-container">
-                        <img src="${data.services[i].image_url}" class="img-fluid zoom-modimage" alt="Service Image" style="max-width: 200px; max-height: 200px;"> </div></div>` : '';
-                      $('#service-list').append(`<div class="row">${imageUrl} <div class="col-md-6"> <h3 class="text-danger">${data.services[i].name}</h3><span class="badge bg-success">Recommended</span> ${data.services[i].description} </div> </div>`);
-                  }
-              },
-              error: function(error) {
-                  console.log(error);
-              }
-          });
-      }
-  });
+<div class="single">
+  <div class="container">
+      <div class="section-header text-center">
+          <h2>Choose Your Service</h2>
+      </div>
+      <div class="row">
+          <div class="col-lg-8">
+              <div class="single-tags">
+                {% for category in categories %}
+                <a href=""
+                   data-category-slug="{{ category.slug }}"
+                   class="{% if request.resolver_match.url_name == 'get_category_data' and category.slug == request.GET.category_slug %}active{% endif %}"
+                   hx-get="{% url 'get_category_data' category_slug=category.slug %}"
+                   hx-trigger="{% if forloop.first %}load once{% else %}click{% endif %}"
+                   hx-target="#category-data">{{ category.category_name }}</a>
+                {% endfor %}
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+<div id="category-data">
+    <!-- Data for the selected category will be loaded here -->
+</div>
+
+
+<script>
+  $(document).ready(function () {
+    // Function to update models dropdown based on the selected make
+    function updateModelsDropdown() {
+        var makeId = $('#id_make_company').val();
+        if (makeId) {
+            $.ajax({
+                url: '/get_models/',
+                data: {'make_id': makeId},
+                dataType: 'json',
+                success: function (data) {
+                    var modelSelect = $('#id_model_name');
+                    modelSelect.empty();
+                    modelSelect.append('<option value="">---------</option>');
+                    $.each(data.models, function (key, value) {
+                        modelSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+
+                    // Trigger change on model dropdown to update model variants
+                    modelSelect.trigger('change');
+                }
+            });
+        }
+    }
+
+    // Initial setup
+    updateModelsDropdown();
+
+    // Event handler for make dropdown change
+    $('#id_make_company').change(function () {
+        updateModelsDropdown();
+    });
+
+    // Event handler for model dropdown change
+    $('#id_model_name').change(function () {
+        var modelId = $(this).val();
+        if (modelId) {
+            $.ajax({
+                url: '/get_model_variants/',
+                data: {'model_id': modelId},
+                dataType: 'json',
+                success: function (data) {
+                    var variantSelect = $('#id_model_variant');
+                    variantSelect.empty();
+                    variantSelect.append('<option value="">---------</option>');
+                    $.each(data.variants, function (key, value) {
+                        variantSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                }
+            });
+        }
+    });
+});
 </script>
 <!-- Price Start -->
 <div class="price">
     <div class="container">
-      <div class="btn-group" role="group" aria-label="Basic example">
-        {% for category in categories %}
-          <a href="#" class="category-link btn btn-danger" data-category-slug="{{ category.slug }}">{{ category.category_name }}</a>
-        {% endfor %}
-      </div>
-      <h2>Service List</h2>
-      <ul id="service-list">
-        <!-- Services will be loaded dynamically using AJAX -->
-      </ul>
-
       <div class="row">
         <div class="col-md-6">
           <div class="container mt-4">
             <div class="row">
+
               {%for make in makes%}
               <div class="col-md-4 d-flex justify-content-center">
                 <div class="card ">

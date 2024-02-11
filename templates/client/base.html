@@ -28,7 +28,8 @@
         <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
         {% comment %} sweetify {% endcomment %}
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
-
+        
+        <script src="https://unpkg.com/htmx.org@1.6.1"></script>
 
         
     </head>
@@ -124,7 +125,7 @@
                             <div class="nav-item dropdown">
                                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="olaid">{{ user.first_name }}</a>
                                 <div class="dropdown-menu" id="olaidmenu">
-                                    <a href="profileview" id="Profile" class="btn dropdown-item">Profile</a>
+                                    <a href="{%url 'account_profile'%}" id="Profile" class="btn dropdown-item">Profile</a>
                                     <a href="bookings" class="btn dropdown-item">Bookings</a>
                                     <a href="Vechile_List" class="btn dropdown-item">Vehicle</a>
                                     <a href="password_change/" class="btn dropdown-item">Change Password</a>

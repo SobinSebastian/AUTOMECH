@@ -1,22 +1,38 @@
 {% extends 'client/base.html' %}
 {%block content%}
-<div id="map" style="height : 600px; width :600px;"></div>
-<script>
-        var map = L.map('map').setView([9.594028186637212,76.52316793636903], 13);
+<div id="map" style="height: 400px;"></div>
 
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(map);
-        var place1 = L.latLng(40.7128, -74.0060); // New York
-            var place2 = L.latLng(34.0522, -118.2437); // Los Angeles
+  <script>
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        center: {lat: 0, lng: 0},
+        zoom: 2
+      });
 
-            // Array of coordinates for the path
-            var pathCoordinates = [place1, place2];
+      {% for service_center in service_centers %}
+        var marker = new google.maps.Marker({
+          position: {lat: {{ service_center.latitude }}, lng: {{ service_center.longitude }}},
+          map: map,
+          title: "{{ service_center.place }}"
+        });
 
-            // Creating a Polyline with the path coordinates
-            var path = L.polyline(pathCoordinates, { color: 'red' }).addTo(map);
+        var contentString = '<div id="content">' +
+            '<strong>{{ service_center.place }}</strong><br>' +
+            '{{ service_center.city }}, {{ service_center.pincode }}<br>' +
+            'Phone: {{ service_center.phone_number }}' +
+            '</div>';
 
-            // Zoom the map to fit the polyline
-            map.fitBounds(path.getBounds());
-</script>
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+        marker.addListener('click', function() {
+          infowindow.open(map, marker);
+        });
+      {% endfor %}
+    }
+  </script>
+  <script async defer
+          src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
+  </script>
 {%endblock%}
