@@ -1,29 +1,44 @@
+
 <div class="price">
+    <div class="section-header ">
+        <p> {{cat}} {% if vehicle %} FOR {{vehicle.model_variant}}({{vehicle.vehicle_Regno}}){% endif%}</p>
+    </div>
+   
     <div class="container">
-                <div class="row">
-                    
-                    {% for service in services%}
-                        <div class="col-md-4">
-                            <div class="price-item featured-item">
-                                <div class="image-model-container">
-                                    <div class="duration-container">
-                                        4 Hrs Taken
-                                    </div>
-                                    <img src="{{ service.service_Image.url }}"  class="img-fluid zoom-modimage" alt="Your Image">
-                                </div>
-                                <div class="price-header">
-                                    <h3> {{service.service_name }}</h3>
-                                    {{service.description }}
-                                    <h2><span>$</span><strong>35</strong><span>.99</span></h2>
-                                </div>
-                                <div class="price-footer">
-                                    <a class="btn btn-custom" href="">Book Now</a>
-                                </div>
-                            </div>
+        <div class="row">
+            {% for service, price in  services %}
+            <div class="col-md-3 d-flex">
+                <div class="price-item featured-item d-flex flex-column">
+                    <div class="image-model-container">
+                        <div class="duration-container">
+                            4 Hrs Taken
                         </div>
-                       
-                    {% endfor%}
+                        <img src="{{service.service_Image.url }}" class="img-fluid zoom-modimage" alt="Your Image">
+                    </div>
+                    <div class="price-header flex-grow-1">
+                        <h3>{{service.service_name}}</h3>
+                        {{service.description}}
+                        <h2><span>₹
+                                {% if price %}
+                                {{price.price}}
+                                {% else %}
+                                0.0
+                                {% endif %}
+                            </span></h2>
+                    </div>
+                    <div class="price-footer">
+                        {% if variant %}
+                        <form method="POST" hx-post="{% url 'add_to_cart' slug=service.slug %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-custom">Add to Cart</button>
+                        </form>
+                        {% else %}
+                        <a class="btn btn-custom" href="">Select Car</a>
+                        {% endif %}
+                    </div>
                 </div>
+            </div>
+            {% endfor %}
         </div>
     </div>
 </div>

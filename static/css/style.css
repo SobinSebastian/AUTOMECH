@@ -2193,4 +2193,14 @@ a:focus {
     background-color: white;
   }
 
+  .card-link {
+    text-decoration: none; /* Remove underline for the link */
+    color: inherit; /* Inherit the color from the parent */
+  }
+  .card-zoom {
+    transition: transform 0.3s ease-in-out;
+  }
 
+  .card-zoom:hover {
+    transform: scale(1.1); /* You can adjust the scale factor as per your preference */
+  }

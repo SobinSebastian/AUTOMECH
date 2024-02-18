@@ -37,6 +37,14 @@ class ProfileForm(forms.Form):
 class ProfileImage(forms.Form):
        profile_picture = forms.ImageField()
 
+class ProfilesetupForm(forms.Form):
+    contact_no = forms.CharField(max_length=15, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Contact Number'}))
+    address = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Address'}))
+    place = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Place'}))
+    city = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'City'}))
+    district = forms.CharField(max_length=100, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'District'}))
+    pincode = forms.CharField(max_length=10, required=True, widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Pincode'}))
+
 # ////////////////// Admin Form //////////////////////
 
 class CarMakeForm(forms.ModelForm):
@@ -269,12 +277,46 @@ class ServicePriceForm(forms.ModelForm):
  
 
 class VehicleaddForm(forms.ModelForm):
-    make_company = forms.ModelChoiceField(queryset=CarMake.objects.all(), required=False)
-    model_name = forms.ModelChoiceField(queryset=CarModel.objects.none(), required=False)
-    model_variant = forms.ModelChoiceField(queryset=ModelVariant.objects.none(), required=False)
+    make_company = forms.ModelChoiceField(
+        queryset=CarMake.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'placeholder': 'Select the Make', 'class': 'form-control'})
+    )
+    model_name = forms.ModelChoiceField(
+        queryset=CarModel.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'placeholder': 'Select the Model', 'class': 'form-control'})
+    )
+    model_variant = forms.ModelChoiceField(
+        queryset=ModelVariant.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'placeholder': 'Select the Variant', 'class': 'form-control'})
+    )
 
     class Meta:
         model = Vehicleinfo
-        fields = ['vehicle_Regno','make_company','model_name', 'model_variant']
+        fields = ['vehicle_Regno', 'make_company', 'model_name', 'model_variant']
+        widgets = {
+            'vehicle_Regno': forms.TextInput(attrs={'placeholder': 'Enter the Registration Number', 'class': 'form-control'}),
+        }
 
-    
+class VehiclecostForm(forms.Form):
+    make_company = forms.ModelChoiceField(
+        queryset=CarMake.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    model_name = forms.ModelChoiceField(
+        queryset=CarModel.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    model_variant = forms.ModelChoiceField(
+        queryset=ModelVariant.objects.all(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    class Meta:
+        fields = ['make_company','model_name', 'model_variant']
+
+

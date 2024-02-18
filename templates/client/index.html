@@ -116,6 +116,11 @@ function closeForm() {
       <div class="section-header text-center">
           <h2>Choose Your Service</h2>
       </div>
+      {% if request.session.selected_vehicle %}
+        <p>Selected Vehicle ID: {{ request.session.selected_vehicle }}</p>
+    {% else %}
+        <p>No vehicle selected</p>
+    {% endif %}
       <div class="row">
           <div class="col-lg-8">
               <div class="single-tags">
@@ -192,30 +197,54 @@ function closeForm() {
 });
 </script>
 <!-- Price Start -->
+<div class="col-md-6">
+  <div class="container ">
+    <div class="row">
+
+      {%for make in makes%}
+        
+        <div class="col-md-4 d-flex justify-content-center card-zoom ">
+          <a href="{% url 'account_login'%}">
+            <div class="card-body">
+              <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 80px; max-height: 80px;">
+              <p class="card-text text-sm">
+              {{make.make_name}}
+              </p>
+            </div>
+          </a>
+        </div>   
+        <div class="col-md-4 d-flex justify-content-center card-zoom ">
+          <a href="{% url 'account_login'%}">
+            <div class="card-body">
+              <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 80px; max-height: 80px;">
+              <p class="card-text text-sm">
+              {{make.make_name}}
+              </p>
+            </div>
+          </a>
+        </div>  
+        <div class="col-md-4 d-flex justify-content-center card-zoom ">
+          <a href="{% url 'account_login'%}">
+            <div class="card-body">
+              <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 80px; max-height: 80px;">
+              <p class="card-text text-sm">
+              {{make.make_name}}
+              </p>
+            </div>
+          </a>
+        </div>  
+        
+      
+      {%endfor%}
+    </div>
+  </div>
+</div>
+</div>
+
+
 <div class="price">
     <div class="container">
       <div class="row">
-        <div class="col-md-6">
-          <div class="container mt-4">
-            <div class="row">
-
-              {%for make in makes%}
-              <div class="col-md-4 d-flex justify-content-center">
-                <div class="card ">
-                  <div class="card-body">
-                    <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 100px; max-height: 100px;">
-                    <p class="card-text text-sm">
-                     {{make.make_name}}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              {%endfor%}
-            </div>
-          </div>
-        </div>
-      </div>
-
         <div class="section-header text-center">
             <p>What We Do?</p>
             <h2>We offer full service auto repair <br>& maintenance</h2>

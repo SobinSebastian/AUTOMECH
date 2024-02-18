@@ -1,38 +1,64 @@
 {% extends 'client/base.html' %}
 {%block content%}
-<div id="map" style="height: 400px;"></div>
+<div class="location">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-7">
+              <div class="section-header text-left">
+                  <p>Service Centers</p>
+                  <h2>AutoMech  Service Points</h2>
+              </div>
+              <div class="row">
+                {% for center in service_centers %}
+                <div class="col-md-6">
+                  <div class="location-item">
+                      <i class="fa fa-map-marker-alt"></i>
+                      <div class="location-text">
+                          <h3>Auto Mech {{ center.place }}</h3>
+                          <p> {{ center.place }}, {{ center.city }}
+                            ({{ center.pincode }})</p>
+                          <p><strong>Call:</strong>{{center.phone_number}}</p>
+                      </div>
+                  </div>
+              </div>
+              {% endfor %}
+                  
+                
+              </div>
+          </div>
+          <div class="col-lg-5">
+            <div id="map" style="height: 400px;"></div>
 
-  <script>
-    function initMap() {
-      var map = new google.maps.Map(document.getElementById('map'), {
-        center: {lat: 0, lng: 0},
-        zoom: 2
-      });
+            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+            <script>
+              var map = L.map('map').setView([0, 0], 12);
+              var centerCoordinates = [];
+          
+              {% for center in service_centers %}
+                var centerLocation = [{{ center.latitude }}, {{ center.longitude }}];
+                L.marker(centerLocation).addTo(map).bindPopup('<strong>AutoMech {{ center.place }}</strong><br>{{ center.city }}, {{ center.pincode }}<br>Contact: {{ center.phone_number }}<br><a href="https://www.google.com/maps?q={{ center.latitude }},{{ center.longitude }}" target="_blank">View on Google Maps</a>');
+          
+                centerCoordinates.push(centerLocation);
+              {% endfor %}
+          
+              var sumLat = 0, sumLon = 0;
+              for (var i = 0; i < centerCoordinates.length; i++) {
+                sumLat += centerCoordinates[i][0];
+                sumLon += centerCoordinates[i][1];
+              }
+          
+              var avgLat = sumLat / centerCoordinates.length;
+              var avgLon = sumLon / centerCoordinates.length;
+          
+              map.setView([avgLat, avgLon], 12);
+          
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+              }).addTo(map);
+            </script>
+          </div>
+      </div>
+  </div>
+</div>
 
-      {% for service_center in service_centers %}
-        var marker = new google.maps.Marker({
-          position: {lat: {{ service_center.latitude }}, lng: {{ service_center.longitude }}},
-          map: map,
-          title: "{{ service_center.place }}"
-        });
-
-        var contentString = '<div id="content">' +
-            '<strong>{{ service_center.place }}</strong><br>' +
-            '{{ service_center.city }}, {{ service_center.pincode }}<br>' +
-            'Phone: {{ service_center.phone_number }}' +
-            '</div>';
-
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
-
-        marker.addListener('click', function() {
-          infowindow.open(map, marker);
-        });
-      {% endfor %}
-    }
-  </script>
-  <script async defer
-          src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap">
-  </script>
 {%endblock%}

@@ -31,73 +31,38 @@
     </head>
 
     <body>   
-        <div class="bgimg h-100">
-            <div class="container">
-                <div class="row mt-lg-n10 mt-md-n11 mt-n10">
-                  <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
-                    <br>
-                    <div class="card z-index-0">
-                        <a href="/"><span class="close-icon">&times;</span></a>
-                      <div class="card-header text-center pt-4">
-                        <div class="custom_logo pt-4">
-                            <a href="">
-                                <h1>Auto<span>Mech</span></h1>
-                                <!-- <img src="img/logo.jpg" alt="Logo"> -->
-                            </a>
-                        </div>
-                      </div> 
-                      <div class="card-body">
-                        <!-- main_template.html -->
-                      <div id="form-container">
-                        <form hx-get="{% url 'step1_view' %}" hx-target="#form-container">
-                          {% csrf_token %}
-                          plz complete these details to sign to the system
-                          <button type="submit">Next</button>
-                      </form>
-                      </div>
-
-                       
-                      </div>
-                    </div>
-                    <!--HELLO-->
-                    
-                    <!--hello-->
-                    <br><br><br>
+      <div class="bgimg h-100">
+        <div class="container">
+          <div class="row mt-lg-n10 mt-md-n11 mt-n10">
+            <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
+              <br>
+              <div class="card z-index-0">
+                <a href="/"><span class="close-icon">&times;</span></a>
+                <div class="card-header text-center pt-4">
+                  <div class="custom_logo pt-4">
+                    <a href="">
+                      <h1>Auto<span>Mech</span></h1>
+                    </a>
+                  </div>
+                </div> 
+                <div class="card-body">
+                  <div id="form-container">
+                    <img src="{% static 'img/Hello.png'%}" width="250" height="250">
+                    <form hx-get="{% url 'step1_view' %}" hx-target="#form-container">
+                      {% csrf_token %}
+                      plz complete the Following  details to Sign In
+                      <button type="submit" class="btn btn-dark w-100 my-4 mb-2">Next</button>
+                    </form>
                   </div>
                 </div>
               </div>
+              <br><br><br><br><br><br><br>
             </div>
           </div>
-          <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                const loginForm = document.getElementById("login-form");
-          
-                loginForm.addEventListener("submit", function (event) {
-                    if (!isFormValid()) {
-                        event.preventDefault(); // Prevent form submission
-                    }
-                });
-          
-                function isFormValid() {
-                    const username = document.getElementById("email").value;
-                    const password = document.getElementById("password").value;
-          
-                    if (username.trim() === "") {
-                        alert("Please enter your Emailid .");
-                        return false;
-                    }
-          
-                    if (password.trim() === "") {
-                        alert("Please enter your password.");
-                        return false;
-                    }
-          
-                    // You can add more validation logic here if needed
-          
-                    return true; // Form is valid
-                }
-            });
-          </script>
+        </div>
+      </div>
+  
+       
                  
         <!-- JavaScript Libraries -->
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>

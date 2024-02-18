@@ -23,8 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('customadmin/',include('client.admin_urls')),
     path('manager/',include('client.manager_urls')),
+    path('cart/',include('client.cart_urls')),
     path ('',include('client.urls')),
-    path('account/',include('allauth.urls')),
+    path('accounts/',include('allauth.urls')),
     path ('account/ signup/', CustomSignupView.as_view(), name='account_signup'),
 ]
 if settings.DEBUG:  

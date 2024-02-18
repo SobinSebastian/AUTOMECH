@@ -10,7 +10,9 @@ from django.conf import settings
 from .forms import *
 from .admin_views import *
 from .manager_views import *
-
+from .cart_views import *
+from django.contrib.auth.signals import user_logged_in
+from django.dispatch import receiver
 def index(request):
     if request.user.is_authenticated:
         if request.user.role == 'ADMIN':
@@ -19,12 +21,12 @@ def index(request):
            return redirect('/mechanic_index')
         elif request.user.role == 'MANAGER':
            return redirect('manager_home')
-        if not UserInfo.objects.filter(client=request.user).exists():
-            return redirect('account_profile')
+        #if not UserInfo.objects.filter(client=request.user).exists():
+            #return redirect('profile_setup')
     categories = ServiceCategory.objects.all()
     # services = ServiceList.objects.all()
     make = CarMake.objects.all()
-    context={'categories':categories,'makes':make }
+    context={'categories':categories,'makes':make}
     return render(request,'client/index.html',context)
     
 def profilesetup(request):
@@ -160,12 +162,32 @@ def vehicle(request):
 
 
 def map_view(request):
-    return render (request,'client/map_view.html')
+    service_centers = ServiceCenter.objects.all()
+    return render(request, 'client/map_view.html', {'service_centers': service_centers})
 
 def get_category_data(request, category_slug):
+    variant = None
+    vehicle = None
+    if request.user.is_authenticated:
+        vehicle = get_object_or_404(Vehicleinfo, client=request.user)
+        variant = vehicle.model_variant
     category = get_object_or_404(ServiceCategory, slug=category_slug)
     category_data = ServiceList.objects.filter(service_category=category)
-    return render(request, 'client/partials/servicecard.html', {'services': category_data})
+    service_prices = ServicePrice.objects.filter(variant=variant)
+    services_with_prices = []
+    for service in category_data:
+        price = next((price for price in service_prices if price.service == service), None)
+        if price:
+            services_with_prices.append((service, price))
+        else:
+            services_with_prices.append((service,price))
+    context = {
+        'services': services_with_prices,
+        'variant' : variant,
+        'cat':category,
+        'vehicle' : vehicle
+    }
+    return render(request, 'client/partials/servicecard.html', context)
 
 
 def get_car_models(request, make_id):
@@ -194,20 +216,67 @@ def get_models(request):
 
 def step1_view(request):
     if request.method == 'POST':
-        form = ProfileEditForm(request.POST)
+        form = ProfilesetupForm(request.POST)
         if form.is_valid():
-            # Process the form data
+            phone =  form.cleaned_data['contact_no']
+            address = form.cleaned_data['address']
+            place = form.cleaned_data['place']
+            city = form.cleaned_data['city']
+            district = form.cleaned_data['district']
+            pincode = form.cleaned_data['pincode']
+            print(phone)
             return redirect('step2_view')
     else:
-        form = ProfileEditForm()
+        form = ProfilesetupForm()
     return render(request, 'account/step1.html', {'form': form})
 
 def step2_view(request):
     if request.method == 'POST':
         form = VehicleaddForm(request.POST)
         if form.is_valid():
-            # Process the form data
+            reg_no = form.cleaned_data['vehicle_Regno']
+            variant_id = form.cleaned_data['model_variant']
+            print(reg_no)
+            print (variant_id)
             return JsonResponse({'success': True})
     else:
         form = VehicleaddForm()
     return render(request, 'account/step2.html', {'form': form})
+
+def servicecost_estimation(request):
+    variant = None
+    if request.method == "POST":
+        form = VehiclecostForm(request.POST)
+        if form.is_valid():
+            variant = form.cleaned_data['model_variant']
+            form = VehiclecostForm(initial={'model_variant': variant})
+    else:
+        form = VehiclecostForm()
+    
+    services = ServiceList.objects.all()
+    service_prices = ServicePrice.objects.none()
+    if variant:
+        service_prices = ServicePrice.objects.filter(variant=variant)
+    services_with_prices = []
+    for service in services:
+        price = next((price for price in service_prices if price.service == service), None)
+        if price:
+            services_with_prices.append((service, price))
+        else:
+            services_with_prices.append((service,  0.0))
+   
+    context = {
+        'form': form,
+        'services_with_prices': services_with_prices,
+    }
+    return render(request, 'client/servicecost_estimation.html', context)
+
+
+@receiver(user_logged_in)
+def set_default_vehicle(sender, user, request, **kwargs):
+    try:
+        default_vehicle = Vehicleinfo.objects.filter(client=user).first()
+        if default_vehicle:
+            request.session['selected_vehicle'] = default_vehicle.id
+    except Vehicleinfo.DoesNotExist:
+        pass

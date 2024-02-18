@@ -1,0 +1,189 @@
+{% extends 'client/base.html' %}
+{%block content%}
+{% load static %}
+    {%if is_filled%}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>{{user.name}}</strong> You should check in on some of those fields below.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% endif %}
+
+<!-- Price Start -->
+<div class="price">
+  <div class="container">
+    <div class="row">
+        <form method="post" >
+            {% csrf_token %}
+            <div class="row ">
+                <div class="col-md-5">
+                  {{form.make_company}}
+                </div>
+                <div class="col-md-5">
+                {{form.model_name}}
+              </div>
+              <div class="col-md-5">
+                {{form.model_variant}}
+              </div>
+              <div class="col-md-5">
+                <input type="submit">
+              </div>
+            </div>
+          </form>
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var myForm = document.getElementById('myForm');
+                var makeSelect = document.getElementById('id_make_company');
+                var modelSelect = document.getElementById('id_model_name');
+                var variantSelect = document.getElementById('id_model_variant');
+                var submitButton = document.getElementById('submitButton');
+        
+                submitButton.addEventListener('click', function (event) {
+                    // Validate Make
+                    if (makeSelect.value === '') {
+                        alert('Please select a Make.');
+                        event.preventDefault();
+                        return;
+                    }
+        
+                    // Validate Model
+                    if (modelSelect.value === '') {
+                        alert('Please select a Model.');
+                        event.preventDefault();
+                        return;
+                    }
+        
+                    // Validate Variant
+                    if (variantSelect.value === '') {
+                        alert('Please select a Variant.');
+                        event.preventDefault();
+                        return;
+                    }
+        
+                    // If all validations pass, the form will be submitted
+                });
+            });
+        </script>
+    </div>
+  </div>
+</div>
+<div class="price">
+  <div class="container">
+              <div class="row">
+                {% comment %} {% for service in services %}
+                    <li>{{ service.service_name }}: {{ service.description }} - Price: {{ service.serviceprice_set.all.first.price }}</li>
+                        {% empty %}
+                            <li>No services available for this variant.</li>
+                {% endfor %} {% endcomment %}
+                {% comment %} {%for service_price in service_prices %}
+                    <div class="col-md-3">
+                        <div class="price-item featured-item">
+                            <div class="image-model-container">
+                                <div class="duration-container">
+                                    4 Hrs Taken
+                                </div>
+                                <img src="{{ service_price.service.service_Image.url }}"  class="img-fluid zoom-modimage" alt="Your Image">
+                            </div>
+                            <div class="price-header">
+                                <h3> {{service_price.service.service_name }}</h3>
+                                {{service_price.service.description }}
+                                <h2><span>₹ {{service_price.price}}</span></h2>
+                            </div>
+                            <div class="price-footer">
+                                <a class="btn btn-custom" href="">Book Now</a>
+                            </div>
+                        </div>
+                    </div>
+                {%endfor%}     {% endcomment %}
+                {%for service, price in services_with_prices %}
+                    <div class="col-md-3">
+                        <div class="price-item featured-item">
+                            <div class="image-model-container">
+                                <div class="duration-container">
+                                    4 Hrs Taken
+                                </div>
+                                <img src="{{service.service_Image.url }}"  class="img-fluid zoom-modimage" alt="Your Image">
+                            </div>
+                            <div class="price-header">
+                                <h3> {{service.service_name }}</h3>
+                                {{service.description }}
+                                <h2><span>₹ {{price.price }}</span></h2>
+                                {% if price == 0%}
+                                These service Unavailable
+                                {%endif%}
+                            </div>
+                            <div class="price-footer">
+                                <a class="btn btn-custom" href="">Book Now</a>
+                            </div>
+                        </div>
+                    </div>
+                {%endfor%}                
+                 
+              </div>
+      </div>
+  </div>
+</div>
+<script>
+$(document).ready(function () {
+  function updateModelNames() {
+      var makeId = $('#id_make_company').val();
+      if (makeId) {
+          $.ajax({
+              url: '/get_models/',  // Replace with your actual URL
+              data: {'make_id': makeId},
+              dataType: 'json',
+              success: function (data) {
+                  var modelSelect = $('#id_model_name');
+                  modelSelect.empty();
+                  modelSelect.append('<option value="">---------</option>');
+                  $.each(data.models, function (key, value) {
+                      modelSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                  });
+                  updateModelVariants();  // Update model variants as well
+              }
+          });
+      } else {
+          // Reset model and variant dropdowns if make is not selected
+          $('#id_model_name').empty();
+          $('#id_model_variant').empty();
+      }
+  }
+
+  function updateModelVariants() {
+      var modelId = $('#id_model_name').val();
+      if (modelId) {
+          $.ajax({
+              url: '/get_model_variants/',  // Replace with your actual URL
+              data: {'model_id': modelId},
+              dataType: 'json',
+              success: function (data) {
+                  var variantSelect = $('#id_model_variant');
+                  variantSelect.empty();
+                  variantSelect.append('<option value="">---------</option>');
+                  $.each(data.variants, function (key, value) {
+                      variantSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                  });
+              }
+          });
+      } else {
+          // Reset variant dropdown if model is not selected
+          $('#id_model_variant').empty();
+      }
+  }
+
+  // Initial setup
+  updateModelNames();
+
+  // Event handlers
+  $('#id_make_company').change(function () {
+      updateModelNames();
+  });
+
+  $('#id_model_name').change(function () {
+      updateModelVariants();
+  });
+});
+
+</script>
+{%endblock%}

@@ -1,5 +1,6 @@
 <form hx-post="{% url 'step1_view' %}" hx-target="#form-container">
+    Profile Informations
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit">Next</button>
+    <button type="submit" class="btn btn-dark w-100 my-4 mb-2">Next</button>
 </form>

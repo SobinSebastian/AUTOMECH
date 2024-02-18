@@ -17,4 +17,6 @@ path('get_model_variants/', views.get_model_variants, name='get_model_variants')
 path('get_models/', views.get_models, name='get_models'),
 path('map/', views.map_view, name='map_view'),
 path('get_category_data/<slug:category_slug>/', views.get_category_data, name='get_category_data'),
+path('service/cost',views.servicecost_estimation,name='service_cost_finder'),
+
 ]

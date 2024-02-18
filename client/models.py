@@ -2,6 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser,BaseUserManager
 
+
 class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, first_name, last_name, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
@@ -82,6 +83,12 @@ class UserInfo(models.Model):
 class CarMake(models.Model):
     make_name = models.CharField(max_length=100,unique=True)
     make_Image = models.ImageField(upload_to='make_images/',blank=True, null=True)
+    make_slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        self.make_slug = slugify(self.make_name)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.make_name
 
@@ -89,6 +96,12 @@ class CarModel(models.Model):
     model_name = models.CharField(max_length=100,unique=True)
     make_company = models.ForeignKey(CarMake, on_delete=models.CASCADE)
     model_Image = models.ImageField(upload_to='model_images/',blank=True, null=True)
+    model_slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        self.model_slug = slugify(self.model_name)
+        super().save(*args, **kwargs)
+
     def __str__(self):
         return self.model_name
 
@@ -111,6 +124,12 @@ class ModelVariant(models.Model):
     transmission = models.ForeignKey( transmissionType , on_delete=models.CASCADE)
     tyre_size = models.CharField(max_length=50)
     variant_name = models.CharField(max_length=50)
+    variant_slug = models.SlugField(max_length=100, unique=True, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        self.variant_slug = slugify(f"{self.model.model_name}-{self.variant_name}")
+        super().save(*args, **kwargs)
+
 
     def __str__(self):
         return f"{self.model.model_name} - {self.variant_name}"
@@ -220,3 +239,30 @@ class ServicePrice(models.Model):
 
     class Meta:
         unique_together = ('variant', 'service',)
+
+
+import uuid
+class Cart(models.Model):
+    client = models.ForeignKey(User, on_delete=models.CASCADE)
+    vehicle_info = models.ForeignKey(Vehicleinfo, on_delete=models.CASCADE)
+    service_list = models.ForeignKey(ServiceList, on_delete=models.CASCADE)
+    slug = models.SlugField(unique=True, blank=True)
+
+    class Meta:
+        unique_together = ['client', 'vehicle_info', 'service_list']
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            unique_id = uuid.uuid4().hex[:10]
+            self.slug = slugify(f"{self.service_list.service_name}-{unique_id}")
+        super().save(*args, **kwargs)
+
+class ServiceOrder(models.Model):
+    vehicle = models.ForeignKey(Vehicleinfo, on_delete=models.CASCADE)
+    service_center = models.ForeignKey(ServiceCenter, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False, max_length=36)
+
+    def __str__(self):
+        return f"{self.vehicle.vehicle_Regno} - {self.service_center.place} - {self.date} {self.time}"
