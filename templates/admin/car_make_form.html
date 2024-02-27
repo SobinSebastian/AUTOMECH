@@ -59,7 +59,7 @@
                               <form action="{% url 'car_make_model' %}" method="post">
                                 {% csrf_token %}
                                 <input type="hidden" name="make_id" value="{{ car_make.id }}">
-                                <input type="submit">
+                                <input  class="btn btn-success btn-sm" type="submit" value="View Details">
                               </form>
                         </div>
                     </div>

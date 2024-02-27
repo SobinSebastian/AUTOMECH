@@ -11,8 +11,10 @@ from .forms import *
 from .admin_views import *
 from .manager_views import *
 from .cart_views import *
+from .mechanic_views import *
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
+import razorpay
 def index(request):
     if request.user.is_authenticated:
         if request.user.role == 'ADMIN':
@@ -21,8 +23,8 @@ def index(request):
            return redirect('/mechanic_index')
         elif request.user.role == 'MANAGER':
            return redirect('manager_home')
-        #if not UserInfo.objects.filter(client=request.user).exists():
-            #return redirect('profile_setup')
+        if not UserInfo.objects.filter(client=request.user).exists():
+            return redirect('profile_setup')
     categories = ServiceCategory.objects.all()
     # services = ServiceList.objects.all()
     make = CarMake.objects.all()
@@ -216,15 +218,18 @@ def get_models(request):
 
 def step1_view(request):
     if request.method == 'POST':
+        user =  request.user
+        user_info = UserInfo()
         form = ProfilesetupForm(request.POST)
         if form.is_valid():
-            phone =  form.cleaned_data['contact_no']
-            address = form.cleaned_data['address']
-            place = form.cleaned_data['place']
-            city = form.cleaned_data['city']
-            district = form.cleaned_data['district']
-            pincode = form.cleaned_data['pincode']
-            print(phone)
+            user_info.contact_no =  form.cleaned_data['contact_no']
+            user_info.address = form.cleaned_data['address']
+            user_info.place = form.cleaned_data['place']
+            user_info.city = form.cleaned_data['city']
+            user_info.district = form.cleaned_data['district']
+            user_info.pincode = form.cleaned_data['pincode']
+            user_info.client=user   
+            user_info.save()
             return redirect('step2_view')
     else:
         form = ProfilesetupForm()
@@ -236,9 +241,17 @@ def step2_view(request):
         if form.is_valid():
             reg_no = form.cleaned_data['vehicle_Regno']
             variant_id = form.cleaned_data['model_variant']
-            print(reg_no)
-            print (variant_id)
-            return JsonResponse({'success': True})
+            
+            # Assuming request.user is the current user
+            vehicle_info = Vehicleinfo(
+                client=request.user,
+                model_variant=variant_id,  # Assign variant_id directly
+                vehicle_Regno=reg_no
+            )
+            vehicle_info.save()
+            sweetify.toast(request, 'Completed', icon='error', timer=3000)
+            return redirect('index')
+
     else:
         form = VehicleaddForm()
     return render(request, 'account/step2.html', {'form': form})
@@ -246,13 +259,8 @@ def step2_view(request):
 def servicecost_estimation(request):
     variant = None
     if request.method == "POST":
-        form = VehiclecostForm(request.POST)
-        if form.is_valid():
-            variant = form.cleaned_data['model_variant']
-            form = VehiclecostForm(initial={'model_variant': variant})
-    else:
-        form = VehiclecostForm()
-    
+        model_variant_id = request.POST.get('model_variant')
+        variant = ModelVariant.objects.get(id =  model_variant_id)
     services = ServiceList.objects.all()
     service_prices = ServicePrice.objects.none()
     if variant:
@@ -264,10 +272,14 @@ def servicecost_estimation(request):
             services_with_prices.append((service, price))
         else:
             services_with_prices.append((service,  0.0))
-   
+    make_companys = CarMake.objects.all()
+    model_names= CarModel.objects.all()
+    model_variants = ModelVariant.objects.all()
     context = {
-        'form': form,
         'services_with_prices': services_with_prices,
+        'make_companys': make_companys,
+        'model_names' : model_names,
+        'model_variants' : model_variants 
     }
     return render(request, 'client/servicecost_estimation.html', context)
 
@@ -280,3 +292,47 @@ def set_default_vehicle(sender, user, request, **kwargs):
             request.session['selected_vehicle'] = default_vehicle.id
     except Vehicleinfo.DoesNotExist:
         pass
+
+from geopy.distance import geodesic
+
+def rsa (request):
+    user =request.user
+    vehicles = Vehicleinfo.objects.filter(client = user)
+    service_centers = ServiceCenter.objects.all()
+    if request.method == "POST":
+        vehicle_info_id = request.POST.get('vehicle_info')
+        latitude = request.POST.get('latitude')
+        longitude = request.POST.get('longitude')
+        description = request.POST.get('description')
+        print(latitude)
+        print(longitude)
+        # Calculate the distance for each service center and store it in a dictionary
+        distances = {}
+        user_location = (latitude, longitude)
+        for center in service_centers:
+            center_location = (float(center.latitude), float(center.longitude))
+            dist = geodesic(user_location, center_location).kilometers
+            distances[center.id] = dist
+
+            # Find the nearest service center
+        nearest_center_id = min(distances, key=distances.get)
+        
+        nearest_service_center = ServiceCenter.objects.get(id=nearest_center_id)
+        rsa_request = RoadsideAssistance.objects.create(
+            vehicle_info_id=vehicle_info_id,
+            service_center=nearest_service_center,
+            latitude=latitude,
+            longitude=longitude,
+            status='requested',  # You can set the default status or adjust as needed
+            description=description,
+        )
+        print("Nearest Service Center:", nearest_service_center.place)
+
+    return render (request,'client/rsa.html',{'service_centers': service_centers,'vehicles':vehicles})
+
+from django.views.decorators.cache import cache_control
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
+def custom_logout(request):
+    logout(request)
+    return render(request, 'client/logout.html')

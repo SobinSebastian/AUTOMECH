@@ -1,0 +1,98 @@
+{% extends 'client/base.html' %}
+{%block content%}
+{% load static %}
+
+<div class="location">
+  <div class="container">
+      <div class="row">
+          <div class="col-lg-7">
+              <div class="section-header text-left">
+                  <p>Service Centers</p>
+                  <h2>AutoMech  Service Points</h2>
+              </div>
+              <div class="row">
+                {% for center in service_centers %}
+                <div class="col-md-6">
+                  <div class="location-item">
+                      <i class="fa fa-map-marker-alt"></i>
+                      <div class="location-text">
+                          <h3>Auto Mech {{ center.place }}</h3>
+                          <p> {{ center.place }}, {{ center.city }}
+                            ({{ center.pincode }})</p>
+                          <p><strong>Call:</strong>{{center.phone_number}}</p>
+                          lat : {{center.latitude}}
+                          log : {{center.longitude}}
+                      </div>
+                  </div>
+              </div>
+              {% endfor %}
+                  
+                
+              </div>
+          </div>
+          <div class="col-lg-5">
+             <div id="map" style="height: 400px;"></div> 
+
+            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+            <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+            <script>
+              var iconUrl = "{% static 'img/car_loc.png'%}";
+              var map = L.map('map').setView([0,  0],  12);
+              var centerCoordinates = [];
+          
+              {% for center in service_centers %}
+                  var centerLocation = [{{ center.latitude }}, {{ center.longitude }}];
+                  L.marker(centerLocation).addTo(map).bindPopup('<strong>AutoMech {{ center.place }}</strong><br>{{ center.city }}, {{ center.pincode }}<br>Contact: {{ center.phone_number }}');
+          
+                  centerCoordinates.push(centerLocation);
+              {% endfor %}
+          
+              // Get user's location using Geolocation API
+              if (navigator.geolocation) {
+                  navigator.geolocation.getCurrentPosition(function(position) {
+                      var userLocation = [position.coords.latitude, position.coords.longitude];
+          
+                      // Define your custom icon
+                      var customIcon = L.icon({
+                          iconUrl: iconUrl,
+                          iconSize:     [50,  60],
+                          iconAnchor:   [25,   60],
+                          popupAnchor:  [-3, -76]
+                      });
+          
+                      // Use the custom icon in the marker
+                      L.marker(userLocation, {icon: customIcon})
+                          .addTo(map)
+                          .bindPopup('Your Location');
+          
+                      // Add routing control
+                      L.Routing.control({
+                          waypoints: [
+                              L.latLng(userLocation[0], userLocation[1]),
+                              L.latLng(centerLocation[0], centerLocation[1])
+                          ]
+                      }).addTo(map);
+                  });
+              }
+          
+              var sumLat =  0, sumLon =  0;
+              for (var i =  0; i < centerCoordinates.length; i++) {
+                  sumLat += centerCoordinates[i][0];
+                  sumLon += centerCoordinates[i][1];
+              }
+          
+              var avgLat = sumLat / centerCoordinates.length;
+              var avgLon = sumLon / centerCoordinates.length;
+          
+              map.setView([avgLat, avgLon],  12);
+          
+              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+        </script>
+          </div>
+      </div>
+  </div>
+</div>
+{%endblock%}

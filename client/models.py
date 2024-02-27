@@ -231,7 +231,7 @@ class ServicePrice(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.id:
-            self.slug = slugify(f"{self.variant.variant_name}-{self.service.service_name}")
+            self.slug = slugify(f"{self.variant.model}-{self.variant.variant_name}-{self.service.service_name}")
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -258,11 +258,64 @@ class Cart(models.Model):
         super().save(*args, **kwargs)
 
 class ServiceOrder(models.Model):
+    STATUS_CHOICES = (
+        ('on hold', 'On hold'),
+        ('pending', 'Pending'),
+        ('processing', 'Processing'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    )
     vehicle = models.ForeignKey(Vehicleinfo, on_delete=models.CASCADE)
     service_center = models.ForeignKey(ServiceCenter, on_delete=models.CASCADE)
     date = models.DateField()
     time = models.TimeField()
     slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False, max_length=36)
-
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='on hold')
     def __str__(self):
         return f"{self.vehicle.vehicle_Regno} - {self.service_center.place} - {self.date} {self.time}"
+    
+class ServiceOrderItem(models.Model):
+    STATUS_CHOICES = (
+        ('created', 'Created'),
+        ('pending', 'Pending'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled'),
+    )
+    service_order = models.ForeignKey(ServiceOrder, on_delete=models.CASCADE)
+    vehicle_info = models.ForeignKey(Vehicleinfo, on_delete=models.CASCADE)
+    service_list = models.ForeignKey(ServiceList, on_delete=models.CASCADE)
+    slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False, max_length=36)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='created')
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = str(uuid.uuid4())
+        super(ServiceOrderItem, self).save(*args, **kwargs)
+    class Meta:
+        unique_together = ['service_order', 'vehicle_info', 'service_list']
+
+
+
+class RoadsideAssistance(models.Model):
+    STATUS_CHOICES = [
+        ('requested', 'Requested'),
+        ('accepted', 'Accepted'),
+        ('processing', 'Processing'),
+        ('completed', 'Completed'),
+    ]
+    vehicle_info = models.ForeignKey('VehicleInfo', on_delete=models.CASCADE)
+    service_center = models.ForeignKey('ServiceCenter', on_delete=models.CASCADE)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES ,default='requested')
+    slug = models.CharField(max_length=36, unique=True)
+    description = models.TextField()
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = str(uuid.uuid4())
+        
+        super(RoadsideAssistance, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return f"Roadside Assistance for {self.vehicle_info.vehicle_Regno}"

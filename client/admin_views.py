@@ -22,6 +22,9 @@ import sweetify
 def is_admin(user):
     return user.is_staff
 
+from django.views.decorators.cache import cache_control
+
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 @staff_member_required
 def admin_dashboard(request):
     u_count = User.objects.filter(is_active=True).count()
@@ -151,7 +154,7 @@ def Car_variant_view(request):
         
     return render(request,"admin/car_variant.html",context)
 
-
+@staff_member_required
 def service_category(request, slug=None):
     cat = ServiceCategory.objects.all()
     
@@ -173,6 +176,7 @@ def service_category(request, slug=None):
     context = {'form': form, 'Categories': cat,'buttontext':button_text}
     return render(request, 'admin/servicecategory.html', context)
 
+@staff_member_required
 def service_category_list(request, slug=None):
     cat= get_object_or_404(ServiceCategory, slug=slug)
     serviceList = ServiceList.objects.filter(service_category=cat.id).order_by('service_name')
@@ -184,7 +188,7 @@ def service_category_list(request, slug=None):
         form = ServiceListForm()
     context={'ServiceLists':serviceList,'service_category':cat,'form':form}
     return render(request, 'admin/servicecategorylist.html', context)
-
+@staff_member_required
 def service_category_view(request, slug=None):
     service = get_object_or_404(ServiceList, slug=slug)
     if request.method == 'POST':
@@ -280,18 +284,17 @@ def create_service_form(request):
 
 
 @staff_member_required
-def variant_serviceprice_view(request):
+def variant_serviceprice_view(request,slug=None):
     model =None
-    if request.method == 'POST':
-        variant_id = request.POST.get('variant_id')
-        if variant_id :
-            variant = get_object_or_404(ModelVariant, id=variant_id)
-        if request.method == "POST":
+    variant = None
+    variant = get_object_or_404(ModelVariant, variant_slug=slug)
+    if request.method == "POST":
             form = ServicePriceForm (request.POST)
             if form.is_valid():
-                form.save()    
-        else:
-            form = ServicePriceForm()
+                form.save()
+            return redirect('car_variant_service', slug=variant.variant_slug)
+    else:
+        form = ServicePriceForm()
        
         price_list = ServicePrice.objects.filter(variant = variant)
         context ={'variant': variant,'price_list':price_list,'form':form}

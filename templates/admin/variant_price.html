@@ -11,17 +11,68 @@
 <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
         <div class="card-body">
-          <h4 class="card-title">{{variant}} {{model.model_name}}</h4>
+          <h4 class="card-title">{{variant}} Service Price</h4>
           <p class="card-description">
-            Add class <code>.table-striped</code>
-            <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-target="#exampleModalLong_{{ car_model.id }}">
-              <i class="icon-circle-plus menu-icon"></i> Add Variant
+                      
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <form method="post" action="{% url "car_variant" %}">
+                {%csrf_token%}
+                <input type="hidden" name="model_id" value="{{variant.model.id}}">
+                <a >
+                  <button   class="btn btn-sm">
+                    {{variant.model.model_name}}
+                  </button>
+                </a>
+            </form>
+              <li class="breadcrumb-item"></li>
+              <li class="breadcrumb-item active" aria-current="page">{{variant}}</li>
+            </ol>
+          </nav>
+            <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-target="#exampleModalLong">
+              <i class="icon-circle-plus menu-icon"></i> ADD SERVICE
           </button>
           </p>
-          
+          <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLongTitle">Add Service</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form method="Post"> 
+                    {%csrf_token%}
+                    {% comment %} {{form.as_p}} {% endcomment %}
+                    <p>
+                    <label> Vehicle </label>
+                    <select name="variant" class="form-control" required="" aria-invalid="true" id="id_variant">
+                      <option value="{{variant.id}}" selected>{{variant}}</option>
+                    </select>
+                    </p>
+                    <p>
+                    <label>Service </label>
+                    {{form.service}}
+                    </p>
+                    <p>
+                      <label>Price </label>
+                      {{form.price}}
+                      </p>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary btn-sm">Save </button>
+                </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        
           <div class="table-responsive">
-            {% if  variants%}
-            
+          {% if  price_list%}
+          
         <div class="table-responsive mt-4">
           <table id="myDataTable" class="display expandable-table dataTable no-footer">
             <thead>
@@ -33,65 +84,23 @@
                   Transmission Type
                 </th>
                 <th>
-                  Fuel
-                </th>
-                <th>
-                  Engine
-                </th>
-                <th>
-                  Bhp
-                </th>
-                <th>
-                  Torque
-                </th>
-                <th>
-                  Tyre Size
-                </th>
-                <th>
-                  Edit
-                </th>
-                <th>
-                  View
+                  Action
                 </th>
               </tr>
             </thead>
             
             <tbody>
-              {% for variant in variants %}
+              {%for price in price_list%}
               <tr>
                 <td class="py-1">
-                  {{variant.variant_name}}
+                  {{price.service.service_name}}
                 </td>
                 <td>
-                  {{variant.transmission}}
+                  {{price.price}}
                 </td>
-                <td>
-                  {{variant.fuel_type}}
-                </td>
-                <td>
-                  {{variant.engine}}
-                </td>
-                <td>
-                  {{variant.bhp}}
-                </td>
-                <td>
-                  {{variant.torque}}
-                </td>
-                <td>
-                  {{variant.tyre_size}}
-                </td>
-                <td>
-                  May 15, 2015
-                </td>
-                <td>
-                  <form method="post" action="{% url "car_variant" %}">
-                    {%csrf_token%}
-                    <input type="hidden" name="variant_id" value="{{variant.id}}">
-                    <button  type="submit" class="btn btn-danger  btn-sm">
-                    View 
-                    </button>
-                  </form>
-                </td>
+               <td>
+                <button class="btn btn-success btn-sm"> Edit</button>
+               </td>
               </tr>
               {% endfor %}
             </tbody>
@@ -100,25 +109,22 @@
           $(document).ready(function() {
             $('#myDataTable').DataTable({
                 search: true, 
-                
-                columnDefs: [
-                { targets: [7, 8], orderable: false } 
-              ]
+              
             });
           });
         </script>
         </div>
-              {% else%}
+             {% else%}
                 <div class="container mt-4">
                   <div class="error-message text-center p-4 bg-light rounded">
                     <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 200px; height: auto;">
                     <h2 class="text-danger"><strong>Oops! No car Variant found.</strong></h2>
                     <p class="lead">It seems there are no car Variants available in the system.</p>
                     <p class="text-muted">Please take the following actions:</p>
-                    <a href="#" class="btn btn-primary">Add New Car Model Variant</a>
+                    <a href="#" class="btn btn-primary">Add New Car Model Variant dgs</a>
                   </div>
                 </div>
-              {%endif%}
+            {%endif%} 
         </div>
       </div>
     </div>

@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Logout</title>
+</head>
+<body>
+    {% load static %}
+<!-- You can include any message or content here if needed -->
+
+<!-- Include the script to reload the page -->
+<script>
+    setTimeout(function() {
+        // Redirect to the desired URL
+        window.location.href = '{%url 'index'%}';
+
+        // Reload the page after a short delay (adjust the delay as needed)
+        setTimeout(function() {
+            window.location.reload();
+        }, 1000);
+    }, 1000);  // Adjust the delay before redirection
+</script>
+
+</body>
+</html>

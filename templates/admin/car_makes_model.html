@@ -6,7 +6,13 @@
         <div class="card">
             <div class="card-body">
                 <h4 class="card-title "> {{ make.make_name }}</h4>
-
+                
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{%url 'car_make' %}">Vehicels</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ make.make_name }}</li>
+                    </ol>
+                </nav>
                 <div class="container">
                     <div class="row">
                         <div class="col-md-4 ">
@@ -213,14 +219,12 @@
                             <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-target="#exampleModalLong_{{ car_model.id }}">
                                 <i class="mdi mdi-plus-circle-outline "></i> Add Variant
                             </button>
-                            <button  type="button" class="btn btn-success  btn-sm">
-                                View 
-                            </button>
+                            <br>
                             <form method="post" action="{% url "car_variant" %}">
                                 {%csrf_token%}
                                 <input type="hidden" name="model_id" value="{{car_model.id}}">
-                                <button  type="submit" class="btn btn-danger  btn-sm">
-                                View 
+                                <button  type="submit" class="btn btn-success btn-sm">
+                                    View 
                                 </button>
                             </form>
                             

@@ -1,64 +1,131 @@
 {% extends 'client/base.html' %}
 {%block content%}
+{% load static %}
 <div class="location">
-  <div class="container">
-      <div class="row">
-          <div class="col-lg-7">
-              <div class="section-header text-left">
-                  <p>Service Centers</p>
-                  <h2>AutoMech  Service Points</h2>
-              </div>
-              <div class="row">
-                {% for center in service_centers %}
-                <div class="col-md-6">
-                  <div class="location-item">
-                      <i class="fa fa-map-marker-alt"></i>
-                      <div class="location-text">
-                          <h3>Auto Mech {{ center.place }}</h3>
-                          <p> {{ center.place }}, {{ center.city }}
-                            ({{ center.pincode }})</p>
-                          <p><strong>Call:</strong>{{center.phone_number}}</p>
-                      </div>
-                  </div>
-              </div>
-              {% endfor %}
-                  
-                
-              </div>
-          </div>
-          <div class="col-lg-5">
-            <div id="map" style="height: 400px;"></div>
-
-            <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-            <script>
-              var map = L.map('map').setView([0, 0], 12);
-              var centerCoordinates = [];
-          
-              {% for center in service_centers %}
-                var centerLocation = [{{ center.latitude }}, {{ center.longitude }}];
-                L.marker(centerLocation).addTo(map).bindPopup('<strong>AutoMech {{ center.place }}</strong><br>{{ center.city }}, {{ center.pincode }}<br>Contact: {{ center.phone_number }}<br><a href="https://www.google.com/maps?q={{ center.latitude }},{{ center.longitude }}" target="_blank">View on Google Maps</a>');
-          
-                centerCoordinates.push(centerLocation);
-              {% endfor %}
-          
-              var sumLat = 0, sumLon = 0;
-              for (var i = 0; i < centerCoordinates.length; i++) {
-                sumLat += centerCoordinates[i][0];
-                sumLon += centerCoordinates[i][1];
-              }
-          
-              var avgLat = sumLat / centerCoordinates.length;
-              var avgLon = sumLon / centerCoordinates.length;
-          
-              map.setView([avgLat, avgLon], 12);
-          
-              L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '© OpenStreetMap contributors'
-              }).addTo(map);
-            </script>
-          </div>
-      </div>
-  </div>
+    <div class="container">
+        <div class="row">
+            <div class="col">
+                <div class="section-header text-left ml-3">
+                    <p>Service Centers</p>
+                    <h2>AutoMech  Service Points</h2>
+                </div>
+                <div class="row">
+                  {% for center in service_centers %}
+                  <div class="col-md-6">
+                    <div class="location-item">
+                        <i class="fa fa-map-marker-alt"></i>
+                        <div class="location-text">
+                            <h3>Auto Mech {{ center.place }}</h3>
+                            <p> {{ center.place }}, {{ center.city }}
+                              ({{ center.pincode }})</p>
+                            <p><strong>Call:</strong>{{center.phone_number}}</p>
+                            <button class="btn btn-success  show-on-map" data-lat="{{ center.latitude }}" data-lng="{{ center.longitude }}">View on Map</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+   <br>
+    <div class="col-lg-7">
+        <div class="section-header text-left">
+            <p id="locate">Service Center Locator</p>
+        </div>
+    </div>
+    <div id="map" style="height: 400px;"></div>
 </div>
-
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+<script>
+    var iconUrl = "{% static 'img/car_loc.png' %}";
+    var iconUrl1 = "{% static 'img/sc_loc.png' %}";
+    var userIcon = L.icon({
+        iconUrl: iconUrl,
+        iconSize: [50, 60],
+        iconAnchor: [25, 60],
+        popupAnchor: [-3, -76]
+    });
+    
+    var cIcon = L.icon({
+        iconUrl: iconUrl1,
+        iconSize: [70, 70],
+        iconAnchor: [25, 60],
+        popupAnchor: [6, -50]
+    });
+    
+    var currentRoute = null;
+    
+    var map = L.map('map').setView([0, 0], 2);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+    }).addTo(map);
+    
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            var userLocation = [position.coords.latitude, position.coords.longitude];
+    
+            L.marker(userLocation, { icon: userIcon }).addTo(map).bindPopup('Your Location');
+            var bounds = L.latLngBounds(userLocation);
+    
+            {% for center in service_centers %}
+            var centerMarker = L.marker([{{ center.latitude }}, {{ center.longitude }}], { icon: cIcon })
+                .addTo(map)
+                .bindPopup('<strong>AutoMech {{ center.place }}</strong><br>{{ center.city }}, {{ center.pincode }}<br>Contact: {{ center.phone_number }}');
+            bounds.extend(centerMarker.getLatLng());
+            centerMarker.on('click', function() {
+                if (currentRoute) {
+                    map.removeControl(currentRoute);
+                }
+    
+                currentRoute = L.Routing.control({
+                    waypoints: [
+                        L.latLng(userLocation),
+                        L.latLng([{{ center.latitude }}, {{ center.longitude }}])
+                    ],
+                    routeWhileDragging: true,
+                    showAlternatives: true,
+                    createMarker: function(i, wp, nWps) {
+                        if (i === 0) {
+                            return L.marker(wp.latLng, { icon: userIcon });
+                        } else {
+                            return L.marker(wp.latLng, { icon: cIcon });
+                        }
+                    }
+                }).addTo(map);
+            });
+            {% endfor %}
+    
+            var buttons = document.getElementsByClassName('show-on-map');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].addEventListener('click', function() {
+                    var lat = this.getAttribute('data-lat');
+                    var lng = this.getAttribute('data-lng');
+                    map.setView([lat, lng], 13);
+                    if (currentRoute) {
+                        map.removeControl(currentRoute);
+                    }
+    
+                    currentRoute = L.Routing.control({
+                        waypoints: [
+                            L.latLng(userLocation),
+                            L.latLng(lat, lng)
+                        ],
+                        routeWhileDragging: true,
+                        showAlternatives: true,
+                        createMarker: function(i, wp, nWps) {
+                            if (i === 0) {
+                                return L.marker(wp.latLng, { icon: userIcon });
+                            } else {
+                                return L.marker(wp.latLng, { icon: cIcon });
+                            }
+                        }
+                    }).addTo(map);
+                });
+            }
+    
+            map.fitBounds(bounds, { padding: [100, 100] });
+        });
+    }
+</script>
 {%endblock%}

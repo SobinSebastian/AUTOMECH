@@ -1,0 +1,61 @@
+{% extends 'client/base.html' %}
+{%block content%}
+{% load static %}
+<div class="blog">
+    <form method="post" action="{% url 'rsarequest' %}">
+        {% csrf_token %}
+    
+        <label for="vehicle_info">Vehicle Info:</label>
+        <select name="vehicle_info" id="vehicle_info">
+            {% for vehicle in vehicles %} <option value="{{ vehicle.id }}">{{ vehicle.vehicle_Regno }}</option> {% endfor %}
+        </select>
+    
+        <br>
+        <input type="hidden" name="latitude" id="latitude" required>
+    
+        <br>
+        <input type="hidden" name="longitude" id="longitude" required>
+    
+        <br>
+    
+        <label for="description">Description:</label>
+        <textarea name="description" id="description" rows="4" required></textarea>
+    
+        <br>
+    
+        <button type="submit">Submit</button>
+    </form>
+</div>
+<div id="map" style="height: 400px;"></div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+            <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
+
+            <script>
+                var iconUrl = "{% static 'img/car_loc.png' %}";
+                var userIcon = L.icon({
+                    iconUrl: iconUrl,
+                    iconSize: [50, 60],
+                    iconAnchor: [25, 60],
+                    popupAnchor: [-3, -76]
+                });
+                var map = L.map('map').setView([0, 0], 2);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 70,
+                }).addTo(map);
+                
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(function(position) {
+                        var userLocation = [position.coords.latitude, position.coords.longitude];
+                
+                        // Set the latitude and longitude fields in the form
+                        document.getElementById('latitude').value = userLocation[0];
+                        document.getElementById('longitude').value = userLocation[1];
+                
+                        L.marker(userLocation, { icon: userIcon }).addTo(map).bindPopup('Your Location');
+                        var bounds = L.latLngBounds(userLocation);
+                        map.fitBounds(bounds, { padding: [100, 100] });
+                    });
+                }
+                </script>
+
+{%endblock%}

@@ -13,7 +13,18 @@
         <div class="card-body">
           <h4 class="card-title">{{model.make_company}} {{model.model_name}}</h4>
           <p class="card-description">
-            Add class <code>.table-striped</code>
+            
+          <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item">
+                <form action="{% url 'car_make_model' %}" method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="make_id" value="{{model.make_company.id}}">
+                  <button class="btn btn-sm">{{model.make_company}}</button>
+                </form>
+              <li class="breadcrumb-item active" aria-current="page">{{model.model_name}}</li>
+            </ol>
+          </nav>
             <button type="button" class="btn btn-primary  btn-sm" data-toggle="modal" data-target="#exampleModalLong_{{ car_model.id }}">
               <i class="icon-circle-plus menu-icon"></i> Add Variant
           </button>
@@ -85,8 +96,8 @@
                               </p>  
                             </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button  type="submit"class="btn btn-primary">Save changes</button>
+                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                            <button  type="submit"class="btn btn-primary btn-sm">Save </button>
                           </div>
                         </div>
                       </div>
@@ -154,16 +165,12 @@
                   {{variant.tyre_size}}
                 </td>
                 <td>
-                  May 15, 2015
+                  <button class="btn btn-success  btn-sm"> Edit</button>
                 </td>
                 <td>
-                  <form method="post" action="{% url "car_variant_service" %}">
-                    {%csrf_token%}
-                    <input type="hidden" name="variant_id" value="{{variant.id}}">
-                    <button  type="submit" class="btn btn-danger  btn-sm">
-                    View 
-                    </button>
-                  </form>
+
+                <a href="{% url 'car_variant_service' slug=variant.variant_slug %}" class="btn btn-success  btn-sm">Service List</a>
+
                 </td>
               </tr>
               {% endfor %}

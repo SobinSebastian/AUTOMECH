@@ -1,22 +1,26 @@
 <form hx-post="{% url 'step2_view' %}" hx-target="#form-container" id="myForm1">
     {% csrf_token %}
     <div class="mb-3"> 
+        {{ form.vehicle_Regno.label}}
         {{ form.vehicle_Regno }}
         <div id="vehicleRegnoError" class="text-danger"></div>
     </div>
     <div class="mb-3"> 
+        {{ form.make_company.label }}
         {{ form.make_company }}
         <div id="makeCompanyError" class="text-danger"></div>
     </div>
     <div class="mb-3"> 
+        {{ form.model_name.label }}
         {{ form.model_name }}
         <div id="modelNameError" class="text-danger"></div>
     </div>
     <div class="mb-3"> 
+        {{ form.model_name.lable }}
         {{ form.model_variant }}
         <div id="modelVariantError" class="text-danger"></div>
     </div>
-    <button type="submit">Next</button>
+    <button type="submit" class="btn btn-dark w-100 my-4 mb-2">Finsh</button>
 </form>
  <script>
 $(document).ready(function () {

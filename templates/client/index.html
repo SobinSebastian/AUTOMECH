@@ -9,6 +9,22 @@
     </button>
   </div>
 {% endif %}
+
+<script>
+  // Check if a flag is set in the sessionStorage to ensure it's executed only once
+  if (!sessionStorage.getItem('pageReloaded')) {
+      // Set the flag in sessionStorage to prevent further reloads
+      sessionStorage.setItem('pageReloaded', 'true');
+
+      // Reload the page after a short delay (adjust the delay as needed)
+      setTimeout(function() {
+          window.location.reload();
+
+          // Clear the session history to prevent going back
+          window.history.forward();
+      }, 1000);  // Adjust the delay before the initial reload
+  }
+</script>
  <!-- Carousel Start -->
  <div class="carousel">
 <div class="container-fluid">
@@ -59,7 +75,7 @@
 <div class="container mt-5">
   <div class="row">
     <div class="col text-right">
-      <button type="button" class="btn btn-primary" onclick="openForm()">Click me</button>
+      {% comment %} <button type="button" class="btn btn-primary" onclick="openForm()">Click me</button> {% endcomment %}
     </div>
   </div>
 </div>
@@ -116,11 +132,11 @@ function closeForm() {
       <div class="section-header text-center">
           <h2>Choose Your Service</h2>
       </div>
-      {% if request.session.selected_vehicle %}
+      {% comment %} {% if request.session.selected_vehicle %}
         <p>Selected Vehicle ID: {{ request.session.selected_vehicle }}</p>
     {% else %}
         <p>No vehicle selected</p>
-    {% endif %}
+    {% endif %} {% endcomment %}
       <div class="row">
           <div class="col-lg-8">
               <div class="single-tags">
@@ -197,7 +213,7 @@ function closeForm() {
 });
 </script>
 <!-- Price Start -->
-<div class="col-md-6">
+{% comment %} <div class="col-md-6">
   <div class="container ">
     <div class="row">
 
@@ -238,7 +254,7 @@ function closeForm() {
       {%endfor%}
     </div>
   </div>
-</div>
+</div> {% endcomment %}
 </div>
 
 

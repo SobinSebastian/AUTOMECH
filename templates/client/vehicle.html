@@ -1,18 +1,49 @@
-{% extends 'client/base.html' %}
-{%block content%}
-{% for vehicle in vehicles %}
+{% extends 'client/base.html' %} {% block content %}
+  {% for vehicle in vehicles %}
+    <div class="container mt-5">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card mb-3">
+            <div class="card-body row">
+              <div class="col-md-3">
+                <img class="card-img-top" src="{{ vehicle.model_variant.model.model_Image.url }}" alt="{{ car_model.make_name }} Image" style="max-width: 200px; max-height: 200px;" />
+              </div>
+              <div class="col-md-9">
+                <h5 class="card-title">{{ vehicle.vehicle_Regno }}</h5>
+                <p class="card-text">
+                  Vehicle:
+                  {{ vehicle.model_variant.model.make_company }}
+                  <b>{{ vehicle.model_variant }}</b>
+                </p>
+                <table>
+                  <tr>
+                    <th>Engine (upto)</th>
+                    <th>Power</th>
+                    <th>Fuel</th>
+                    <th>Torque</th>
+                    <th>Transmission</th>
+                    <th>Tyre Size</th>
+                  </tr>
+                  <tr>
+                    <td>{{ vehicle.model_variant.engine }}</td>
+                    <td>{{ vehicle.model_variant.bhp }}</td>
+                    <td>{{ vehicle.model_variant.fuel_type }}</td>
+                    <td>{{ vehicle.model_variant.torque }}</td>
+                    <td>{{ vehicle.model_variant.transmission }}</td>
+                    <td>{{ vehicle.model_variant.tyre_size }}</td>
+                  </tr>
+                </table>
+                <a href="#" class="btn btn-primary">Rate &amp; Review Product</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
-{{vehicle.vehicle_Regno}}
-{{vehicle.car_model}}
-{{vehicle.year}}
-{{vehicle.fuel_type}}
-{{vehicle.car_model.make_company}}
-{{vehicle.id}}
-<form action="{% url 'vehicle_edit' vehicle.id %}" method="post">
-    {% csrf_token %} 
-    <button type="submit">Add Vehicle</button>
- </form>
- 
-{% endfor %}
- 
-{%endblock%}
+    <form action="{% url 'vehicle_edit' vehicle.id %}" method="post">
+      {% csrf_token %}
+      <button type="submit">Add Vehicle</button>
+    </form>
+  {% endfor %}
+{% endblock %}

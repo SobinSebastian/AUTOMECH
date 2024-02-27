@@ -1,7 +1,7 @@
 from .import views
 from django.urls import  path
 from django.contrib.auth import views as auth_views
-from .views import CustomSignupView
+from .views import CustomSignupView 
 
 urlpatterns = [
 path('',views.index,name="index"),
@@ -18,5 +18,6 @@ path('get_models/', views.get_models, name='get_models'),
 path('map/', views.map_view, name='map_view'),
 path('get_category_data/<slug:category_slug>/', views.get_category_data, name='get_category_data'),
 path('service/cost',views.servicecost_estimation,name='service_cost_finder'),
-
+path('rsa/request',views.rsa,name='rsarequest'),
+path('logout/', views.custom_logout, name='custom_logout'),
 ]

@@ -14,7 +14,7 @@ path('car_make/', views.CarMakes.as_view(), name='car_make'),
 path('car_make/model',views.ModelsMake, name='car_make_model'),
 path('car_model/', views.CarModels.as_view(), name='car_model'),
 path('car_model/variant',views.Car_variant_view,name='car_variant'),
-path('car_model/variant/service',views.variant_serviceprice_view,name='car_variant_service'),
+path('car_model/variant/service/<slug:slug>/',views.variant_serviceprice_view,name='car_variant_service'),
 path('service/category/',views.service_category,name='service_category'),
 path('service/category/<slug:slug>/',views.service_category,name='service_category'),
 path('service/category/list/<slug:slug>/',views.service_category_list,name='service_category_list'),
@@ -32,4 +32,5 @@ path('service_center/manager/', views.service_center_manager, name='service_cent
 path('service_center/<slug:slug>/', views.service_center_details, name='service_center_details'),
 path('model_variant/service',variant_service,name='variant_service'),
 path('create_service_price/',create_service_form,name='create_service_price'),
+
 ]

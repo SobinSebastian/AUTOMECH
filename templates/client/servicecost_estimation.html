@@ -14,57 +14,46 @@
 <div class="price">
   <div class="container">
     <div class="row">
-        <form method="post" >
-            {% csrf_token %}
-            <div class="row ">
-                <div class="col-md-5">
-                  {{form.make_company}}
+        <div class="container mt-4">
+            <form method="post" action="" id="yourForm">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="id_make_company">Make Company:</label>
+                        <select id="id_make_company" name="make_company" class="form-control" onchange="validateMakeCompany()">
+                            <option value="">--Please choose an option--</option>
+                            {% for make in make_companys %}
+                                <option value="{{ make.id }}">{{ make }}</option>
+                            {% endfor %}
+                        </select>
+                        <span id="makeCompanyError" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_model_name">Model Name:</label>
+                        <select id="id_model_name" name="model_name" class="form-control">
+                            <option value="">--Please choose an option--</option>
+                            {% for model_name in model_names %}
+                                <option value="{{ model_name.id }}">{{ model_name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="id_model_variant">Vehicle</label>
+                        <select id="id_model_variant" name="model_variant" class="form-control" onchange="validateModelVariant()">
+                            <option value="">--Please choose an option--</option>
+                            {% for model_variant in model_variants %}
+                                <option value="{{ model_variant.id }}">{{ model_variant }}</option>
+                            {% endfor %}
+                        </select>
+                        <span id="modelVariantError" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-4 d-flex justify-content-center">
+                        <input type="submit" class="btn btn-primary mt-4" value="Submit" onclick="validateForm()">
+                        <p id="validationMessage" class="text-danger"></p>
+                    </div>
                 </div>
-                <div class="col-md-5">
-                {{form.model_name}}
-              </div>
-              <div class="col-md-5">
-                {{form.model_variant}}
-              </div>
-              <div class="col-md-5">
-                <input type="submit">
-              </div>
-            </div>
-          </form>
-          <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var myForm = document.getElementById('myForm');
-                var makeSelect = document.getElementById('id_make_company');
-                var modelSelect = document.getElementById('id_model_name');
-                var variantSelect = document.getElementById('id_model_variant');
-                var submitButton = document.getElementById('submitButton');
-        
-                submitButton.addEventListener('click', function (event) {
-                    // Validate Make
-                    if (makeSelect.value === '') {
-                        alert('Please select a Make.');
-                        event.preventDefault();
-                        return;
-                    }
-        
-                    // Validate Model
-                    if (modelSelect.value === '') {
-                        alert('Please select a Model.');
-                        event.preventDefault();
-                        return;
-                    }
-        
-                    // Validate Variant
-                    if (variantSelect.value === '') {
-                        alert('Please select a Variant.');
-                        event.preventDefault();
-                        return;
-                    }
-        
-                    // If all validations pass, the form will be submitted
-                });
-            });
-        </script>
+            </form>
+        </div>
     </div>
   </div>
 </div>

@@ -14,7 +14,6 @@ def manager_dashboard(request):
     context ={'center':center}
     return render(request, 'manager/manager_dashboard.html',context)
 
-
 def available_mechanics(user):
     service_center_instance = user.servicecenter
     mechanic_list = mechanicList.objects.filter(service_center=service_center_instance).values_list('mechanic', flat=True)
@@ -43,7 +42,7 @@ def available_mechanics(user):
 #         'form1' : form1
 #         }
 #     return render(request, 'manager/manager_slots.html',context)
-
+@manager_required
 def manager_slots(request):
     if request.method == 'POST':
         # Handling ServicesSlotsForm
@@ -67,9 +66,9 @@ def manager_slots(request):
     else:
         form = ServicesSlotsForm(user=request.user)
         form1 = SlotsMechAddForm(user=request.user)
-
+    user =request.user
     mcount = available_mechanics(request.user)
-    service_slots = ServicesSlots.objects.filter(service_center=request.user.servicecenter)
+    service_slots = ServicesSlots.objects.filter(service_center=user.servicecenter)
 
     context = {
         'form': form,
@@ -80,13 +79,13 @@ def manager_slots(request):
 
     return render(request, 'manager/manager_slots.html', context)
 
-
+@manager_required
 def remove_alloc_mech(request, solt_slug):
     services_slot = get_object_or_404(ServicesSlots, slug = solt_slug)
     services_slot.allocated_mech = None
     services_slot.save()
     return redirect('service_slots')
-
+@manager_required
 def manager_mechanic(request):
     user = request.user
     service_center_instance = ServiceCenter.objects.get(manager = user)
@@ -121,9 +120,38 @@ def check_unique_slotname(request):
 
     return JsonResponse({'error': 'Invalid request method'})
 
-
+@manager_required
 def manager_bookings(request):
-    return render(request, 'manager/manager_booking.html')
+    user = request.user
+    center = ServiceCenter.objects.get(manager = user)
+    service_orders = ServiceOrder.objects.filter(service_center=center)
+    order_items =ServiceOrderItem.objects.all()
+    context = {
+        'service_orders': service_orders,
+        'orderitems' : order_items
+    }
+    return render(request, 'manager/manager_booking.html',context)
 
+@manager_required
+def manager_bookings_json(request):
+    user = request.user
+    center = ServiceCenter.objects.get(manager=user)
+
+    # Fetch service orders related to the service center
+    service_orders = ServiceOrder.objects.filter(service_center=center)
+
+    # Convert service order data to a format suitable for FullCalendar
+    events = []
+    for order in service_orders:
+        events.append({
+            'title': f"{order.vehicle.vehicle_Regno} - {order.service_center.place}",
+            'start': str(order.date) + 'T' + str(order.time),
+        })
+
+    return JsonResponse(events, safe=False)
+
+
+
+@manager_required
 def manager_rsa(request):
     return render(request, 'manager/manager_rsa.html')
