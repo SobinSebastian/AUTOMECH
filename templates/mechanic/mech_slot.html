@@ -1,0 +1,89 @@
+{% extends 'mechanic/base.html' %}
+{%block content%}
+{% load tz %}
+{% load static %}
+<div class="row">
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Slot  Details</p>
+        {% if slot%}
+        
+        <div class="alert alert-warning" role="alert">
+          <b>{{slot.slotname}} </b> <br>Service Center :{{slot.service_center}},{{slot.service_center.city}}  </div>
+        </div>
+      </div>
+      </div>
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="card-title">Service Orders</p>
+            <div class="table-responsive">
+          <table class="display expandable-table dataTable no-footer w-100">
+            <thead>
+              <tr >
+                <th scope="col">Vehicle</th>
+                <th scope="col">Date & Time</th>
+                <th scope="col">Status</th>
+                <th scope="col">View</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for  order in orders %}
+              <tr >
+                <td>{{order.vehicle.vehicle_Regno}}</td>
+                <td> {{order.date}}{{ order.time|time:"H:i A" }}</td>
+                <td> {{ order.status}}</td>
+                <td>
+                  <button class="btn btn-light btn-sm"  data-toggle="collapse" data-target="#details{{order.slug}}" class="clickable">
+                    <i class="ti-eye text-primary"></i> View
+                  </button></td>
+                <td><button type="button" class="btn btn-success btn-sm">Process</button>
+                  <a href="{% url 'service_details' service_slug=order.slug %}">Service Details</a></td>
+              </tr>
+              <tr id="details{{order.slug}}" class="collapse">
+                <td colspan="5" >
+                  <div class="row">
+                    <div class="col-md-4 grid-margin stretch-card">
+                      <div class="card card-tale">
+                        <div class="card-body">
+                          <p class="mb-4">Vehicle Details</p>
+                          <p>{{order.vehicle.vehicle_Regno}}
+                            {{order.vehicle.model_variant.model.make_company}}
+                            {{order.vehicle.model_variant}}</p>
+                            <br>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6 grid-margin stretch-card">
+                      <div class=" card card-light-danger">
+                        <div class="card-body">
+                          <p class="mb-4"> User Details</p>
+                          {{order.vehicle.client.get_full_name}}({{order.vehicle.client}})<br>
+                          {{order.vehicle.client.userinfo.address}} , 
+                          {{order.vehicle.client.userinfo.place}} ,
+                          {{order.vehicle.client.userinfo.city}} ,
+                          {{order.vehicle.client.userinfo.pincode}}<br>
+                          {{order.vehicle.client.userinfo.contact_no}}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </td>
+              </tr>
+              {%endfor%}
+            </tbody>
+          </table>
+        
+          </div>
+        </div>
+      </div>
+
+          {% else %}
+        No slots allocted to u
+        {% endif %}
+
+</div>
+{%endblock%}

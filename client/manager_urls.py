@@ -9,5 +9,6 @@ urlpatterns = [
     path('rsa/',views.manager_rsa,name="rsa_request"),
     path('check_unique_slotname/', check_unique_slotname, name='check_unique_slotname'),
     path('remove_alloc_mech/<slug:solt_slug>', remove_alloc_mech, name='remove_alloc_mech'),
-     path('manager/bookings/json/', manager_bookings_json, name='manager_bookings_json'),
+    path('manager/bookings/json/', manager_bookings_json, name='manager_bookings_json'),
+    path('allocate_service_slot/',views.allocate_service_slot,name='allocate_service_slot')
 ]

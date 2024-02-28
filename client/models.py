@@ -219,7 +219,7 @@ class ServicesSlots(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f"{self.slotname} - {self.service_center.name} - {self.allocated_mech.get_full_name()} - {self.status}"
+        return f"{self.slotname} - {self.service_center.place} - {self.allocated_mech.get_full_name()} - {self.status}"
     
 
 
@@ -271,6 +271,8 @@ class ServiceOrder(models.Model):
     time = models.TimeField()
     slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False, max_length=36)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='on hold')
+    service_slot = models.ForeignKey(ServicesSlots, on_delete=models.SET_NULL, null=True, blank=True)
+
     def __str__(self):
         return f"{self.vehicle.vehicle_Regno} - {self.service_center.place} - {self.date} {self.time}"
     
@@ -319,3 +321,4 @@ class RoadsideAssistance(models.Model):
 
     def __str__(self):
         return f"Roadside Assistance for {self.vehicle_info.vehicle_Regno}"
+

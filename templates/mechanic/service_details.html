@@ -1,0 +1,110 @@
+{% extends 'mechanic/base.html' %}
+{%block content%}
+{% load tz %}
+{% load static %}
+<div class="row">
+  <div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Service Order Details </p>
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'mechanic_slot' %}">Your Slot</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Service Order of {{order.vehicle.vehicle_Regno}}</li>
+          </ol>
+        </nav>
+        <div class="col-lg-6">
+        <div class="py-4">
+          <p class="clearfix">
+            <span class="float-left">
+              Service Order Date & Time
+            </span>
+            <span class="float-right text-muted">
+              {{order.date}} , {{order.time}} 
+            </span>
+          </p>
+          <p class="clearfix">
+            <span class="float-left">
+              Service Order Status
+            </span>
+            <span class="float-right text-muted">
+              {{order.status}} 
+            </span>
+          </p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-4 grid-margin stretch-card">
+            <div class="card card-tale">
+              <div class="card-body">
+                <p class="mb-4">Vehicle Details</p>
+                <p>{{order.vehicle.vehicle_Regno}}
+                  {{order.vehicle.model_variant.model.make_company}}
+                  {{order.vehicle.model_variant}}</p>
+                  <br>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6 grid-margin stretch-card">
+            <div class="card">
+              <div class="card-body">
+                <div class="col-lg-12">
+                  <div class="border-bottom text-center pb-4">
+                    
+                    <div class="mb-3">
+                      <h4>{{order.vehicle.client.get_full_name}}</h4>
+                    </div>
+                  </div>
+                  <div class="py-4">
+                    <p class="clearfix">
+                      <span class="float-left">
+                        Email
+                      </span>
+                      <span class="float-right text-muted">
+                        {{order.vehicle.client}}
+                      </span>
+                      </p>
+                      <p class="clearfix">
+                        <span class="float-left">
+                          Phone
+                        </span>
+                        <span class="float-right text-muted">
+                          {{order.vehicle.client.userinfo.contact_no}}
+                        </span>    
+                      </p>
+                      <p class="clearfix">
+                        <span class="float-left">
+                         Address
+                        </span>
+                        <span class="float-right text-muted">
+                          {{order.vehicle.client.userinfo.address}} , 
+                          {{order.vehicle.client.userinfo.place}} ,<br>
+                          {{order.vehicle.client.userinfo.city}} ,
+                          {{order.vehicle.client.userinfo.pincode}}
+                        </span>    
+                  </p>
+                </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+      <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+          <div class="card-body">
+            <p class="card-title">Service Orders Items</p>
+            {%for order_item in order_items%}
+            {{order_item.service_list}}
+            {{order_item.service_list.service_category}}
+            <img src="{{ order_item.service_list.service_Image }}" alt="Service Image">
+
+            {%endfor%}
+          </div>
+        </div>
+      </div>
+  </div></div>
+</div>
+{%endblock%}

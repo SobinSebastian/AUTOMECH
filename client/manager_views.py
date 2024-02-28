@@ -5,6 +5,7 @@ from django.views import View
 from django.http import JsonResponse
 from .decorators import manager_required
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_POST
 from django.shortcuts import render,redirect, get_object_or_404
 
 @manager_required
@@ -126,9 +127,12 @@ def manager_bookings(request):
     center = ServiceCenter.objects.get(manager = user)
     service_orders = ServiceOrder.objects.filter(service_center=center)
     order_items =ServiceOrderItem.objects.all()
+    active_service_slots = ServicesSlots.objects.filter(service_center=center,allocated_mech__isnull=False)
+    print(active_service_slots)
     context = {
         'service_orders': service_orders,
-        'orderitems' : order_items
+        'orderitems' : order_items,
+        'active_service_slots':active_service_slots
     }
     return render(request, 'manager/manager_booking.html',context)
 
@@ -155,3 +159,20 @@ def manager_bookings_json(request):
 @manager_required
 def manager_rsa(request):
     return render(request, 'manager/manager_rsa.html')
+
+
+
+
+
+@require_POST
+def allocate_service_slot(request):
+    slug = request.POST.get('slug')
+    selected_slot = request.POST.get('slot')
+    service_order = ServiceOrder.objects.get(slug=slug)
+    slot = ServicesSlots.objects.get(id =selected_slot)
+    service_order.service_slot = slot
+    service_order.status = 'pending'
+    service_order.save()
+    sweetify.success(request, 'Slot allocated ', text= f'successfully.',timer=5000, persistent=False,)
+    # Redirect to a success page or back to the same page
+    return redirect('manager_booking')

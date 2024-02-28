@@ -85,13 +85,16 @@ def orders (request):
     order_items_with_prices = []
     total_price  = 0
     for order_item in order_items:
+        matched = False
         for service_p in service_prices:
-            if service_p.service == order_item.service_list:
+            if service_p.service == order_item.service_list and not matched:
+                total_price = (total_price+service_p.price)
                 order_items_with_prices.append({
                     'order_item': order_item,
                     'price': service_p.price
                 })
-                total_price = (total_price + service_p.price)
+                print(service_p.price)
+                matched = True 
                 payruppe = total_price *100
     context = {
         'serviceorders': serviceorders,
@@ -111,3 +114,43 @@ def remove_from_cart(request, slug):
 
 def book(request):
     return redirect('view_cart')
+
+
+
+
+# code to generate pdf 
+from django.shortcuts import render
+from django.http import HttpResponse
+from reportlab.pdfgen import canvas
+
+def generate_estimate_pdf(request):
+    # Your estimate data (replace this with your actual data)
+    estimate_data = {
+        'customer_name': 'John Doe',
+        'item': 'Web Development',
+        'quantity': 5,
+        'unit_price': 100,
+        'total_amount': 500,
+    }
+
+    # Create a response object with PDF content type
+    response = HttpResponse(content_type='application/pdf')
+    
+    # Set the content-disposition header to force download
+    response['Content-Disposition'] = 'attachment; filename="estimate.pdf"'
+
+    # Create a PDF object
+    pdf = canvas.Canvas(response)
+
+    # Add content to the PDF
+    pdf.drawString(100, 800, f'Estimate for: {estimate_data["customer_name"]}')
+    pdf.drawString(100, 780, f'Item: {estimate_data["item"]}')
+    pdf.drawString(100, 760, f'Quantity: {estimate_data["quantity"]}')
+    pdf.drawString(100, 740, f'Unit Price: ${estimate_data["unit_price"]}')
+    pdf.drawString(100, 720, f'Total Amount: ${estimate_data["total_amount"]}')
+
+    # Save the PDF
+    pdf.showPage()
+    pdf.save()
+
+    return response

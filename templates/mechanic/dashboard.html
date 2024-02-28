@@ -5,8 +5,6 @@
   <div class="col-md-12 grid-margin">
     <div class="row">
       <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-        <h3 class="font-weight-bold">Service Center Dashboard</h3>
-        <h6 class="font-weight-normal mb-0">Service Center : {{center.place}} </h6>
       </div>
       <div class="col-12 col-xl-4">
        <div class="justify-content-end d-flex">
@@ -36,7 +34,9 @@
     </div>
   </div>
 </div>
-{% if center %}
+{% if center_details %}
+{{user.get_full_name}}
+{{user.email}}
 <div class="row">
   <div class="col-md-4 grid-margin stretch-card">
     <div class="card">
@@ -45,8 +45,9 @@
           <div class="border-bottom text-center pb-4">
             {% comment %} <img src="../../../assets/images/faces/face12.jpg" alt="profile" class="img-lg rounded-circle mb-3"> {% endcomment %}
             <div class="mb-3">
-              <h3>{{center.place}}</h3>
-              <h4>{{center.city}}</h4>
+              <h4>Service Center Details</h4>
+              <h3>{{center_details.service_center.place}}</h3>
+              <h4>{{center_details.service_center.city}}</h4>
             </div>
           </div>
           <div class="py-4">
@@ -63,7 +64,7 @@
                   Phone
                 </span>
                 <span class="float-right text-muted">
-                  {{center.phone_number}}
+                  {{center_details.service_center.phone_number}}
                 </span>    
           </div>
         </div>
@@ -75,7 +76,7 @@
         <div class="col-md-6 mb-4 stretch-card transparent">
           <div class="card card-tale">
             <div class="card-body">
-              <p class="mb-4">Today’s Bookings</p>
+              <p class="mb-4">Today’s Service Orders</p>
               <p class="fs-30 mb-2">{{tbooking}}</p>
             </div>
           </div>
@@ -83,7 +84,7 @@
         <div class="col-md-6 mb-4 stretch-card transparent">
           <div class="card card-dark-blue">
             <div class="card-body">
-              <p class="mb-4">Total Bookings</p>
+              <p class="mb-4">Total Service Orders</p>
               <p class="fs-30 mb-2">{{total}}</p>
               <p>{{per}}% (30 days)</p>
             </div>
@@ -94,7 +95,7 @@
         <div class="col-md-6 mb-4 mb-lg-0 stretch-card transparent">
           <div class="card card-light-blue">
             <div class="card-body">
-              <p class="mb-4">Number of Mechanic</p>
+              <p class="mb-4">Completed Service Orders </p>
               <p class="fs-30 mb-2">{{mcount}}</p>
             </div>
           </div>
@@ -102,7 +103,7 @@
         <div class="col-md-6 stretch-card transparent">
           <div class="card card-light-danger">
             <div class="card-body">
-              <p class="mb-4">Number of Clients</p>
+              <p class="mb-4">Pending Service Orders</p>
               <p class="fs-30 mb-2">{{ ucount }}</p>
             </div>
           </div>

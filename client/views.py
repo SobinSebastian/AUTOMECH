@@ -15,12 +15,13 @@ from .mechanic_views import *
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 import razorpay
+from .regmail import *
 def index(request):
     if request.user.is_authenticated:
         if request.user.role == 'ADMIN':
            return redirect('admin_home')
         elif request.user.role == 'MECHANIC':
-           return redirect('/mechanic_index')
+           return redirect('mechanic_home')
         elif request.user.role == 'MANAGER':
            return redirect('manager_home')
         if not UserInfo.objects.filter(client=request.user).exists():
@@ -52,12 +53,11 @@ class CustomSignupView(SignupView):
             else:
                 user = Client.objects.create_user(username=username, first_name=firstname, last_name=lastname, email=email, password=password)
                 # Additional logic for sending email
-                subject = 'Subject of the email'
-                message = 'Body of the email'
+                subject = 'Welcome To AutoMech'
+                message = regemail_content
                 from_email = settings.DEFAULT_FROM_EMAIL
                 recipient_list = [email]
-
-                send_mail(subject, message, from_email, recipient_list)
+                send_mail(subject, "", from_email, recipient_list, html_message=regemail_content)
 
                 return redirect('account_login')  # Replace with the URL for your login page
         else:

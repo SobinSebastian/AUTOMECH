@@ -320,3 +320,11 @@ class VehiclecostForm(forms.Form):
         fields = ['make_company','model_name', 'model_variant']
 
 
+
+class AvailableslotChoiceField(forms.ModelChoiceField):
+    def __init__(self, *args, **kwargs):
+        kwargs['widget'] = forms.Select(attrs={'class': 'form-control'})
+        super().__init__(*args, **kwargs)
+    def label_from_instance(self, obj):
+        return obj.get_full_name()
+
