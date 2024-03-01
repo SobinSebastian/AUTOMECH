@@ -328,3 +328,18 @@ class AvailableslotChoiceField(forms.ModelChoiceField):
     def label_from_instance(self, obj):
         return obj.get_full_name()
 
+#///////////////////// FORMS FOR BLOG START ////////////////////////////////
+from tinymce.widgets import TinyMCE
+class PostForm(forms.ModelForm):
+    class Meta:
+        model = Post
+        fields = ['title', 'content', 'image', 'video']
+        widgets = {
+            'content': TinyMCE(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(PostForm, self).__init__(*args, **kwargs)
+        self.fields['image'].widget.attrs['accept'] = 'image/*'
+        self.fields['video'].widget.attrs['accept'] = 'video/*'
+#\\\\\\\\\\\\\\\\\\\\\ FORMS FOR BLOG END   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

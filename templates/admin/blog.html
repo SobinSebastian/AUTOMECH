@@ -1,0 +1,38 @@
+{% extends 'admin/adminbase.html' %}
+{%block content%}
+{% load static %}
+<div class="row">
+  <div class="col-md-12 grid-margin stretch-card ">
+    <div class="card">
+      <div class="card-body ">
+        <h3 class="text-danger"> Service Center Details </h3>
+            <h4 class="text-primary mt-4"> Auto Mech  {{center.city}} Service Center </h4>
+        <div class="row">
+        {% for post in posts%}
+        {{post}}
+        <article>
+          <h1>{{ post.title }}</h1>
+          <p class="post-meta">Published on: {{ post.pub_date }} | Author: {{ post.author }}</p>
+      
+          {% if post.image %}
+            <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-image">
+          {% endif %}
+      
+          {% if post.video %}
+            <video width="320" height="240" controls>
+              <source src="{{ post.video.url }}" type="video/mp4">
+              Your browser does not support the video tag.
+            </video>
+          {% endif %}
+      
+          <div class="post-content">
+            {{ post.content | safe }}
+          </div>
+        </article>
+        {% endfor %}
+        </div>
+      </div>           
+    </div>        
+  </div>
+</div>
+{%endblock%}

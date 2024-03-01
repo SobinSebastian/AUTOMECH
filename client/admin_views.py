@@ -300,3 +300,31 @@ def variant_serviceprice_view(request,slug=None):
         context ={'variant': variant,'price_list':price_list,'form':form}
         
     return render(request,"admin/variant_price.html",context)
+
+
+
+#/////////////////////////////  VIEWS FOR BLOG  START /////////////////////////////////////////////////
+def view_blog (request):
+    posts = Post.objects.all()
+    context ={
+        'posts':posts
+    }
+    return render(request,'admin/blog.html',context)
+
+
+def create_or_edit_post(request, slug=None):
+    post = get_object_or_404(Post, slug=slug) if slug else None
+
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.save()
+            return redirect('post_detail', slug=post.slug)
+    else:
+        form = PostForm(instance=post)
+
+    template_name ='admin/create_post.html'
+    return render(request, template_name, {'form': form, 'post': post})
+#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  VIEWS FOR BLOG END    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\

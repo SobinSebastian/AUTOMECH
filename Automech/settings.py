@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'sweetify',
+    'tinymce',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -172,3 +173,8 @@ ACCOUNT_FORMS = {
 # possible options: 'sweetalert', 'sweetalert2' - default is 'sweetalert2'
 SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'
 razor_pay_key_id='rzp_test_LWLCjtUNBImDaB'
+
+TINYMCE_DEFAULT_CONFIG = {
+    'height': 360,
+    'width': 960,
+}

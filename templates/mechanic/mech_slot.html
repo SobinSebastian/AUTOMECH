@@ -34,13 +34,34 @@
               <tr >
                 <td>{{order.vehicle.vehicle_Regno}}</td>
                 <td> {{order.date}}{{ order.time|time:"H:i A" }}</td>
-                <td> {{ order.status}}</td>
+                <td> <label class="badge 
+                  {% if  order.status == 'created'%}
+                  badge-info
+                  {% elif order.status == 'pending' %}
+                  badge-danger
+                  {% elif order.status == 'completed' %}
+                  badge-success
+                  {% elif order.status == 'processing' %}
+                  badge-success
+                  {% endif %}">
+                  {{ order.status}}
+                </label></td>
                 <td>
                   <button class="btn btn-light btn-sm"  data-toggle="collapse" data-target="#details{{order.slug}}" class="clickable">
                     <i class="ti-eye text-primary"></i> View
                   </button></td>
-                <td><button type="button" class="btn btn-success btn-sm">Process</button>
-                  <a href="{% url 'service_details' service_slug=order.slug %}">Service Details</a></td>
+                <td>
+                  <a class="btn btn-success btn-sm"  href="{% url 'service_details' service_slug=order.slug %}">
+                    {% if  order.status == 'created'%}
+                    Start Service
+                    {% elif order.status == 'pending' %}
+                    Resume Service
+                    {% else %}
+                    View Service
+                    {% endif %}
+
+                  </a>
+                </td>
               </tr>
               <tr id="details{{order.slug}}" class="collapse">
                 <td colspan="5" >

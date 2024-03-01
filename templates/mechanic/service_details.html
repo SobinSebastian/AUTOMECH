@@ -31,17 +31,46 @@
               {{order.status}} 
             </span>
           </p>
+          <div class="progress" style="height: 15px;">
+            <div class="progress-bar bg-success" role="progressbar" style="width: {{completed_percentage}}%;" aria-valuemin="0" aria-valuemax="100"> {{completed_percentage}} %</div>
+          </div>
           </div>
         </div>
         <div class="row">
-          <div class="col-md-4 grid-margin stretch-card">
-            <div class="card card-tale">
+          <div class="col-md-6 grid-margin stretch-card">
+            <div class="card ">
               <div class="card-body">
-                <p class="mb-4">Vehicle Details</p>
-                <p>{{order.vehicle.vehicle_Regno}}
-                  {{order.vehicle.model_variant.model.make_company}}
-                  {{order.vehicle.model_variant}}</p>
-                  <br>
+                <div class="border-bottom text-center pb-4">
+                  <div class="mb-3">
+                    <h4>Vehicle Details</h4>
+                  </div>
+                </div>
+                  <div class="py-4">
+                    <p class="clearfix">
+                      <span class="float-left">
+                        Vehicle RegNo
+                      </span>
+                      <span class="float-right text-muted">
+                        {{order.vehicle.vehicle_Regno}}
+                      </span>
+                      </p>
+                      <p class="clearfix">
+                        <span class="float-left">
+                          Vehicle Model
+                        </span>
+                        <span class="float-right text-muted">
+                          {{order.vehicle.model_variant}}
+                        </span>
+                        </p>
+                        <p class="clearfix">
+                          <span class="float-left">
+                            Vehicle Manufacture
+                          </span>
+                          <span class="float-right text-muted">
+                            {{order.vehicle.model_variant.model.make_company}}
+                          </span>
+                          </p>
+                  </div>
               </div>
             </div>
           </div>
@@ -96,12 +125,39 @@
         <div class="card">
           <div class="card-body">
             <p class="card-title">Service Orders Items</p>
-            {%for order_item in order_items%}
-            {{order_item.service_list}}
-            {{order_item.service_list.service_category}}
-            <img src="{{ order_item.service_list.service_Image }}" alt="Service Image">
+            <table id="orderItemsTable" class="w-100">
+              <thead>
+                  <tr>
+                    <th>Service Image</th>  
+                    <th>Service</th>
+                    <th> Status</th>
+                    <th>Service Category</th>  
+                    <th>Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for order_item in order_items %}
+                      <tr>
+                        <td>
+                          <img src="{{ order_item.service_list.service_Image.url }}" alt="Service Image" width="100">
+                        </td>  
+                        <td>{{ order_item.service_list }}</td>
+                        <td>{{order_item.status}}</td>
+                        <td>{{ order_item.service_list.service_category }}</td>
+                        <td>
+                          {%if order_item.status == 'created'%}
+                            <a class="btn btn-success btn-sm"  href="{% url 'order_start' order_slug=order_item.slug %}">Start</a></td>
+                          {% elif order_item.status == 'pending' %}
+                            <a class="btn btn-success btn-sm"  href="{% url 'order_start' order_slug=order_item.slug %}">Complete</a></td>
+                          {% else %}
+                          Complete
+                          {%endif%} 
+                        </td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>          
 
-            {%endfor%}
           </div>
         </div>
       </div>

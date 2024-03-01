@@ -321,4 +321,32 @@ class RoadsideAssistance(models.Model):
 
     def __str__(self):
         return f"Roadside Assistance for {self.vehicle_info.vehicle_Regno}"
+    
 
+#//////////////////////////////model For Blog //////////////////////////////////////////////////////
+class Post(models.Model):
+    title = models.CharField(max_length=200)
+    content = models.TextField()
+    pub_date = models.DateTimeField(auto_now_add=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
+    video = models.FileField(upload_to='videos/', null=True, blank=True)
+    likes = models.ManyToManyField(User, related_name='post_likes', blank=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.title)
+            slug = base_slug
+            counter = 1
+
+            while Post.objects.filter(slug=slug).exists():
+                slug = f"{base_slug}-{counter}"
+                counter += 1
+
+            self.slug = slug
+
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.title

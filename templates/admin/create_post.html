@@ -1,0 +1,30 @@
+{% extends 'admin/adminbase.html' %}
+{%block content%}
+{% load static %}
+<div class="row">
+  <div class="col-md-12 grid-margin stretch-card ">
+    <h1>{% if post %}Edit Post{% else %}Create Post{% endif %}</h1>
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      {{ form.title.label_tag }}
+      {{ form.title }}
+      {{ form.title.errors }}
+      
+      {{ form.content.label_tag }}
+      {{ form.content }}
+      {{ form.content.errors }}
+      
+      {{ form.image.label_tag }}
+      {{ form.image }}
+      {{ form.image.errors }}
+      
+      {{ form.video.label_tag }}
+      {{ form.video }}
+      {{ form.video.errors }}
+      
+      <button type="submit">Save</button>
+    </form>
+  </div>
+</div>
+{%endblock%}
