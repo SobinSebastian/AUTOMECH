@@ -101,6 +101,17 @@
                   {% endif %}
                 </div>
               </div>
+              
+              <div class="nav-item dropdown">
+                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">More</a>
+                <div class="dropdown-menu">
+                  <a href="{% url 'client_blog' %}" class="btn dropdown-item {% if request.path == 'blog/' %}{% endif %}">Blog</a>
+                    <a href="{% url 'map_view' %}" class="btn dropdown-item {% if request.path == 'map/' %}{% endif %}">FAQ</a>
+                    <a href="{% url 'terms' %}" class="btn dropdown-item {% if request.path == 'Terms' %}active{% endif %}">Terms</a>
+                    <a href="{% url 'privacy' %}" class="btn dropdown-item {% if request.path == '/Privacy' %}{% endif %}">Privacy</a>
+                </div>
+              </div>
+
               {% comment %}
               <a href="price.html" class="nav-item nav-link">Price</a>
               {% endcomment %}
@@ -187,15 +198,15 @@
               <a href="">About Us</a>
               <a href="">Contact Us</a>
               <a href="">Our Service</a>
-              <a href="">Service Points</a>
-              <a href="">Pricing Plan</a>
+              <a href="{% url 'map_view' %}">Service Points</a>
+              <a href="{% url 'service_cost_finder' %}">Pricing Plan</a>
             </div>
           </div>
           <div class="col-lg-3 col-md-6">
             <div class="footer-link">
               <h2>Useful Links</h2>
-              <a href="">Terms of use</a>
-              <a href="">Privacy policy</a>
+              <a href="{% url 'terms' %}" >Terms of use</a>
+              <a href="{% url 'privacy' %}">Privacy policy</a>
               <a href="">Cookies</a>
               <a href="">Help</a>
               <a href="">FQAs</a>

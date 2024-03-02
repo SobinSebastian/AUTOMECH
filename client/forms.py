@@ -334,9 +334,7 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'image', 'video']
-        widgets = {
-            'content': TinyMCE(),
-        }
+        widgets = {'content': TinyMCE(attrs={'cols': 80, 'rows': 30})}
 
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)

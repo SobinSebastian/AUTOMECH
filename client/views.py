@@ -332,6 +332,43 @@ def rsa (request):
 
 from django.views.decorators.cache import cache_control
 
+#////////////////////////// BLOG START //////////////////////////////////////////////////////////
+
+def client_blog(request):
+    posts = Post.objects.all()
+    context={
+        'posts':posts
+    }
+    return render(request,'client/blog.html',context)
+
+def client_blog_details (request,blog_slug):
+    post = Post.objects.get(slug = blog_slug)
+    context={
+        'post':post
+    }
+    return render(request,'client/blog_details.html',context)
+
+@login_required
+def like_post(request, post_slug):
+    post = get_object_or_404(Post, slug=post_slug)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        sweetify.toast(request, 'Unlike', icon='error', timer=3000)
+    else:
+        post.likes.add(request.user)
+        sweetify.toast(request, 'Liked', timer=3000)
+    return redirect('client_blog_details', blog_slug=post.slug)
+
+#\\\\\\\\\\\\\\\\\\\\\\\\\\ BLOG END  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+#////////////////////////// Terms and Conditions ///////////////////////////////////////////////////////
+def terms(request):
+    return render (request,'client/terms.html')
+def privacy(request):
+    return render (request,'client/privacy.html')
+#\\\\\\\\\\\\\\\\\\\\\\\\\\ Terms and Conditions End \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+
 @cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def custom_logout(request):
     logout(request)

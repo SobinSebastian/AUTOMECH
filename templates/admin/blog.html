@@ -28,6 +28,7 @@
           <div class="post-content">
             {{ post.content | safe }}
           </div>
+          <a href="{% url 'edit_post' slug=post.slug %}">Edit Post</a>
         </article>
         {% endfor %}
         </div>

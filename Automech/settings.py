@@ -177,4 +177,5 @@ razor_pay_key_id='rzp_test_LWLCjtUNBImDaB'
 TINYMCE_DEFAULT_CONFIG = {
     'height': 360,
     'width': 960,
+    'menubar': True,
 }

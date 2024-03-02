@@ -1,0 +1,52 @@
+{% extends 'client/base.html' %}
+{%block content%}
+{% load static %}
+    {%if is_filled%}
+<div class="alert alert-warning alert-dismissible fade show" role="alert">
+    <strong>{{user.name}}</strong> You should check in on some of those fields below.
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+{% endif %}
+
+<div class="blog">
+  <div class="container">
+      <div class="section-header text-center">
+          <h2>{{ post.title }}</h2>
+      </div>
+      <div class="blog-img">
+        {% if post.image %}
+        <img src="{{ post.image.url }}" alt="{{ post.title }}" class="post-image">
+        {% endif %}
+      </div>
+      <div class="blog-text">
+        <h3>{{ post.title }}</h3>
+      </div>
+      <div class="blog-meta">
+        <p><i class="fa fa-user"></i><a href="">{{ post.author.get_full_name }}</a></p>
+        <p>{{ post.pub_date }}</p>
+        <p>{{ post.likes.count }} likes</p>
+        <p>
+          <a href="{% url 'like_post' post_slug=post.slug %}">
+          {% if user in post.likes.all %}
+            Unlike <i class="ti-heart text-danger ms-1"></i>
+          {% else %}
+            Like <i class="ti-heart text-danger ms-1"></i>
+          {% endif %}
+          </a>
+        </p>
+    </div>
+    <div class="post-content">
+      {{ post.content | safe }}
+    </div>
+    {% if post.video %}
+    <video width="320" height="240" controls>
+      <source src="{{ post.video.url }}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+  {% endif %}
+  </div>
+</div>
+ 
+{%endblock%}
