@@ -2204,3 +2204,16 @@ a:focus {
   .card-zoom:hover {
     transform: scale(1.1); /* You can adjust the scale factor as per your preference */
   }
+
+
+  .ser_price_li {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+  }
+  
+  .ser_price_li .check-mark {
+    font-size: 1.2em;
+    margin-right: 0.5em;
+  }
+  

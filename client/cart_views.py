@@ -82,25 +82,44 @@ def orders (request):
     serviceorders = ServiceOrder.objects.filter(vehicle_id=id).order_by('date')
     order_items =ServiceOrderItem.objects.all()
 
+    serviceorder_prices = []
+
+    for serviceorder in serviceorders:
+        total_price = 0
+
+        for order_item in order_items:
+            if order_item.service_order == serviceorder:
+                for service_p in service_prices:
+                    if service_p.service == order_item.service_list:
+                        total_price += service_p.price
+                        # order_item_with_price = {
+                        #     'order_item': order_item,
+                        #     'price': service_p.price
+                        # }
+                        # serviceorder_prices.append(order_item_with_price)
+
+        # Append the total price along with the service order
+                payruppe = total_price *100
+        serviceorder_prices.append({
+            'service_order': serviceorder,
+            'total_price': total_price,
+            'payruppe':payruppe        
+            })
+
     order_items_with_prices = []
-    total_price  = 0
-    for order_item in order_items:
-        matched = False
+    for order_item in order_items: 
+        total_price  = 0
         for service_p in service_prices:
-            if service_p.service == order_item.service_list and not matched:
+            if service_p.service == order_item.service_list:
                 total_price = (total_price+service_p.price)
                 order_items_with_prices.append({
                     'order_item': order_item,
                     'price': service_p.price
                 })
-                print(service_p.price)
-                matched = True 
-                payruppe = total_price *100
     context = {
+        'serviceorder_prices':serviceorder_prices,
         'serviceorders': serviceorders,
         'order_items' : order_items_with_prices,
-        'total_price':  total_price,
-        'payruppe':payruppe
         }
     return  render(request,'client/orders.html',context)
 

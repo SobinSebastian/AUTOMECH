@@ -7,14 +7,19 @@
     <div class="container">
         <div class="row">
             {% for service, price in  services %}
-            <div class="col-md-3 d-flex">
-                <div class="price-item featured-item d-flex flex-column">
-                    <div class="image-model-container">
-                        <div class="duration-container">
-                            4 Hrs Taken
-                        </div>
-                        <img src="{{service.service_Image.url }}" class="img-fluid zoom-modimage" alt="Your Image">
+            <div class="col-12 d-flex border ">
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                        <div class="price-item featured-item d-flex flex-column">
+                            <div class="image-model-container">
+                                <div class="duration-container">
+                                    4 Hrs Taken
+                                </div>
+                                <img src="{{service.service_Image.url }}" class="img-fluid zoom-modimage" alt="Your Image">
+                            </div>
                     </div>
+                </div>
+                <div class="col-md-6">
                     <div class="price-header flex-grow-1">
                         <h3>{{service.service_name}}</h3>
                         {{service.description}}
@@ -26,19 +31,26 @@
                                 {% endif %}
                             </span></h2>
                     </div>
-                    <div class="price-footer">
-                        {% if variant %}
-                        <form method="POST" hx-post="{% url 'add_to_cart' slug=service.slug %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-custom">Add to Cart</button>
-                        </form>
-                        {% else %}
-                        <a class="btn btn-custom" href="">Select Car</a>
-                        {% endif %}
-                    </div>
+                    {% for task in service.tasks.all %}
+                    <ul style="list-style-type:none">
+                      <li>✅{{ task.task_name }}</li> 
+                    </ul>
+                    {% endfor %}
+                </div>
+                
+                </div>
+                <div class="price-footer  col-3 align-content-center">
+                    {% if variant %}
+                    <form method="POST" hx-post="{% url 'add_to_cart' slug=service.slug %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-custom">Add to Cart</button>
+                    </form>
+                    {% else %}
+                    <a class="btn btn-custom" href="">Select Car</a>
+                    {% endif %}
                 </div>
             </div>
-            {% endfor %}
+            {% endfor %}          
         </div>
     </div>
 </div>

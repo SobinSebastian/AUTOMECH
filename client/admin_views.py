@@ -328,3 +328,33 @@ def create_or_edit_post(request, slug=None):
     template_name ='admin/create_post.html'
     return render(request, template_name, {'form': form, 'post': post})
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  VIEWS FOR BLOG END    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+#\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ TASK \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+    
+def TaskListViewAndCreateView(request):
+    if request.method == 'POST':
+        form = TaskForm(request.POST)
+        if form.is_valid():
+            form.save()
+            sweetify.toast(request, 'Service Task Is Added', icon='success', timer=3000)
+            return redirect('task_list_create_update')
+    else:
+        form = TaskForm()
+
+    tasks = Task.objects.all()
+    context = {
+        'form': form,
+        'tasks': tasks,
+    }
+    return render(request, 'admin/task_list_create_update.html', context)
+
+def TaskListUpdateView(request, slug=None):
+    if slug:
+        task = get_object_or_404(Task, slug=slug)
+        if request.method == 'POST':
+            form = TaskForm(request.POST, instance=task)
+            if form.is_valid():
+                form.save()
+                sweetify.toast(request, 'Service Task Is Updated', icon='success', timer=3000)
+                return redirect('task_list_create_update')

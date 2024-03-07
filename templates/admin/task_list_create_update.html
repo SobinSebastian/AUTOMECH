@@ -1,0 +1,44 @@
+{% extends 'admin/adminbase.html' %}
+{% block content %}
+    <form method="POST" >
+        {% csrf_token %}
+        {{form.as_p}}
+    <button class="btn btn-primary btn-sm" >Add </button>
+    </form>
+  <h2>Task List</h2>
+  <ul>
+    {% for task in tasks %}
+      <li>{{ task.task_name }} -</li>
+      <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal{{task.slug}}">
+        Edit Service Task
+    </button>
+      
+      <!-- Modal -->
+      <div class="modal fade" id="exampleModal{{task.slug}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <form method="POST" action="{% url 'edit_task' slug=task.slug %}">
+                {% csrf_token %}
+                <label>{{form.task_name.label}}</label>
+                <input type="text" name="task_name" placeholder="Enter The Service Task" class="form-control" maxlength="255" required="" id="id_task_name"
+                value="{{task.task_name}}">
+             
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary btn-sm">Save changes</button>
+            </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </ul>
+{% endblock %}

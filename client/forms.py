@@ -108,12 +108,13 @@ class ServiceCategoryForm(forms.ModelForm):
 class ServiceListForm(forms.ModelForm):
     class Meta:
         model = ServiceList
-        fields = [ 'service_name','service_category','description' ,'service_Image']
+        fields = [ 'service_name','service_category','description' ,'service_Image','tasks']
         widgets = {
              'service_name': forms.TextInput(attrs={'placeholder': 'Enter the Service name','class': 'form-control'}),
              'service_category': forms.Select(attrs={'class': 'form-control'}),
              'description' : forms.TextInput(attrs={'class': 'form-control'}),
              'service_Image' : forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
+             'tasks': forms.CheckboxSelectMultiple(attrs={'class': 'form-check-input'}),
         }
 
 
@@ -341,3 +342,11 @@ class PostForm(forms.ModelForm):
         self.fields['image'].widget.attrs['accept'] = 'image/*'
         self.fields['video'].widget.attrs['accept'] = 'video/*'
 #\\\\\\\\\\\\\\\\\\\\\ FORMS FOR BLOG END   \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+#///////////////////// FORM FOR TASK ///////////////////////////////////////
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ['task_name']
+        widgets = {
+            'task_name': forms.TextInput(attrs={'placeholder': 'Enter The Service Task', 'class': 'form-control'}),
+        }

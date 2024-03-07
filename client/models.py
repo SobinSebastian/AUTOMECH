@@ -152,11 +152,24 @@ class ServiceCategory(models.Model):
     def __str__(self):
         return self.category_name
 
+class Task(models.Model):
+    task_name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.task_name)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.task_name
+
 class ServiceList(models.Model):
     service_name = models.CharField(max_length=255,unique=True)
     service_category = models.ForeignKey('ServiceCategory', on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
     service_Image = models.ImageField(upload_to='service_images/',blank=True, null=True)
+    tasks = models.ManyToManyField(Task)
     slug = models.SlugField(unique=True, blank=True)
     def save(self, *args, **kwargs):
         if not self.slug:
