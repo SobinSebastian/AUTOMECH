@@ -75,57 +75,21 @@
 <div class="container mt-5">
   <div class="row">
     <div class="col text-right">
-      {% comment %} <button type="button" class="btn btn-primary" onclick="openForm()">Click me</button> {% endcomment %}
+     <button type="button" class="btn btn-primary" onclick="openForm()">Click me</button>
     </div>
   </div>
 </div>
 
-<div class="form-popup" id="myForm">
-  <div class="form-container">
-    <div class="row">
-      <div class="col-md-12 grid-margin stretch-card">
-        <div class="card">
-          <div class="card-body">
-            <div class="col-md-6">
-              
-
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="container mt-4">
-                    <div class="row">
-                      {%for make in makes%}
-                      <div class="col-md-4 d-flex justify-content-center">
-                        <div class="card ">
-                          <div class="card-body">
-                            <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 100px; max-height: 100px;">
-                          </div>
-                        </div>
-                      </div>
-                      {%endfor%}
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-        </div>
+{% comment %} Modal For Car Select {% endcomment %}
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered car-width-modal" role="document">
+    <div class="modal-content">
+      <div class="modal-body" id="mycar">
+        {% include 'client/partials/car_make.html' with car_makes=makes %}
       </div>
     </div>
   </div>
-  <button type="button" class="btn cancel" onclick="closeForm()">Close</button>
 </div>
-</div>
-
-<script>
-function openForm() {
-  document.getElementById("myForm").style.display = "block";
-}
-
-function closeForm() {
-  document.getElementById("myForm").style.display = "none";
-}
-</script>
 
 <div class="single">
   <div class="container">
@@ -137,20 +101,34 @@ function closeForm() {
     {% else %}
         <p>No vehicle selected</p>
     {% endif %} {% endcomment %}
-      <div class="row">
-          <div class="col-lg-8">
-              <div class="single-tags">
-                {% for category in categories %}
-                <a href=""
-                   data-category-slug="{{ category.slug }}"
-                   class="{% if request.resolver_match.url_name == 'get_category_data' and category.slug == request.GET.category_slug %}active{% endif %}"
-                   hx-get="{% url 'get_category_data' category_slug=category.slug %}"
-                   hx-trigger="{% if forloop.first %}load once{% else %}click{% endif %}"
-                   hx-target="#category-data">{{ category.category_name }}</a>
-                {% endfor %}
-              </div>
-          </div>
+    <div class="row">
+      <div class="col-lg-8">
+        <div class="single-tags">
+          {% for category in categories %}
+            <a href=""
+              data-category-slug="{{ category.slug }}"
+              class="{% if request.resolver_match.url_name == 'get_category_data' and category.slug == request.GET.category_slug %}active{% endif %}"
+              hx-get="{% url 'get_category_data' category_slug=category.slug %}"
+              hx-trigger="{% if forloop.first %}load once{% else %}click{% endif %}"
+              hx-target="#category-data">{{ category.category_name }}</a>
+            {% endfor %}
+        </div>
       </div>
+      <div>
+        <!--Details Of Selected Vehicle-->
+        {% if carvariant %}
+        {{carvariant}}
+        <img src="{{carvariant.model.model_Image.url}}" width="100">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+          change
+        </button>
+        {% else %}
+          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+            Select Car
+          </button>
+        {% endif %}    
+      </div>
+    </div>
   </div>
 </div>
 <div id="category-data">
@@ -213,48 +191,6 @@ function closeForm() {
 });
 </script>
 <!-- Price Start -->
-{% comment %} <div class="col-md-6">
-  <div class="container ">
-    <div class="row">
-
-      {%for make in makes%}
-        
-        <div class="col-md-4 d-flex justify-content-center card-zoom ">
-          <a href="{% url 'account_login'%}">
-            <div class="card-body">
-              <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 80px; max-height: 80px;">
-              <p class="card-text text-sm">
-              {{make.make_name}}
-              </p>
-            </div>
-          </a>
-        </div>   
-        <div class="col-md-4 d-flex justify-content-center card-zoom ">
-          <a href="{% url 'account_login'%}">
-            <div class="card-body">
-              <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 80px; max-height: 80px;">
-              <p class="card-text text-sm">
-              {{make.make_name}}
-              </p>
-            </div>
-          </a>
-        </div>  
-        <div class="col-md-4 d-flex justify-content-center card-zoom ">
-          <a href="{% url 'account_login'%}">
-            <div class="card-body">
-              <img src="{{ make.make_Image.url }}" alt="{{ make.make_name }} Image" style="max-width: 80px; max-height: 80px;">
-              <p class="card-text text-sm">
-              {{make.make_name}}
-              </p>
-            </div>
-          </a>
-        </div>  
-        
-      
-      {%endfor%}
-    </div>
-  </div>
-</div> {% endcomment %}
 </div>
 
 

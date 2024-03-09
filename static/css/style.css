@@ -2217,3 +2217,9 @@ a:focus {
     margin-right: 0.5em;
   }
   
+.zoom-modimage {
+    transition: transform 0.2s;
+}
+.zoom-modimage:hover {
+    transform: scale(1.2);
+}

@@ -26,10 +26,20 @@ def index(request):
            return redirect('manager_home')
         if not UserInfo.objects.filter(client=request.user).exists():
             return redirect('profile_setup')
+        
+    car =request.session.get('selected_car')
+    if car :
+        carvariant = ModelVariant.objects.get(variant_slug = car)
+    else :
+        carvariant = None
     categories = ServiceCategory.objects.all()
     # services = ServiceList.objects.all()
     make = CarMake.objects.all()
-    context={'categories':categories,'makes':make}
+    context={
+        'categories':categories,
+        'makes':make,
+        'carvariant':carvariant
+        }
     return render(request,'client/index.html',context)
     
 def profilesetup(request):
@@ -173,6 +183,9 @@ def get_category_data(request, category_slug):
     if request.user.is_authenticated:
         vehicle = get_object_or_404(Vehicleinfo, client=request.user)
         variant = vehicle.model_variant
+    selcar = request.session.get('selected_car')
+    if  selcar :
+        variant = ModelVariant.objects.get(variant_slug = selcar)
     category = get_object_or_404(ServiceCategory, slug=category_slug)
     category_data = ServiceList.objects.filter(service_category=category)
     service_prices = ServicePrice.objects.filter(variant=variant)
@@ -373,3 +386,39 @@ def privacy(request):
 def custom_logout(request):
     logout(request)
     return render(request, 'client/logout.html')
+
+def car(request):
+    cars=CarModel.objects.all()
+    car_makes = CarMake.objects.all()
+    context={
+        'cars':cars,
+        'car_makes': car_makes
+    }
+    return render(request,'client/car.html',context)
+
+from django.template.loader import render_to_string
+
+def load_car_make(request):
+    car_makes = CarMake.objects.all()
+    return render(request, 'client/partials/car_make.html', {'car_makes': car_makes})
+
+
+def load_car_models(request, make_id):
+    car_models = CarModel.objects.filter(make_company_id=make_id)
+    return render(request, 'client/partials/car_models.html', {'car_models': car_models})
+
+def load_model_variants(request, model_id):
+    model_variants = ModelVariant.objects.filter(model_id=model_id)
+    car_model = CarModel.objects.get(pk=model_id)
+    make_id = car_model.make_company.id
+    context ={
+        'model_variants': model_variants,
+        'm_id' : make_id
+    }
+    return render(request, 'client/partials/model_variants.html',context)
+
+
+def setcar(request,var_slug):
+    request.session['selected_car'] = var_slug
+    sweetify.toast(request, 'Car Model Is Seleted', timer=3000)
+    return redirect('index')

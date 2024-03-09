@@ -1,7 +1,13 @@
 
 <div class="price">
     <div class="section-header ">
-        <p> {{cat}} {% if vehicle %} FOR {{vehicle.model_variant}}({{vehicle.vehicle_Regno}}){% endif%}</p>
+        <p> {{cat}}  
+            {% if request.session.selected_car %}
+            FOR {{ request.session.selected_car }}
+            {% elif vehicle %}
+            FOR {{vehicle.model_variant}}({{vehicle.vehicle_Regno}})
+            {% endif %}
+        </p>
     </div>
    
     <div class="container">
@@ -31,6 +37,7 @@
                                 {% endif %}
                             </span></h2>
                     </div>
+                    
                     {% for task in service.tasks.all %}
                     <ul style="list-style-type:none">
                       <li>✅{{ task.task_name }}</li> 
@@ -39,14 +46,20 @@
                 </div>
                 
                 </div>
-                <div class="price-footer  col-3 align-content-center">
+                <div class="price-footer  col-3 d-flex">
                     {% if variant %}
                     <form method="POST" hx-post="{% url 'add_to_cart' slug=service.slug %}">
                         {% csrf_token %}
+                        <br><br><br>
                         <button type="submit" class="btn btn-custom">Add to Cart</button>
                     </form>
                     {% else %}
-                    <a class="btn btn-custom" href="">Select Car</a>
+                    <br><br><br>
+                    <form method="POST" hx-post="">
+                        {% csrf_token %}
+                        <br><br><br>
+                        <button type="submit" class="btn btn-custom">Select Car</button>
+                    </form>
                     {% endif %}
                 </div>
             </div>

@@ -5,5 +5,6 @@ urlpatterns = [
     path('add_cart/<slug:slug>/', views.add_to_cart, name='add_to_cart'),
     path('remove/<slug:slug>/', views.remove_from_cart, name='remove_from_cart'),
     path('orders/', views.orders, name='orders'),
-    path('generate-estimate-pdf/', views.generate_estimate_pdf, name='generate_estimate_pdf'),
+    path('generate-estimate-pdf/<slug:slug>', views.generate_estimate_pdf, name='generate_estimate_pdf'),
+    path('pay/<slug:slug>',views.pay,name='bill_pay')
 ]

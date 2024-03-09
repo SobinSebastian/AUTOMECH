@@ -1,0 +1,59 @@
+<!-- model_variants.html -->
+<main class="container py-4">
+    <div class="row" id="carsContainer">
+        <div class="col-md-14">
+            <div class="card mb-3">
+                <b>
+                    <button hx-get="{% url 'load_car_models' m_id %}" hx-trigger="click" hx-target="#mycar" class="btn btn-light ">
+                        ← 
+                    </button>
+                    Select Car Variant
+                </b>
+                <br>
+                <div class="row g-0">
+                    {% for model_variant in model_variants %}
+                    <a href="{% url 'setcar' var_slug=model_variant.variant_slug %}" class="col-md-4 d-flex flex-column justify-content-center align-items-center zoom-modimage">
+                        <div class="col-md-10">
+                            <img src="{{model_variant.model.model_Image.url}}" class="img-fluid zoom-modimage" alt="...">
+                        </div>
+                        <small>{{ model_variant.variant_name }} </small>
+                    </a>
+                    {% endfor %}
+                </div>
+                <br>
+            </div>
+            <button type="button" class="btn btn-sm" data-dismiss="modal" aria-label="Close">
+                Close
+              </button>
+        </div>
+    </div>
+</main>
+
+{% comment %} 
+<!-- model_variants.html -->
+<main class="container py-4">
+    <div class="row" id="carsContainer">
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <b>
+                    <button hx-get="{% url 'load_car_models' m_id %}" hx-trigger="click" hx-target="#mycar" class="btn btn-light ">
+                        ← 
+                    </button>
+                    Select Car Variant
+                </b>
+                <br>
+                <div class="row g-0">
+                    {% for model_variant in model_variants %}
+                    <div class="col-md-4 d-flex flex-column justify-content-center align-items-center zoom-modimage">
+                        <div class="col-md-10">
+                            <img src="{{model_variant.model.model_Image.url}}" class="img-fluid zoom-modimage" alt="...">
+                        </div>
+                        <small>{{ model_variant.variant_name }} </small>
+                    </div>
+                    {% endfor %}
+                </div>
+                <br>
+            </div>
+        </div>
+    </div>
+</main> {% endcomment %}

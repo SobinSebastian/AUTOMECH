@@ -1,0 +1,25 @@
+
+ <main class="container py-4">
+    <div class="row" id="carsContainer">
+      <div class="col-md-14">
+        <div class="card mb-3">
+            <b> <button type="button"  class="btn btn-light " data-dismiss="modal" aria-label="Close">
+                ← 
+            </button>Select Manufacturer</b>
+            <br>
+            <div class="row g-0">
+                {% for car_make in car_makes %}
+                    <div class="col-md-4 d-flex flex-column justify-content-center align-items-center zoom-modimage"
+                    hx-get="{% url 'load_car_models' car_make.id %}" hx-trigger="click" hx-target="#mycar">
+                        <div class="col-md-10">
+                            <img src="{{car_make.make_Image.url}}" class="img-fluid zoom-modimage" alt="...">
+                        </div>
+                        <small>{{ car_make.make_name }}</small>
+                    </div>
+                {% endfor %}
+            </div>
+            <br>
+        </div>
+      </div>
+    </div>
+</main> 

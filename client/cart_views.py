@@ -3,6 +3,7 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import sweetify
+import razorpay
 @login_required
 def view_cart(request):
     id = request.session.get('selected_vehicle')
@@ -35,6 +36,7 @@ def view_cart(request):
             date=booking_date,
             time=time,
             vehicle=vehicle,
+            price = total_price,
         )
         service_order.save()
 
@@ -134,24 +136,41 @@ def remove_from_cart(request, slug):
 def book(request):
     return redirect('view_cart')
 
-
-
+#basic setup for payment it will handle with pay id in database
+def pay(request,slug):
+    det = ServiceOrder.objects.get(slug=slug)
+    price = det.price
+    amount_in_paise = int(price * 100)
+    client = razorpay.Client(auth=('rzp_test_fUAj9vRg2OywN4', '1edKB7jxm6c56kSl4tzg0z0E'))
+    payment = client.order.create(data={ 'amount':amount_in_paise, 'currency': 'INR', 'payment_capture': 1 })
+    det.razorpay_order_id=payment['id']
+    det.save() 
+    context ={
+        'det':det,
+        'payment': payment
+    }
+    return render(request,'client/pay_bill.html',context)
 
 # code to generate pdf 
 from django.shortcuts import render
 from django.http import HttpResponse
 from reportlab.pdfgen import canvas
 
-def generate_estimate_pdf(request):
-    # Your estimate data (replace this with your actual data)
-    estimate_data = {
-        'customer_name': 'John Doe',
-        'item': 'Web Development',
-        'quantity': 5,
-        'unit_price': 100,
-        'total_amount': 500,
-    }
+def generate_estimate_pdf(request,slug):
 
+    orders = ServiceOrder.objects.get(slug =slug)
+    car = orders.vehicle.model_variant
+    service_prices = ServicePrice.objects.filter(variant = car)
+    items = ServiceOrderItem.objects.filter(service_order = orders)
+    table_data = [
+    ["Service Name", "Price"]
+    ]
+    totalprice= 0
+    for i in items:
+        for j in service_prices:
+            if j.service == i.service_list:
+                totalprice =  totalprice + j.price
+                table_data.append([i.service_list.service_name,str(j.price) ])
     # Create a response object with PDF content type
     response = HttpResponse(content_type='application/pdf')
     
@@ -160,15 +179,86 @@ def generate_estimate_pdf(request):
 
     # Create a PDF object
     pdf = canvas.Canvas(response)
+    logo_path = "D:\PROJECT 2024\Automech\client\logo.png"  # Modify this path to your logo image
+    logo_width = 50  # Adjust logo width as needed
+    logo_height = 50  # Adjust logo height as needed
+    if logo_path:
+      pdf.drawImage(logo_path, 50, 770, width=logo_width, height=logo_height)
 
-    # Add content to the PDF
-    pdf.drawString(100, 800, f'Estimate for: {estimate_data["customer_name"]}')
-    pdf.drawString(100, 780, f'Item: {estimate_data["item"]}')
-    pdf.drawString(100, 760, f'Quantity: {estimate_data["quantity"]}')
-    pdf.drawString(100, 740, f'Unit Price: ${estimate_data["unit_price"]}')
-    pdf.drawString(100, 720, f'Total Amount: ${estimate_data["total_amount"]}')
+  # Add company name
+    pdf.setFont("Helvetica-Bold", 20)
+    company_name = "Auto Mech"
+    pdf.drawString(logo_width + 60, 790, company_name)  # Adjust position based on logo size
 
-    # Save the PDF
+    # Enter your company and customer information
+
+    customer_name = "Customer Name"
+    customer_phone = "Customer Phone"
+    customer_date = "MM/DD/YYYY"
+    customer_address = "Customer Address"
+    car_make = f"{orders.vehicle.model_variant.model.make_company}"
+    car_model = f"{orders.vehicle.model_variant}"
+    car_registration = f"{orders.vehicle.vehicle_Regno}"
+    car_serial = "Car Serial"
+    car_odometer = "Odometer"
+    insurance_company = "Insurance Company"
+    adjuster = "Adjuster"
+
+    pdf.setFont("Helvetica", 10)
+    pdf.drawString(400, 800, f"Auto Mech,Pala Road")
+    pdf.drawString(400, 785, f"Pallickathode,Kottayam ,686503")
+    pdf.drawString(400, 770, f"auto.mech.rsa@gmail.com")
+    pdf.drawString(400, 755, f"907457 4393")
+
+    start_x = 50
+    start_y = 750
+    end_x = 500
+    end_y = 750
+
+    # Set line width and color (optional)
+    line_width = 1  # Adjust thickness
+    line_color = "black"  # Adjust color
+
+    # Draw the line
+    pdf.setStrokeColor(line_color)  # Set color before drawing (optional)
+    pdf.setLineWidth(line_width)  # Set width before drawing (optional)
+    pdf.line(start_x, start_y, end_x, end_y)
+
+    pdf.drawString(60, 720, "Estimate For :")
+    pdf.drawString(60, 705, "Name:")
+    pdf.drawString(100, 705, f"{request.user}")
+    pdf.drawString(60, 690, "Phone:")
+    pdf.drawString(100, 690, f"9074574393")
+    pdf.drawString(60, 675, "Email:")
+    pdf.drawString(100, 675, f"sobinolickal1936@gmail.com")
+    pdf.drawString(60, 660, "Address:")
+    pdf.drawString(100, 660, f"{totalprice}")
+
+    pdf.drawString(350, 720, "Date:")
+    pdf.drawString(400, 720, customer_date)
+
+    pdf.drawString(350, 705, "Vehicle Information:")
+    car_details_left = 350  # Adjust for spacing
+    car_details_top = 690
+    pdf.drawString(car_details_left, car_details_top, f"Make: {car_make}")
+    pdf.drawString(car_details_left, car_details_top - 15, f"Model: {car_model}")
+    pdf.drawString(car_details_left, car_details_top - 30, f"Registration: {car_registration}")
+
+    # Create a table for the estimate items
+    # # Helper function to draw the table
+    def draw_table(table_data, x, y, col_widths, row_heights):
+        for col_index, col_width in enumerate(col_widths):
+            for row_index, row_data in enumerate(table_data):
+                cell_text = row_data[col_index]
+                pdf.drawString(x + (col_index * col_width), y - (row_index * row_heights), cell_text)
+
+    # # Draw the estimate table
+    col_widths = [100, 150]
+    row_heights = 15
+    table_top = 600
+    table_left = 50
+    draw_table(table_data, table_left, table_top, col_widths, row_heights)
+
     pdf.showPage()
     pdf.save()
 

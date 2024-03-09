@@ -70,38 +70,10 @@
             <h4>Estimated Total: ₹ {{ forder.total_price }}</h4>
             {% if oder.status == 'on hold' %}
                 <br>
-                <a href="{% url 'generate_estimate_pdf' %}">download</a>
+                <a href="{% url 'generate_estimate_pdf' oder.slug %}">download</a>
             {% endif %}
-            <button id="rzp-button1-{{ oder.id }}" class="btn btn-success">Pay Bill</button>
-            <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-            <script>
-                var options_{{ oder.id }} = {
-                    "key": "rzp_test_fUAj9vRg2OywN4",
-                    "amount": "{{ forder.payruppe}}",  // Make sure the amount is in subunits (paise for INR)
-                    "currency": "INR",
-                    "name": "AutoMech",
-                    "description": "Booking payment",
-                    "image": "https://example.com/your_logo",
-                    "order_id": "{{ forder.razorpay_order_id }}",
-                    "callback_url": "http://127.0.0.1:8000/razorpay_callback/",
-                    "prefill": {
-                        "name": "{{ user.first_name }} {{ user.last_name }}",
-                        "email": "{{ user.email }}",
-                        "contact": "9000090000"
-                    },
-                    "notes": {
-                        "address": "Razorpay Corporate Office"
-                    },
-                    "theme": {
-                        "color": "#201658"
-                    }
-                };
-                var rzp_{{ oder.id }} = new Razorpay(options_{{ oder.id }});
-                document.getElementById('rzp-button1-{{ oder.id }}').onclick = function(e) {
-                    rzp_{{ oder.id }}.open();
-                    e.preventDefault();
-                }
-            </script>
+            <a href="{% url 'bill_pay' oder.slug %}">PAY</a>
+            
         </div>
     {% endif %}
 {% endfor %}

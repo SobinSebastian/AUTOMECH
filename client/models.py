@@ -285,6 +285,10 @@ class ServiceOrder(models.Model):
     slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False, max_length=36)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='on hold')
     service_slot = models.ForeignKey(ServicesSlots, on_delete=models.SET_NULL, null=True, blank=True)
+    razorpay_payment_id=models.CharField(max_length=100,null=True,blank=True)
+    razorpay_order_id=models.CharField(max_length=100, null=True,blank=True)
+    razorpay_signature=models.CharField(max_length=100, null=True,blank=True)
+    price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
 
     def __str__(self):
         return f"{self.vehicle.vehicle_Regno} - {self.service_center.place} - {self.date} {self.time}"

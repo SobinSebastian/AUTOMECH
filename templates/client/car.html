@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zoom Effect</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .zoom-modimage {
+            transition: transform 0.2s;
+        }
+        .zoom-modimage:hover {
+            transform: scale(1.2);
+        }
+        .car-width-modal {
+            max-width: 30%; /* Adjust the percentage or use a fixed value like '500px' */
+            margin: auto;    /* Center the modal horizontally */
+          }
+    </style>
+    <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
+</head>
+</head>
+<body>
+
+    <!-- Bootstrap JS (popper.js and bootstrap.js) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    
+
+    
+
+{% comment %} <!-- Button trigger modal -->
+<br>
+<br><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" >
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        <div id="mycar">
+            {% include 'client/partials/car_make.html' with car_makes=car_makes %}
+        </div>
+    </div> {% endcomment %}
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+    Launch demo modal
+</button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered car-width-modal" role="document">
+      <div class="modal-content">
+        <div class="modal-body" id="mycar">
+          {% include 'client/partials/car_make.html' with car_makes=car_makes %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+</body>
+</html>
