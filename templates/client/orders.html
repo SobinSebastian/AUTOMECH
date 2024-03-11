@@ -67,12 +67,15 @@
                                         {% for forder in serviceorder_prices %}
     {% if forder.service_order == oder %}
         <div class="text-right">
-            <h4>Estimated Total: ₹ {{ forder.total_price }}</h4>
+            <h4>Total   Amount: ₹ {{ forder.total_price }}</h4>
             {% if oder.status == 'on hold' %}
                 <br>
                 <a href="{% url 'generate_estimate_pdf' oder.slug %}">download</a>
             {% endif %}
-            <a href="{% url 'bill_pay' oder.slug %}">PAY</a>
+            {% if oder.status == 'completed' %}
+            <br>
+            <a href="{% url 'bill_pay' oder.slug %}" class=" btn btn-primary btn-sm">PAY</a>
+            {% endif %}
             
         </div>
     {% endif %}

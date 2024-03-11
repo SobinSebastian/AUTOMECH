@@ -1,0 +1,119 @@
+{% extends 'admin/adminbase.html' %}
+{%block content%}
+{% load static %}
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="card-title"> Edit Manufacturer : {{ car_make.make_name }}
+                </h4> 
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{%url 'car_make' %}">Vehicels</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">{{ car_make.make_name }}</li>
+                    </ol>
+                </nav>
+                <form method="post" enctype="multipart/form-data" id="makeForm">
+                    {% csrf_token %}
+                    <label>{{form.make_name.label}}</label>  
+                    {{form.make_name}}  
+                    <div id="make_nameError" class="text-danger"></div>
+                    <label>{{form.make_Image.label}}</label>
+                    {{form.make_Image}}  
+                    <div id="make_ImageError" class="text-danger"></div>
+            </div>
+            <div class="modal-footer">
+                <a href="{%url 'car_make' %}" class="btn btn-secondary btn-sm" >Go Back</a>
+                <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                </form>
+
+
+
+            </div>
+        </div>
+        
+    </div>
+   
+    
+{% comment %} java Script for validation {% endcomment %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var makeForm = document.querySelector('#makeForm');
+        var makeNameInput = document.querySelector('#id_make_name');
+        var makeImageInput = document.querySelector('#id_make_Image');
+
+        // Add input event listeners for real-time validation
+        makeNameInput.addEventListener('input', function () {
+            validateMakeName(makeNameInput);
+        });
+
+        makeImageInput.addEventListener('change', function () {
+            validateMakeImage(makeImageInput);
+        });
+
+        makeForm.addEventListener('submit', function (event) {
+            // Validate Make Name
+            if (!validateMakeName(makeNameInput)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+
+            // Validate Make Image
+            if (!validateMakeImage(makeImageInput)) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+        });
+
+        function validateMakeName(input) {
+            var value = input.value.trim();
+            var errorContainer = document.getElementById('make_nameError');
+
+            // Check if the value is empty or doesn't match the pattern
+            if (value === '' || !/^[a-zA-Z&\s-]+$/.test(value)) {
+                errorContainer.textContent = "Make Name can only contain letters, &, space, and hyphens.";
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                errorContainer.textContent = "";
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+
+       
+    function validateMakeImage(fileInput) {
+        var errorContainer = document.getElementById('make_ImageError');
+        var file = fileInput.files[0];
+
+        // Check if the value is empty
+        if (file === undefined) {
+            errorContainer.textContent = "Please select a Manufacturer Image.";
+            fileInput.classList.remove('is-valid');
+            fileInput.classList.add('is-invalid');
+            return false;
+        }
+
+        // Validate image dimensions
+        var image = new Image();
+        image.src = URL.createObjectURL(file);
+        image.onload = function () {
+            if (image.width === 800 && image.height === 800) {
+                errorContainer.textContent = "";
+                fileInput.classList.remove('is-invalid');
+                fileInput.classList.add('is-valid');
+            } else {
+                errorContainer.textContent = "Image dimensions must be 800x800 pixels.";
+                fileInput.classList.remove('is-valid');
+                fileInput.classList.add('is-invalid');
+            }
+        };
+
+        return true;
+    }
+});
+</script>
+
+{%endblock%}

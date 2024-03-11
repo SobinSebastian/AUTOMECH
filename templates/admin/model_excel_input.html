@@ -1,0 +1,17 @@
+{% extends 'admin/adminbase.html' %}
+{% block conhead%}
+
+{% endblock %}
+{%block content%}
+{% load static %}
+<div class="row">
+    <h2>Insert Edited Excel</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    {{ form.as_p }}
+    
+    <button type="submit" class="btn btn-primary">Insert Data</button>
+  </form>
+</div>
+{%endblock%}

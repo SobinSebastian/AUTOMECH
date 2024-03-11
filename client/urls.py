@@ -24,6 +24,7 @@ path('blog/<slug:blog_slug>/',views.client_blog_details,name='client_blog_detail
 path('like_post/<slug:post_slug>/',views.like_post, name='like_post'),
 path('Terms',views.terms,name='terms'),
 path('Privacy',views.privacy,name='privacy'),
+path('Vehicles',views.vehicel_details,name='my_vehicles'),
 path('logout/', views.custom_logout, name='custom_logout'),
 path('cars/',views.car,name='cars'),
 #for vehicle select

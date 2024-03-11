@@ -3,8 +3,10 @@ from .models import *
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 import sweetify
+from django.views.decorators.cache import cache_control
 import razorpay
 @login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def view_cart(request):
     id = request.session.get('selected_vehicle')
     vehicle = Vehicleinfo.objects.get(id=id)
@@ -76,7 +78,8 @@ def add_to_cart(request, slug):
 
 
     return redirect('index')
- 
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def orders (request):
     id = request.session.get('selected_vehicle')
     vehicle = Vehicleinfo.objects.get(id=id)

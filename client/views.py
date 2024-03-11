@@ -374,6 +374,16 @@ def like_post(request, post_slug):
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\ BLOG END  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
+#////////////////////////// CLIENT VEHICLE DETAILS       ///////////////////////////////////////////////////
+def vehicel_details(request):
+    user = request.user
+    vehicles = Vehicleinfo.objects.filter(client = user) 
+    context = {
+        'vehicles' : vehicles,
+        'form' : VehicleaddForm()
+    }
+    return render (request,"client/client_vehicle.html",context)
+#////////////////////////// CLIENT VEHICLE DETAILS END  ///////////////////////////////////////////////////
 #////////////////////////// Terms and Conditions ///////////////////////////////////////////////////////
 def terms(request):
     return render (request,'client/terms.html')

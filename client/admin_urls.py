@@ -37,5 +37,8 @@ path('post/', create_or_edit_post, name='create_post'),#FOR BLOG CREATION
 path('blog/',view_blog,name='admin_blog'),#blog
 path('tasks/', TaskListViewAndCreateView, name='task_list_create_update'),
 path('tasks/<slug:slug>/', TaskListUpdateView, name='edit_task'),
-
+#URLS FOR Bluk upload
+path('download-excel-with-headers/',download_excel_with_headers, name='download_excel_with_headers'),
+path('insert_data',insert_excel,name="excelin"),
+path('car_make/<slug:make_slug>/edit/', CarMakeUpdateView.as_view(), name='car_make_edit'),
 ]

@@ -61,6 +61,8 @@ class CarMakeForm(forms.ModelForm):
             'make_Image': forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
         }
 
+
+
 class CarModelForm(forms.ModelForm):
     class Meta:
         model = CarModel
@@ -350,3 +352,8 @@ class TaskForm(forms.ModelForm):
         widgets = {
             'task_name': forms.TextInput(attrs={'placeholder': 'Enter The Service Task', 'class': 'form-control'}),
         }
+
+
+#//////////////////////// FORM FOR EXCEL UPLOAD ////////////////////////////////
+class ExcelUploadForm(forms.Form):
+    excel_file = forms.FileField(label='Select Excel File')

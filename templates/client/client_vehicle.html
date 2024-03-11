@@ -1,0 +1,202 @@
+{% extends 'client/base.html' %}
+{%block content%}
+<p class="ml-3"><a href="{% url 'index' %}">Home</a> > <a href="{% url 'account_profile' %}">My Account</a> > <a href="{% url 'my_vehicles' %}">My Vehicles</a></p>
+<div class="team">
+    <div class="container">
+        <div class="section-header text-center">
+            <p>My Vehicles</p>
+            <h2>Vehicle List</h2>
+        </div>
+        <div class="row">
+            <table class="table  table-sm">
+                <thead class="thead-primary">
+                    <tr>
+                        <th>Img</th>
+                        <th>Vehicle</th>
+                        <th>RegNo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {% for vehicle in vehicles%}
+                    <tr>
+                    <td><img src="{{vehicle.model_variant.model.model_Image.url}}" class="img-fluid zoom-modimage" alt="Your Image" width="150"></td>
+                    <td> {{vehicle.model_variant}}</td>
+                    <td> {{vehicle.vehicle_Regno}}</td>
+                    {% endfor %}
+                </tbody>
+            </table>
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+<!-- Button trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+    Launch demo modal
+  </button>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Add New Vehicle</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+            <form id="myForm1">
+                {% csrf_token %}
+                <div class="mb-3"> 
+                    {{ form.vehicle_Regno.label}}
+                    {{ form.vehicle_Regno }}
+                    <div id="vehicleRegnoError" class="text-danger"></div>
+                </div>
+                <div class="mb-3"> 
+                    {{ form.make_company.label }}
+                    {{ form.make_company }}
+                    <div id="makeCompanyError" class="text-danger"></div>
+                </div>
+                <div class="mb-3"> 
+                    {{ form.model_name.label }}
+                    {{ form.model_name }}
+                    <div id="modelNameError" class="text-danger"></div>
+                </div>
+                <div class="mb-3"> 
+                    {{ form.model_name.lable }}
+                    {{ form.model_variant }}
+                    <div id="modelVariantError" class="text-danger"></div>
+                </div>
+                <button type="submit" class="btn btn-dark w-100 my-4 mb-2">Finsh</button>
+            </form>
+            
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+ <script>
+$(document).ready(function () {
+    function updateModelNames() {
+        var makeId = $('#id_make_company').val();
+        if (makeId) {
+            $.ajax({
+                url: '/get_models/',  // Replace with your actual URL
+                data: {'make_id': makeId},
+                dataType: 'json',
+                success: function (data) {
+                    var modelSelect = $('#id_model_name');
+                    modelSelect.empty();
+                    modelSelect.append('<option value="">---------</option>');
+                    $.each(data.models, function (key, value) {
+                        modelSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                    updateModelVariants();  // Update model variants as well
+                }
+            });
+        } else {
+            // Reset model and variant dropdowns if make is not selected
+            $('#id_model_name').empty();
+            $('#id_model_variant').empty();
+        }
+    }
+
+    function updateModelVariants() {
+        var modelId = $('#id_model_name').val();
+        if (modelId) {
+            $.ajax({
+                url: '/get_model_variants/',  // Replace with your actual URL
+                data: {'model_id': modelId},
+                dataType: 'json',
+                success: function (data) {
+                    var variantSelect = $('#id_model_variant');
+                    variantSelect.empty();
+                    variantSelect.append('<option value="">---------</option>');
+                    $.each(data.variants, function (key, value) {
+                        variantSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                    });
+                }
+            });
+        } else {
+            // Reset variant dropdown if model is not selected
+            $('#id_model_variant').empty();
+        }
+    }
+
+    // Initial setup
+    updateModelNames();
+
+    // Event handlers
+    $('#id_make_company').change(function () {
+        updateModelNames();
+    });
+
+    $('#id_model_name').change(function () {
+        updateModelVariants();
+    });
+}); 
+function validateVehicleRegno(input) {
+    var value = input.value.trim();
+    var errorContainer = document.getElementById('vehicleRegnoError');
+
+    // Check if the value is empty or doesn't match the specified patterns
+    if (value === '' || !/(^[A-Z]{2}\d{2}[A-Z]{2}\d{4}$)|(^[A-Z]{2}\d{2}[A-Z]{1}\d{4}$)|(^[A-Z]{2}\d{2}[A-Z]{2}\d{4}$)/.test(value)) {
+        errorContainer.textContent = "Invalid Vehicle Regno. Use xx00xx0000, xx00x0000, or BH00XX0000 format.";
+        input.classList.remove('is-valid');
+        input.classList.add('is-invalid');
+        return false;
+    } else {
+        errorContainer.textContent = "";
+        input.classList.remove('is-invalid');
+        input.classList.add('is-valid');
+        return true;
+    }
+}
+document.addEventListener('input', function (event) {
+    if (event.target && event.target.matches('[name="vehicle_Regno"]')) {
+        console.log('Input event triggered');
+        validateVehicleRegno(event.target);
+    }
+    
+});
+function validateSelect(select, errorId) {
+    var value = select.options[select.selectedIndex].value;
+    var errorContainer = document.getElementById(errorId);
+
+    // Check if the value is empty
+    if (value === '') {
+        errorContainer.textContent = "Please make a selection.";
+        select.classList.remove('is-valid');
+        select.classList.add('is-invalid');
+        return false;
+    } else {
+        errorContainer.textContent = "";
+        select.classList.remove('is-invalid');
+        select.classList.add('is-valid');
+        return true;
+    }
+}
+document.addEventListener('change', function (event) {
+    if (event.target && event.target.matches('[name="make_company"]')) {
+        validateSelect(event.target, 'makeCompanyError');
+    } else if (event.target && event.target.matches('[name="model_name"]')) {
+        validateSelect(event.target, 'modelNameError');
+    } else if (event.target && event.target.matches('[name="model_variant"]')) {
+        validateSelect(event.target, 'modelVariantError');
+    }
+});
+
+
+
+</script>
+
+{% endblock %}

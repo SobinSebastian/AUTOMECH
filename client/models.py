@@ -313,6 +313,16 @@ class ServiceOrderItem(models.Model):
     class Meta:
         unique_together = ['service_order', 'vehicle_info', 'service_list']
 
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+@receiver(post_save, sender=ServiceOrderItem)
+def update_service_order_status(sender, instance, **kwargs):
+    service_order = instance.service_order
+    if service_order.serviceorderitem_set.filter(status='completed').count() == service_order.serviceorderitem_set.count():
+        service_order.status = 'completed'
+        service_order.save()
+
+
 
 
 class RoadsideAssistance(models.Model):

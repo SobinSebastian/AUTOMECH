@@ -11,7 +11,7 @@ from django.contrib.admin.views import main as default_admin_index
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
-from django.views.generic.edit import CreateView
+from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse_lazy
 from .models import CarMake
 from .forms import CarMakeForm
@@ -93,6 +93,21 @@ class CarMakes(CreateView, ListView):
     @method_decorator(staff_member_required)
     def dispatch(self, *args, **kwargs):
        return super().dispatch(*args, **kwargs)
+    
+class CarMakeUpdateView(UpdateView,ListView):
+    model = CarMake
+    form_class = CarMakeForm
+    template_name = 'admin/car_make_editform.html'
+    success_url = reverse_lazy('car_make')
+    slug_field = 'make_slug'  # Adjust this to your actual slug field name
+    slug_url_kwarg = 'make_slug' 
+    context_object_name = 'car_make'
+
+    @method_decorator(staff_member_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
 
 class CarModels(CreateView, ListView):
     model = CarModel
@@ -358,3 +373,107 @@ def TaskListUpdateView(request, slug=None):
                 form.save()
                 sweetify.toast(request, 'Service Task Is Updated', icon='success', timer=3000)
                 return redirect('task_list_create_update')
+            
+
+
+
+
+#//////////////////////////////// VIEWS FOR EXCEL UPLOAD  ////////////////////////////////////////////////
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xlsxwriter.workbook import Workbook
+def download_excel_with_headers(request):
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename="model_variants_template.xlsx"'
+
+    workbook = Workbook(response, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+
+    # Add headers
+    headers = ['Model', 'Fuel Type', 'Torque', 'BHP', 'Engine', 'Transmission', 'Tyre Size', 'Variant Name']
+    for col_num, header in enumerate(headers):
+        worksheet.write(0, col_num, header)
+
+    fuel_types = Fueltype.objects.all()
+    transmission_types = transmissionType.objects.all()
+    car_models = CarModel.objects.all()
+
+    # Add fuel types, transmission types, and car models to lists for dropdowns
+    fuel_type_list = [fuel.fuel_name for fuel in fuel_types]
+    transmission_type_list = [transmission.transmission_name for transmission in transmission_types]
+    car_model_list = [model.model_name for model in car_models]
+
+    # Add dropdowns for Fuel Type, Transmission, and Car Model
+    worksheet.data_validation(1, 1, 1000, 1, {'validate': 'list',
+                                              'source': fuel_type_list,
+                                              'input_message': 'Select a Fuel Type'})
+
+    worksheet.data_validation(1, 5, 1000, 5, {'validate': 'list',
+                                              'source': transmission_type_list,
+                                              'input_message': 'Select a Transmission Type'})
+
+    worksheet.data_validation(1, 0, 1000, 0, {'validate': 'list',
+                                              'source': car_model_list,
+                                              'input_message': 'Select a Car Model'})
+
+
+    workbook.close()
+    return response
+
+import pandas as pd
+def insert_excel(request):
+    if request.method == 'POST':
+        form = ExcelUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            try:
+                # Read the uploaded Excel file
+                df = pd.read_excel(request.FILES['excel_file'])
+
+                # Get fuel types, transmission types, and car models
+                fuel_types = Fueltype.objects.all()
+                transmission_types = transmissionType.objects.all()
+                car_models = CarModel.objects.all()
+
+                # Create dictionaries for quick lookup
+                fuel_type_dict = {fuel.fuel_name: fuel.id for fuel in fuel_types}
+                transmission_type_dict = {transmission.transmission_name: transmission.id for transmission in transmission_types}
+                car_model_dict = {model.model_name: model.id for model in car_models}
+
+                # Iterate over each row in the DataFrame and save data to ModelVariant
+                for index, row in df.iterrows():
+                    model_name = row['Model']
+
+                    # Skip the row if the model is missing
+                    if not model_name or model_name not in car_model_dict:
+                        sweetify.toast(request, f"Skipping row {index + 2}: Missing or invalid model name", icon='error', timer=3000)
+                        continue
+
+                    # Get the IDs for fuel type and transmission type, handling possible missing values
+                    fuel_type_id = fuel_type_dict.get(row.get('Fuel Type', ''), None)
+                    transmission_type_id = transmission_type_dict.get(row.get('Transmission', ''), None)
+
+                    # Create the ModelVariant, skipping if any of the required values are missing
+                    try:
+                        model_variant = ModelVariant.objects.create(
+                            model_id=car_model_dict[model_name],
+                            fuel_type_id=fuel_type_id,
+                            torque=row.get('Torque', ''),
+                            bhp=row.get('BHP', ''),
+                            engine=row.get('Engine', ''),
+                            transmission_id=transmission_type_id,
+                            tyre_size=row.get('Tyre Size', ''),
+                            variant_name=row.get('Variant Name', '')
+                        )
+                        sweetify.toast(request, f"Model Variant {model_variant.variant_name} inserted successfully", icon='success', timer=3000)
+                    except Exception as e:
+                        messages.warning(request, f"Skipping row {index + 2}: {str(e)}")
+
+                return redirect('success_url')  # Replace 'success_url' with the URL you want to redirect to after successful upload
+            except Exception as e:
+                sweetify.toast(request, f'Error inserting data: {e}')
+        else:
+            sweetify.toast(request, 'Invalid form submission. Please check your file and try again.')
+    else:
+        form = ExcelUploadForm()
+
+    return render(request, 'admin/model_excel_input.html', {'form': form})
