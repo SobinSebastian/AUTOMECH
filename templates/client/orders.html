@@ -64,22 +64,50 @@
                                         </tbody>
                                     </table>
                                     <div class="text-right">
-                                        {% for forder in serviceorder_prices %}
-    {% if forder.service_order == oder %}
-        <div class="text-right">
-            <h4>Total   Amount: ₹ {{ forder.total_price }}</h4>
-            {% if oder.status == 'on hold' %}
-                <br>
-                <a href="{% url 'generate_estimate_pdf' oder.slug %}">download</a>
-            {% endif %}
-            {% if oder.status == 'completed' %}
-            <br>
-            <a href="{% url 'bill_pay' oder.slug %}" class=" btn btn-primary btn-sm">PAY</a>
-            {% endif %}
-            
-        </div>
-    {% endif %}
-{% endfor %}
+                                      {% for forder in serviceorder_prices %}
+                                        {% if forder.service_order == oder %}
+                                        <div class="text-right">
+                                          <h4>Total   Amount: ₹ {{ forder.total_price }}</h4>
+                                            {% if oder.status == 'on hold' %}
+                                              <br>
+                                              <a href="{% url 'generate_estimate_pdf' oder.slug %}">download</a>
+                                            {% endif %}
+                                            {% if oder.status == 'completed' %}
+                                              <br>
+                                              <a href="{% url 'bill_pay' oder.slug %}" class=" btn btn-primary btn-sm">PAY</a>
+                                            {% endif %}
+
+                                            
+
+                                        </div>
+                                      {% endif %}
+                                      {% endfor %}
+                                        <!-- Button trigger modal -->
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{oder.slug}}">
+                                          Cancel Order
+                                        </button>
+                                    </div>
+                                    <div class="modal fade" id="exampleModal{{oder.slug}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel"> Cancel Service Order </h5>
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                            </button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <h2>Service Order Details</h2>
+                                            <p>Order: {{ oder.vehicle.vehicle_Regno }} ({{ oder.vehicle.model_variant }})</p>
+                                            <p>Service Center: {{ oder.service_center.place }}, {{ oder.service_center.city }}</p>
+                                            <p>Date and Time: {{ oder.date }}, {{ oder.time }}</p>
+                                          </div>
+                                          <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                                            <a href="{% url 'ocancel' oder.slug %}" class=" btn btn-danger btn-sm">Cancel</a>
+                                          </div>
+                                        </div>
+                                      </div>
                                     </div>
                                 </div>
                                 </td>

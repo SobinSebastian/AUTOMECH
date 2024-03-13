@@ -282,17 +282,17 @@ class ServicePriceForm(forms.ModelForm):
 class VehicleaddForm(forms.ModelForm):
     make_company = forms.ModelChoiceField(
         queryset=CarMake.objects.all(),
-        required=False,
+        required=True,
         widget=forms.Select(attrs={'placeholder': 'Select the Make', 'class': 'form-control'})
     )
     model_name = forms.ModelChoiceField(
         queryset=CarModel.objects.all(),
-        required=False,
+        required=True,
         widget=forms.Select(attrs={'placeholder': 'Select the Model', 'class': 'form-control'})
     )
     model_variant = forms.ModelChoiceField(
         queryset=ModelVariant.objects.all(),
-        required=False,
+        required=True,
         widget=forms.Select(attrs={'placeholder': 'Select the Variant', 'class': 'form-control'})
     )
 

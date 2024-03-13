@@ -1,45 +1,52 @@
 {% extends 'client/base.html' %}
-{%block content%}
-<p class="ml-3"><a href="{% url 'index' %}">Home</a> > <a href="{% url 'account_profile' %}">My Account</a> > <a href="{% url 'my_vehicles' %}">My Vehicles</a></p>
-<div class="team">
-    <div class="container">
-        <div class="section-header text-center">
-            <p>My Vehicles</p>
-            <h2>Vehicle List</h2>
-        </div>
-        <div class="row">
-            <table class="table  table-sm">
-                <thead class="thead-primary">
-                    <tr>
-                        <th>Img</th>
-                        <th>Vehicle</th>
-                        <th>RegNo</th>
-                    </tr>
-                </thead>
-                <tbody>
+{% block cstyle %}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
+{% endblock %}
+{% block content %}
+    <p class="ml-3"><a href="{% url 'index' %}">Home</a> > <a href="{% url 'account_profile' %}">My Account</a> > <a href="{% url 'my_vehicles' %}">My Vehicles</a></p>
+    <div class="team">
+        <div class="container">
+            <div class="section-header text-center">
+                <p>My Vehicles</p>
+                <h2>Vehicle List</h2>
+                <ul class="nav justify-content-end">
+                    <li class="nav-item">
+                      <a class="btn btn-success btn-sm" href="{% url "index" %}">< Go Back</a>
+                    </li>
                     
-                    {% for vehicle in vehicles%}
-                    <tr>
-                    <td><img src="{{vehicle.model_variant.model.model_Image.url}}" class="img-fluid zoom-modimage" alt="Your Image" width="150"></td>
-                    <td> {{vehicle.model_variant}}</td>
-                    <td> {{vehicle.vehicle_Regno}}</td>
-                    {% endfor %}
-                </tbody>
-            </table>
-            
+                    <li class="nav-item ml-2">
+                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
+                            Add Vehicle
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
+                <table class="table  table-sm" id="vehicleTable">
+                    <thead class="thead-primary">
+                        <tr>
+                            <th>Img</th>
+                            <th>Vehicle</th>
+                            <th>RegNo</th>
+                            <th>Service History</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for vehicle in vehicles %}
+                            <tr>
+                                <td><img src="{{ vehicle.model_variant.model.model_Image.url }}" class="img-fluid zoom-modimage" alt="Your Image" width="150"></td>
+                                <td>{{ vehicle.model_variant }}</td>
+                                <td>{{ vehicle.vehicle_Regno }}</td>
+                                <td><a href="{% url 'history' vehicle_Regno=vehicle.vehicle_Regno %}" class="btn btn-danger btn-sm">History</a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
-</div>
-
-
-
-
-<!-- Button trigger modal -->
-<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-    Launch demo modal
-  </button>
-  
-  <!-- Modal -->
+    
+      <!-- Modal -->
   <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
@@ -50,7 +57,7 @@
           </button>
         </div>
         <div class="modal-body">
-            <form id="myForm1">
+            <form id="myForm1" method="post" action="{% url 'my_vehicles' %}"> 
                 {% csrf_token %}
                 <div class="mb-3"> 
                     {{ form.vehicle_Regno.label}}
@@ -72,18 +79,101 @@
                     {{ form.model_variant }}
                     <div id="modelVariantError" class="text-danger"></div>
                 </div>
-                <button type="submit" class="btn btn-dark w-100 my-4 mb-2">Finsh</button>
-            </form>
             
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="submit" class="btn btn-primary">Add Vehicle</button>
+        </form>
         </div>
       </div>
     </div>
   </div>
+<script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var myForm = document.querySelector('#myForm1');
+            var vehicleRegnoInput = document.querySelector('#id_vehicle_Regno');
+            var makeCompanySelect = document.querySelector('#id_make_company');
+            var modelNameSelect = document.querySelector('#id_model_name');
+            var modelVariantSelect = document.querySelector('#id_model_variant');
 
+            // Add input event listeners for real-time validation
+            vehicleRegnoInput.addEventListener('input', function () {
+                validateVehicleRegno(vehicleRegnoInput);
+            });
+
+            makeCompanySelect.addEventListener('change', function () {
+                validateSelect(makeCompanySelect, 'makeCompanyError');
+                updateModelNames();
+            });
+
+            modelNameSelect.addEventListener('change', function () {
+                validateSelect(modelNameSelect, 'modelNameError');
+                updateModelVariants();
+            });
+
+            modelVariantSelect.addEventListener('change', function () {
+                validateSelect(modelVariantSelect, 'modelVariantError');
+            });
+
+            myForm.addEventListener('submit', function (event) {
+                // Validate Vehicle Regno
+                if (!validateVehicleRegno(vehicleRegnoInput)) {
+                    input.classList.add('is-invalid');
+                    event.preventDefault();
+                    event.stopPropagation();
+                }else {
+                    // Check if the vehicle number already exists
+                    checkVehicleExists(vehicleRegnoInput);
+                }
+
+                // Validate Make Company
+                if (!validateSelect(makeCompanySelect, 'makeCompanyError')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // Validate Model Name
+                if (!validateSelect(modelNameSelect, 'modelNameError')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // Validate Model Variant
+                if (!validateSelect(modelVariantSelect, 'modelVariantError')) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+
+                // Perform any additional form submission logic here
+
+                myForm.classList.add('was-validated');
+            });
+
+            function checkVehicleExists(input) {
+                var value = input.value.trim();
+                var errorContainer = document.getElementById('vehicleRegnoError');
+            
+                $.ajax({
+                    url: '{% url "check_vehicle_exists" %}',
+                    data: {'vehicle_regno': value},
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.exists) {
+                            errorContainer.textContent = "Vehicle number already registered.";
+                            input.classList.remove('is-valid');
+                            input.classList.add('is-invalid');
+                        } else {
+                            errorContainer.textContent = "";
+                            input.classList.remove('is-invalid');
+                            input.classList.add('is-valid');
+                        }
+                    }
+                });
+            }
+
+        });
+    </script>
  <script>
 $(document).ready(function () {
     function updateModelNames() {

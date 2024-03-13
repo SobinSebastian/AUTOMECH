@@ -1,0 +1,91 @@
+{% extends 'client/base.html' %}
+
+{% block cstyle %}
+        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Add Bootstrap JavaScript and Popper.js -->
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    
+        <!-- Add DataTables JavaScript -->
+        <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+{% endblock %}
+{%block content%}
+{% load static %}
+<div class="blog">
+    <div class="container mt-5">
+        <div class="section-header text-center">
+            <p>Service History</p>
+            <h3>{{ vehicle.vehicle_Regno }} ( {{ vehicle.model_variant }})</h3>
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                  <a class="btn btn-success btn-sm" href="{% url "index" %}">< Go Back</a>
+                </li>
+            </ul>
+        </div>
+        {% if orders%}
+        <table class="table" id="serviceHistoryTable">
+            <thead>
+                <tr>
+                    <th scope="col">Sl No</th>
+                    <th scope="col">Date & time</th>
+                    <th scope="col">Service Center</th>
+                    <th scope="col">View </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+                <tr data-toggle="collapse" data-target="#details{{order.slug}}" class="clickable">
+                    <td></td>
+                    <td>{{order.date}} ,{{order.time}}</td>
+                    <td>{{order.service_center.place}},{{order.service_center.city}}</td>
+                    <td> View More</td>
+                </tr>
+                <tr id="details{{order.slug}}" class="collapse">
+                    <td colspan="4">
+                        <div class="rounded border border-primary">
+                            <div class="card-body">
+                                <b>Service Order Details</b>
+                                <table class="table table-info">
+                                    <thead>
+                                        <tr>
+                                            <th>Service Name</th>
+                                            <th>Price</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for item in order_items %} <!-- Assuming 'items' is the correct attribute name -->
+                                        {%if order.id == item.order_item.service_order.id%}
+                                        <tr>
+                                            <td>{{item.order_item.service_list}}</td>
+                                            <td>₹ {{ item.price }}</td>
+                                        </tr>
+                                        {% endif %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                                <div class="text-right">
+                                    <h4>Total   Amount: ₹  {{order.price}}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <script>
+            $(document).ready(function() {
+                $('#serviceHistoryTable').DataTable();
+            });
+        </script>
+        {% else %}
+We don't Have Any pervious Service Records 
+        {% endif %}
+
+        <br>
+        <br>
+        <br>
+    </div>
+</div>
+{% endblock %} 

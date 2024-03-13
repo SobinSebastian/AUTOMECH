@@ -1,8 +1,51 @@
 {% extends 'client/base.html' %}
 {%block content%}
 {% load static %}
-{{det.price}}
-<button type="submit" class="btn btn-dark w-100 my-4 mb-2" id="rzp-button1"> Pay with Razorpay</button>
+
+<div>
+    <br>
+</div>
+<div class="bgimg h-100">
+    <div class="container">
+        <div class="row mt-lg-n10 mt-md-n11 mt-n10">
+          <div class="col-xl-4 col-lg-5 col-md-7 mx-auto">
+            <br>
+            <div class="card z-index-0">
+              <div class="card-header text-center pt-4">
+                <h5 id="bookingpay" >Service Payment</h5>
+              </div>
+              <div class="card-body">
+                  <div class="mb-3">
+                    Service Order :{{det}}
+                    <br>
+                  </div>
+                  <div class="mb-3">
+                    Amount  : {{det.price}} ₹
+                  </div>
+                  <form method="post" action="booking_payment">
+                    {% csrf_token %}
+                    <input type="hidden" name="identifier" value="{{id}}">
+                  <div class="text-center">
+                    <button type="submit" class="btn btn-dark w-100 my-4 mb-2" id="rzp-button1"> Pay with Razorpay</button>
+                  </div>
+                  <div class="mt-2 position-relative text-center">
+                    <p class="text-sm font-weight-bold mb-2 text-secondary text-border d-inline z-index-2 bg-white px-3">
+                    </p>
+                  </div>
+                  
+                 </form>
+              </div>
+            </div>
+            <!--HELLO-->
+            
+            <!--hello-->
+            <br><br><br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <script>
     var options = {
@@ -13,7 +56,7 @@
         "description": "Booking payment",
         "image": "{% static 'img/favicon.ico' %}",
         "order_id": "{{det.razorpay_order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-        "callback_url": "http://127.0.0.1:8000/razorpay_callback/",
+        "callback_url": "http://127.0.0.1:8000/cart/razorpay_callback/",
         "prefill": {
             "name": "{{user.first_name}} {{user.last_name}}",
             "email": "{{user.email}}",

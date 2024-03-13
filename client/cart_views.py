@@ -5,6 +5,8 @@ from django.utils import timezone
 import sweetify
 from django.views.decorators.cache import cache_control
 import razorpay
+
+
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def view_cart(request):
@@ -84,7 +86,7 @@ def orders (request):
     id = request.session.get('selected_vehicle')
     vehicle = Vehicleinfo.objects.get(id=id)
     service_prices = ServicePrice.objects.filter(variant = vehicle.model_variant)
-    serviceorders = ServiceOrder.objects.filter(vehicle_id=id).order_by('date')
+    serviceorders = ServiceOrder.objects.filter(vehicle_id=id).exclude( status__in=['closed', 'cancelled']).order_by('date')
     order_items =ServiceOrderItem.objects.all()
 
     serviceorder_prices = []
@@ -195,7 +197,7 @@ def generate_estimate_pdf(request,slug):
 
     # Enter your company and customer information
 
-    customer_name = "Customer Name"
+    userinfo = UserInfo.objects.get(client = request.user)
     customer_phone = "Customer Phone"
     customer_date = "MM/DD/YYYY"
     customer_address = "Customer Address"
@@ -229,14 +231,14 @@ def generate_estimate_pdf(request,slug):
 
     pdf.drawString(60, 720, "Estimate For :")
     pdf.drawString(60, 705, "Name:")
-    pdf.drawString(100, 705, f"{request.user}")
+    pdf.drawString(100, 705, f"{request.user.first_name} {request.user.last_name}")
     pdf.drawString(60, 690, "Phone:")
-    pdf.drawString(100, 690, f"9074574393")
+    pdf.drawString(100, 690, f"{userinfo.contact_no}")
     pdf.drawString(60, 675, "Email:")
     pdf.drawString(100, 675, f"sobinolickal1936@gmail.com")
     pdf.drawString(60, 660, "Address:")
-    pdf.drawString(100, 660, f"{totalprice}")
-
+    pdf.drawString(100, 660, f"{userinfo.address},{userinfo.place},{userinfo.city}")
+    pdf.drawString(100, 645, f"{userinfo.city},{userinfo.district},{userinfo.pincode}")
     pdf.drawString(350, 720, "Date:")
     pdf.drawString(400, 720, customer_date)
 
@@ -266,3 +268,37 @@ def generate_estimate_pdf(request,slug):
     pdf.save()
 
     return response
+
+
+# ///////////////////////// Payment Backend //////////////////////////////////////////////
+
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt
+def razorpay_callback(request):
+    if request.method == "POST" :
+        a=request.POST
+        order_id=""
+        payment_id=""
+        for key ,val in a.items():
+            if key=='razorpay_order_id':
+                order_id=val
+                break
+        for key ,val in a.items():
+            if key=='razorpay_order_id':
+                payment_id=val
+                break
+    service=ServiceOrder.objects.filter(razorpay_order_id=order_id).first()
+    service.razorpay_payment_id=payment_id
+    service.status="closed"
+    service.save()
+    sweetify.toast(request, 'Payment is Successful', timer=3000)
+    return  redirect('index')
+
+
+#//////////////////////////// Cancel Service ORDER
+def Cancel_Service_order(request,slug):
+    orders = ServiceOrder.objects.get(slug =slug)
+    orders.status = 'cancelled'
+    orders.save()
+    sweetify.toast(request, 'Service Order cancelled ', timer=3000)
+    return redirect('orders')

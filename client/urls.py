@@ -27,9 +27,11 @@ path('Privacy',views.privacy,name='privacy'),
 path('Vehicles',views.vehicel_details,name='my_vehicles'),
 path('logout/', views.custom_logout, name='custom_logout'),
 path('cars/',views.car,name='cars'),
+path('Vehicles/History/<str:vehicle_Regno>',views.service_history,name='history'),
 #for vehicle select
 path('load_car_make/', views.load_car_make, name='load_car_make'),
 path('load_car_models/<int:make_id>/', views.load_car_models, name='load_car_models'),
 path('load_model_variants/<int:model_id>/', views.load_model_variants, name='load_model_variants'),
 path('setcar/<slug:var_slug>', views.setcar, name='setcar'),
+ path('check_vehicle_exists/', views.check_vehicle_exists, name='check_vehicle_exists'),
 ]

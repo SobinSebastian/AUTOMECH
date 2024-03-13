@@ -378,11 +378,33 @@ def like_post(request, post_slug):
 def vehicel_details(request):
     user = request.user
     vehicles = Vehicleinfo.objects.filter(client = user) 
+    if request.method == 'POST':
+        form = VehicleaddForm(request.POST)
+        if form.is_valid():
+            reg_no = form.cleaned_data['vehicle_Regno']
+            variant_id = form.cleaned_data['model_variant']
+            vehicle_info = Vehicleinfo(
+                client=request.user,
+                model_variant=variant_id,
+                vehicle_Regno=reg_no
+            )
+            vehicle_info.save()
+            sweetify.toast(request, 'New Vehicle is Added',timer=3000)
     context = {
         'vehicles' : vehicles,
         'form' : VehicleaddForm()
     }
     return render (request,"client/client_vehicle.html",context)
+
+#/////////////// For Check Vehicle Existance
+def check_vehicle_exists(request):
+    if request.method == 'GET':
+        vehicle_regno = request.GET.get('vehicle_regno', None)
+        print(vehicle_regno)
+        if vehicle_regno:
+            exists = Vehicleinfo.objects.filter(vehicle_Regno=vehicle_regno).exists()
+            return JsonResponse({'exists': exists})
+    return JsonResponse({'exists': False})
 #////////////////////////// CLIENT VEHICLE DETAILS END  ///////////////////////////////////////////////////
 #////////////////////////// Terms and Conditions ///////////////////////////////////////////////////////
 def terms(request):
@@ -432,3 +454,31 @@ def setcar(request,var_slug):
     request.session['selected_car'] = var_slug
     sweetify.toast(request, 'Car Model Is Seleted', timer=3000)
     return redirect('index')
+
+
+
+
+# /////////////////////// SERVICE HISTORY /////////////////////////////
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
+def service_history (request, vehicle_Regno):
+    vehicle_info = get_object_or_404(Vehicleinfo, vehicle_Regno=vehicle_Regno)
+    service_prices = ServicePrice.objects.filter(variant = vehicle_info.model_variant)
+    serviceorders = ServiceOrder.objects.filter(vehicle_id=vehicle_info.id,status = 'closed').order_by('date')
+    order_items =ServiceOrderItem.objects.all()
+    order_items_with_prices = []
+    for order_item in order_items: 
+        total_price  = 0
+        for service_p in service_prices:
+            if service_p.service == order_item.service_list:
+                total_price = (total_price+service_p.price)
+                order_items_with_prices.append({
+                    'order_item': order_item,
+                    'price': service_p.price
+                })
+    context ={
+        'vehicle':vehicle_info,
+        'orders' :serviceorders,
+        'order_items' : order_items_with_prices,
+    }
+    return render (request,'client/service_history.html',context)

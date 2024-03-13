@@ -137,7 +137,7 @@ class ModelVariant(models.Model):
         unique_together = ('model', 'variant_name',)
 
 class Vehicleinfo(models.Model):
-    client = models.OneToOneField(User, on_delete=models.CASCADE)
+    client = models.ForeignKey(User, on_delete=models.CASCADE)
     model_variant = models.ForeignKey(ModelVariant, on_delete=models.CASCADE)
     vehicle_Regno = models.CharField(max_length=20, unique=True)
 
@@ -277,6 +277,7 @@ class ServiceOrder(models.Model):
         ('processing', 'Processing'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
+        ('closed', 'Closed'),
     )
     vehicle = models.ForeignKey(Vehicleinfo, on_delete=models.CASCADE)
     service_center = models.ForeignKey(ServiceCenter, on_delete=models.CASCADE)
