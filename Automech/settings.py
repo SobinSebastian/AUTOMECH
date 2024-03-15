@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.google',
     'sweetify',
     'tinymce',
+    'chosen',
 ]
 
 SOCIALACCOUNT_PROVIDERS = {

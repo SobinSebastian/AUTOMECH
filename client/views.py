@@ -181,13 +181,16 @@ def get_category_data(request, category_slug):
     variant = None
     vehicle = None
     if request.user.is_authenticated:
-        vehicle = get_object_or_404(Vehicleinfo, client=request.user)
+        vehicle = Vehicleinfo.objects.filter(client=request.user).first()
         variant = vehicle.model_variant
     selcar = request.session.get('selected_car')
     if  selcar :
         variant = ModelVariant.objects.get(variant_slug = selcar)
     category = get_object_or_404(ServiceCategory, slug=category_slug)
-    category_data = ServiceList.objects.filter(service_category=category)
+    #category_data = ServiceList.objects.filter(service_category=category)
+    category_data=ServiceList.objects.filter(
+            serviceprice__variant=variant,service_category=category
+        ).distinct()
     service_prices = ServicePrice.objects.filter(variant=variant)
     services_with_prices = []
     for service in category_data:

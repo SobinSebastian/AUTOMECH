@@ -304,17 +304,33 @@ def variant_serviceprice_view(request,slug=None):
     variant = None
     variant = get_object_or_404(ModelVariant, variant_slug=slug)
     if request.method == "POST":
-            form = ServicePriceForm (request.POST)
-            if form.is_valid():
-                form.save()
-            return redirect('car_variant_service', slug=variant.variant_slug)
+        form2 = PriceFormchange (request.POST)
+        form = ServicePriceForm (request.POST)
+       
+        if form.is_valid():
+            form.save()
+            sweetify.toast(request, f'New Service Is Added for  {variant}', icon='success', timer=3000)
+        if form2.is_valid():
+            p = form2.cleaned_data['price']
+            val = request.POST.get('slugval')
+            ser_price = ServicePrice.objects.get(slug=val)
+            ser_price.price =p
+            ser_price.save()
+            sweetify.toast(request, f' Service Is Updated for  {ser_price}', icon='success', timer=3000)
+        return redirect('car_variant_service', slug=variant.variant_slug)
     else:
         form = ServicePriceForm()
+        form2 = PriceFormchange()
        
         price_list = ServicePrice.objects.filter(variant = variant)
-        context ={'variant': variant,'price_list':price_list,'form':form}
+        context ={
+                'variant': variant,
+                'price_list':price_list,
+                'form':form,
+                'form2':form2,
+                }
         
-    return render(request,"admin/variant_price.html",context)
+        return render(request,"admin/variant_price.html",context)
 
 
 

@@ -1,14 +1,17 @@
 {% extends 'manager/managerbase.html' %}
 {%block content%}
 {% load static %}
-
-  
   <div class="row">
     <div class="col-md-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
           <h3 class="text-danger mt-3">Road Side Assistance </h3>
-
+          {% for i in list %}
+            {{i}}
+            {{i.longitude}}
+            {{i.latitude}}
+            {{i.description}}
+          {% endfor %}
           <div class="container mt-4">
             <div class="error-message text-center p-4 bg-light rounded">
               <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 200px; height: auto;">

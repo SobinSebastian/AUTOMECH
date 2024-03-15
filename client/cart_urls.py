@@ -9,4 +9,5 @@ urlpatterns = [
     path('generate-estimate-pdf/<slug:slug>', views.generate_estimate_pdf, name='generate_estimate_pdf'),
     path('pay/<slug:slug>',views.pay,name='bill_pay'),
     path('razorpay_callback/',views.razorpay_callback,name='razorpay_callback'),
+    path('generate-bill-pdf/<slug:slug>', views.generate_bill_pdf, name='generate_bill_pdf'),
 ]

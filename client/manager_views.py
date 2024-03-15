@@ -158,7 +158,12 @@ def manager_bookings_json(request):
 
 @manager_required
 def manager_rsa(request):
-    return render(request, 'manager/manager_rsa.html')
+    center = ServiceCenter.objects.get(manager=request.user)
+    list = RoadsideAssistance.objects.filter(service_center = center)
+    context = {
+        'list':list
+    }
+    return render(request, 'manager/manager_rsa.html',context)
 
 
 

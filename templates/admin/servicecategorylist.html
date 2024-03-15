@@ -1,6 +1,9 @@
 {% extends 'admin/adminbase.html' %}
-{%block content%}
 {% load static %}
+{% block conhead%}
+{% endblock %}
+{%block content%}
+
 <div class="row">
 
 <div class="col-md-12 grid-margin stretch-card">
@@ -76,7 +79,17 @@
                 </div>
               </div>
             </div>
-
+            <script>
+              $(".chosen-select").chosen({no_results_text: "Oops, nothing found!"}); 
+              {% comment %} $(document).ready(function() {
+                  $('.chosen-select').chosen({
+                      disable_search_threshold: 10,
+                      width: '100%'
+                  });
+              }); {% endcomment %}
+              </script>
+  
+           
             
             {% if ServiceLists %}
             <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">

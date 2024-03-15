@@ -43,7 +43,7 @@
                   </button>
                 </div>
                 <div class="modal-body">
-                  <form method="Post"> 
+                  <form method="Post" id="pricef"> 
                     {%csrf_token%}
                     {% comment %} {{form.as_p}} {% endcomment %}
                     <p>
@@ -55,10 +55,12 @@
                     <p>
                     <label>Service </label>
                     {{form.service}}
+                    <div id="serviceError" class="invalid-feedback"></div>
                     </p>
                     <p>
                       <label>Price </label>
                       {{form.price}}
+                      <div id="priceError" class="invalid-feedback"></div>
                       </p>
                 </div>
                 <div class="modal-footer">
@@ -68,7 +70,68 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> 
+          {% comment %} VALIDATION CODE FOR PRICE ADD FORM {% endcomment %}
+         
+          <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var serviceSelect = document.getElementById('id_service');
+                var priceInput = document.getElementById('id_price');
+                var form = document.getElementById('pricef');
+        
+                serviceSelect.addEventListener('change', function (event) {
+                    if (!validateService(serviceSelect)) {
+                        event.preventDefault();
+                    }
+                });
+        
+                priceInput.addEventListener('input', function (event) {
+                    if (!validatePrice(priceInput)) {
+                        event.preventDefault();
+                    }
+                });
+        
+                form.addEventListener('submit', function (event) {
+                    if (!validateService(serviceSelect) || !validatePrice(priceInput)) {
+                        event.preventDefault();
+                    }
+                });
+        
+                function validateService(select) {
+                    var errorContainer = document.getElementById('serviceError');
+                    var value = select.value;
+        
+                    if (value === '') {
+                        errorContainer.textContent = "Please select a service.";
+                        select.classList.add('is-invalid');
+                        return false;
+                    } else {
+                        errorContainer.textContent = "";
+                        select.classList.remove('is-invalid');
+                        select.classList.add('is-valid');
+                        return true;
+                    }
+                }
+        
+                function validatePrice(input) {
+                    var errorContainer = document.getElementById('priceError');
+                    var value = input.value.trim();
+        
+                    if (value === '' || isNaN(value)) {
+                        errorContainer.textContent = "Please enter a valid price.";
+                        input.classList.add('is-invalid');
+                        return false;
+                    } else {
+                        errorContainer.textContent = "";
+                        input.classList.remove('is-invalid');
+                        input.classList.add('is-valid');
+                        return true;
+                    }
+                }
+            });
+        </script>
+        
+        
         
           <div class="table-responsive">
           {% if  price_list%}
@@ -78,10 +141,10 @@
             <thead>
               <tr>
                 <th class="py-1">
-                  Variant Name
+                  service Name
                 </th>
                 <th>
-                  Transmission Type
+                  Service Price
                 </th>
                 <th>
                   Action
@@ -99,7 +162,14 @@
                   {{price.price}}
                 </td>
                <td>
-                <button class="btn btn-success btn-sm"> Edit</button>
+                
+                <form method="post" id="price" >
+                  {% csrf_token %}
+                  {{form2.price}}
+                  <input type="hidden" name="slugval" maxlength="15" required="" id="id_slugval" value="{{price.slug}}">
+                  <button class="btn btn-success btn-sm" type="submit"> Edit Price</button>
+                  <div id="priceError" class="invalid-feedback"></div>
+                </form>
                </td>
               </tr>
               {% endfor %}

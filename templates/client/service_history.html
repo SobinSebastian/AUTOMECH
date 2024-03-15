@@ -66,6 +66,8 @@
                                 </table>
                                 <div class="text-right">
                                     <h4>Total   Amount: ₹  {{order.price}}</h4>
+                                    <br>
+                                    <a href="{% url 'generate_bill_pdf' order.slug %}">Invoice</a>
                                 </div>
                             </div>
                         </div>

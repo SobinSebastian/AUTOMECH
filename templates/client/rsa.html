@@ -2,31 +2,110 @@
 {%block content%}
 {% load static %}
 <div class="blog">
-    <div id="distance-error" style="color: red; font-weight: bold;"></div>
-    <form method="post" action="{% url 'rsarequest' %}">
-        {% csrf_token %}
+    <div class="container mt-5">
+        <div class="section-header text-center">
+            <p>RSA Request</p>
+            <h3>Road Side Assistance</h3>
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                  <a class="btn btn-success btn-sm" href="{% url "index" %}">< Go Back</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div id="map" style="height: 400px; width: 400px;"></div>
+            </div>
+            <div class="col-lg-6">
+                <div id="distance-error" style="color: red; font-weight: bold;"></div>
+                <form method="post" action="{% url 'rsarequest' %}" class="my-10" style="width: 26rem;" id="yourFormId">
+                    {% csrf_token %}
+                
+                    <div class="form-group"> 
+                        <label for="vehicle_info">Select The Vehicle:</label>
+                        <select name="vehicle_info" id="vehicle_info" class="form-control">
+                            <option value="">---------</option>
+                            {% for vehicle in vehicles %}
+                            <option value="{{ vehicle.id }}">{{ vehicle.vehicle_Regno }}</option>
+                            {% endfor %}
+                        </select>
+                        <div id="vehicleError" class="text-danger"></div>
+                    </div>
+                
+                    <div class="form-group">
+                        <input type="hidden" name="latitude" id="latitude" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <input type="hidden" name="longitude" id="longitude" required>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea name="description" id="description" rows="4" class="form-control" required></textarea>
+                        <div id="descriptionError" class="text-danger"></div>
+                    </div>
+                
+                    <button type="submit" class="btn btn-primary" id="rsa">Submit</button>
+                </form>
+
+            </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('form');
     
-        <label for="vehicle_info">Vehicle Info:</label>
-        <select name="vehicle_info" id="vehicle_info">
-            {% for vehicle in vehicles %} <option value="{{ vehicle.id }}">{{ vehicle.vehicle_Regno }}</option> {% endfor %}
-        </select>
+            form.addEventListener('submit', function (event) {
+                var vehicleSelect = document.getElementById('vehicle_info');
+                var descriptionInput = document.getElementById('description');
     
-        <br>
-        <input type="hidden" name="latitude" id="latitude" required>
+                // Validate vehicle selection
+                if (!validateVehicle(vehicleSelect)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
     
-        <br>
-        <input type="hidden" name="longitude" id="longitude" required>
+                // Validate description
+                if (!validateDescription(descriptionInput)) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            });
     
-        <br>
+            function validateVehicle(select) {
+                var errorContainer = document.getElementById('vehicleError');
+                var value = select.value;
     
-        <label for="description">Description:</label>
-        <textarea name="description" id="description" rows="4" required></textarea>
+                if (value === '') {
+                    errorContainer.textContent = "Please select a vehicle.";
+                    select.classList.add('is-invalid');
+                    return false;
+                } else {
+                    errorContainer.textContent = "";
+                    select.classList.remove('is-invalid');
+                    select.classList.add('is-valid');
+                    return true;
+                }
+            }
     
-        <br>
+            function validateDescription(input) {
+                var errorContainer = document.getElementById('descriptionError');
+                var value = input.value.trim();
     
-        <button type="submit">Submit</button>
-    </form>
-    <div id="map" style="height: 400px; width: 400px;"></div>
+                if (value === '') {
+                    errorContainer.textContent = "Please provide a description.";
+                    input.classList.add('is-invalid');
+                    return false;
+                } else {
+                    errorContainer.textContent = "";
+                    input.classList.remove('is-invalid');
+                    input.classList.add('is-valid');
+                    return true;
+                }
+            }
+        });
+    </script> 
+        </div>
+    </div>
 </div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
@@ -136,6 +215,7 @@
                 // Display an error message if the distance is greater than 20 km
                 if (nearestDistance > 20) {
                     distanceErrorDiv.innerHTML = 'Roadside Assistance is not available for distances greater than 20 km.';
+                    document.getElementById('rsa').disabled = true;
                 }
             }
     
