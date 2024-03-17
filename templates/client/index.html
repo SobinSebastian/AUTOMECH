@@ -85,6 +85,8 @@
   <div class="modal-dialog modal-dialog-centered car-width-modal" role="document">
     <div class="modal-content">
       <div class="modal-body" id="mycar">
+
+        {% comment %} {% include 'client/partials/user_vehicles.html' with vehicles=vehicleinfo%} {% endcomment %}
         {% include 'client/partials/car_make.html' with car_makes=makes %}
       </div>
     </div>

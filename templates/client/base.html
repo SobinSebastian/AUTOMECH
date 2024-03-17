@@ -139,7 +139,24 @@
             <div class="navbar-nav ml-auto">
               {% if user.is_authenticated %}
                 <div class="nav-item dropdown">
-                  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="olaid">{{ user.first_name }}</a>
+                  
+                  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown" id="olaid">
+                    {% if uinfo.profile_picture %}
+          <img
+              src="{{uinfo.profile_picture.url}}"
+              alt="user-avatar"
+              width="200" height="200"
+              id="uploadedAvatar" 
+              class="card-img-top"
+              />
+          {% elif user.socialaccount_set.all.0.get_avatar_url %}
+            <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="rounded-circle" alt="Google Profile" width="30" height="30">
+          {% else %}
+            <img src="/media/profile_pictures/default.jpg"  class="rounded-circle" alt="Default Profile"  width="30" height="30">
+            
+          {% endif %}
+                    
+                    {{ user.first_name }}</a>
                   <div class="dropdown-menu" id="olaidmenu">
                     <a href="{% url 'account_profile' %}" id="Profile" class="btn dropdown-item">Profile</a>
                     <a href="{% url 'my_vehicles' %}" id="" class="btn dropdown-item">Vehicles</a>

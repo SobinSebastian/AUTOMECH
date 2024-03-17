@@ -1,6 +1,267 @@
 {% extends "client/base.html" %}
 {%block content%}
-<div class="bgimg h-100">
+
+<section class="vh-100" style="background-color: #f4f5f7;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-lg-8 mb-4 mb-lg-0">
+        <div class="card mb-3" style="border-radius: .5rem;">
+          <div class="row g-0">
+            <div class="col-md-4 gradient-custom text-center text-white"
+              style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                {% if uinfo.profile_picture %}
+                <img src="{{uinfo.profile_picture.url}}" alt="Avatar" class="img-fluid my-5" style="width: 100px;" />
+                {% elif user.socialaccount_set.all.0.get_avatar_url %}
+                  <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}"  alt="Avatar" class="img-fluid my-5" style="width: 100px;" >
+                {% else %}
+                  <img src="/media/profile_pictures/default.jpg"   alt="Avatar" class="img-fluid my-5" style="width: 100px;" >
+                  
+                {% endif %}
+              <h5> {{ user.first_name }} {{ user.last_name }} </h5>
+              <div class="col-12 mb-3">
+                <div class="row">
+                  <div class="col-12">
+                    <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#exampleModal1">
+                      Change Profile Picture
+                    </button>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-12">
+                    <button type="button" class="btn btn-primary btn-sm btn-block" >
+                      Change Password <use xlink:href="#tools"></use>
+                    </button>
+                  </div> 
+                </div>
+              </div>
+
+
+            </div>
+            <div class="col-md-8">
+              <div class="card-body p-4">
+                <h6>Information</h6>
+                <hr class="mt-0 mb-4">
+                <div class="row pt-1">
+                  <div class="col-6 mb-3">
+                    <h6>Email</h6>
+                    <p class="text-muted">{{ user.email }}</p>
+                  </div>
+                  <div class="col-6 mb-3">
+                    <h6>Phone</h6>
+                    <p class="text-muted">{{uinfo.contact_no}}</p>
+                  </div>
+                </div>
+                <h6>Address</h6>
+                <hr class="mt-0 mb-4">
+                <div class="row pt-1">
+                  <div class="col-6 mb-3">
+                    <h6>{{uinfo.address}}</h6>
+                    <p class="text-muted">{{uinfo.place}} ,{{uinfo.city}}</p>
+                    <p class="text-muted">{{uinfo.district}} , {{uinfo.pincode}}</p>
+                  </div>
+                  
+                
+                  <div class="col-6 mb-3">
+                    <div class="row">
+                      <div class="col-12">
+                        <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#exampleModal">
+                          Edit Profile
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row mt-2">
+                      <div class="col-12">
+                        <a href="{% url 'my_vehicles' %}" id="" class="btn btn-primary btn-sm btn-block" > Vehicles </a>
+                    
+                      </div> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  " role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <form role="form text-left" method="post" action="{% url 'account_profile' %}" id="updateForm" >
+              {% csrf_token %}
+              <input class="form-control" type="hidden" id="firstName" name="f_name" value="{{ user.first_name }}">
+              <input class="form-control" type="hidden" name="l_name" id="lastName" value="{{ user.last_name }}"  required/>
+
+              <div class="row mt-2 gy-4">
+                {% comment %} <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="firstName">First Name</label>
+                    <input class="form-control" type="text" id="firstName" name="f_name" value="{{ user.first_name }}"
+                      autofocus required />
+                      <p id="firstNameError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="lastName">Last Name</label>
+                    <input class="form-control" type="text" name="l_name" id="lastName" value="{{ user.last_name }}"  required/>
+                    <p id="lastNameError" class="text-danger"></p>
+                  </div>
+                </div> {% endcomment %}
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <input
+                      class="form-control"
+                      type="hidden"
+                      value="{{ user.email }}"
+                      placeholder="john.doe@example.com"  readonly/>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-floating form-floating-outline">
+                      <input
+                        type="hidden"
+                        id="phoneNumber"
+                        name="contact_no"
+                        class="form-control"
+                        placeholder="202 555 0111" 
+                        value="{{uinfo.contact_no}}"
+                        required/>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-floating form-floating-outline">
+                    <label for="place">Address</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="address"
+                      name="address"
+                      placeholder="Address" 
+                      value="{{uinfo.address}}"
+                      required
+                      />
+                       <p id="addressError" class="text-danger"></p>
+                      <br>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <label for="place">Place</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="place"
+                      name="place"
+                      placeholder="Place" 
+                      value="{{uinfo.place}}"
+                      required
+                      />
+                      <p id="placeError" class="text-danger"></p>
+                      <br>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <label for="city">City</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="city"
+                      name="city"
+                      placeholder="City" 
+                      value="{{uinfo.city}}"
+                      required/> 
+                      <p id="cityError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <label for="zipCode">Pincode</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="pincode"
+                      name="pincode"
+                      placeholder="pincode"
+                      maxlength="6" 
+                      value="{{uinfo.pincode}}" required/>
+                      <p id="pincodeError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <label for="country">District</label>
+                    <select id="district" name="district" class="form-control" >
+                        <option value="">select</option>
+                        <option value="{{uinfo.district}}" selected>{{uinfo.district}}</option>
+                        <option value="thiruvananthapuram">Thiruvananthapuram</option>
+                        <option value="kollam">Kollam</option>
+                        <option value="pathanamthitta">Pathanamthitta</option>
+                        <option value="alappuzha">Alappuzha</option>
+                        <option value="kottayam">Kottayam</option>
+                        <option value="idukki">Idukki</option>
+                        <option value="ernakulam">Ernakulam</option>
+                        <option value="thrissur">Thrissur</option>
+                        <option value="palakkad">Palakkad</option>
+                        <option value="malappuram">Malappuram</option>
+                        <option value="kozhikode">Kozhikode</option>
+                        <option value="wayanad">Wayanad</option>
+                        <option value="kannur">Kannur</option>
+                        <option value="kasaragod">Kasaragod</option>
+                    </select>
+                    <p id="districtError" class="text-danger"></p>
+                  </div>
+                </div>
+              </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-warning btn-sm me-2">Update </button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Change Profile Picture</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" enctype="multipart/form-data">  
+          {% csrf_token %}  
+          {{ form1.as_p }}              
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary btn-sm">Change </button>
+      </form>  
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+{% comment %} <div class="bgimg h-100">
   <div class="container">
     <!-- First Row -->
     <div class="row">
@@ -18,9 +279,10 @@
               class="card-img-top"
               />
           {% elif user.socialaccount_set.all.0.get_avatar_url %}
-            <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="Google Profile">
+            <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="rounded-circle" alt="Google Profile">
           {% else %}
-            <img src="" alt="Default Profile">
+            <img src="/media/profile_pictures/default.jpg"  class="rounded-circle" alt="Default Profile">
+            
           {% endif %}
           <br>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
@@ -32,7 +294,7 @@
             <div class="modal-dialog" role="document">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="exampleModalLabel">Add Profile Picture</h5>
+                  <h5 class="modal-title" id="exampleModalLabel">Change Profile Picture</h5>
                   <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                   </button>
@@ -43,8 +305,8 @@
                     {{ form1.as_p }}              
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                  <button type="submit" class="btn btn-primary">Change Profile Pic</button>
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary btn-sm">Change </button>
                 </form>  
                 </div>
               </div>
@@ -214,7 +476,7 @@
         </div>  
       </div>
     </div>
-  </div>
+  </div> {% endcomment %}
 <!-- / Content -->
 
 <script>

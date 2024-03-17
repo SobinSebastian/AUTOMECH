@@ -1,6 +1,231 @@
 <form hx-post="{% url 'step1_view' %}" hx-target="#form-container">
-    Profile Informations
+    <b>Profile Informations</b>
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-dark w-100 my-4 mb-2">Next</button>
-</form>
+    {{form.contact_no}}
+    <div id="phoneNumberError" class="text-danger"></div>
+    <br>
+    {{form.address}}
+    <div id="addressError" class="text-danger"></div>
+    <br> 
+    {{form.place}}
+    <div id="placeError" class="text-danger"></div>
+    <br>
+    {{form.city}}
+    <div id="cityError" class="text-danger"></div>
+    <br>
+    <select id="district" name="district" class="form-control"  placeholder="District" maxlength="100" required="" id="id_district">
+        <option value="">select</option>
+        <option value="thiruvananthapuram">Thiruvananthapuram</option>
+        <option value="kollam">Kollam</option>
+        <option value="pathanamthitta">Pathanamthitta</option>
+        <option value="alappuzha">Alappuzha</option>
+        <option value="kottayam">Kottayam</option>
+        <option value="idukki">Idukki</option>
+        <option value="ernakulam">Ernakulam</option>
+        <option value="thrissur">Thrissur</option>
+        <option value="palakkad">Palakkad</option>
+        <option value="malappuram">Malappuram</option>
+        <option value="kozhikode">Kozhikode</option>
+        <option value="wayanad">Wayanad</option>
+        <option value="kannur">Kannur</option>
+        <option value="kasaragod">Kasaragod</option>
+    </select>
+    <div id="districtError" class="text-danger"></div>
+    <br>
+    {{form.pincode}}
+    {% comment %} {{ form.as_p }} {% endcomment %}
+    <div id="pincodeError" class="text-danger"></div>
+        
+        <button type="submit" class="btn btn-dark w-100 my-4 mb-2" id="submit_button">Next</button>
+    </form>
+</div>
+<script>
+    function validatePINCode(pincode) {
+        const pincodeError = document.getElementById('pincodeError');
+        const pinRegex = /^[1-9][0-9]{5}$/;
+        if (pincode.trim() === '') {
+            pincodeError.textContent = 'PIN code cannot be empty';
+            return false;
+        } else if (!pinRegex.test(pincode)) {
+            pincodeError.textContent = 'Invalid PIN code. It should be a 6-digit number.';
+            return false;
+        } else {
+            pincodeError.textContent = '';
+            return true;
+        }
+    }
+
+    function validatePhoneNumber(phoneNumber) {
+        const phoneNumberError = document.getElementById('phoneNumberError');
+        const phoneRegex = /^[6-9]\d{9}$/;
+        if (phoneNumber.trim() === '') {
+            phoneNumberError.textContent = 'Phone number cannot be empty';
+            return false;
+        } else if (!phoneRegex.test(phoneNumber)) {
+            phoneNumberError.textContent = 'Invalid phone number. It should be a 10-digit number.';
+            return false;
+        } else {
+            phoneNumberError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateAddress(address) {
+        const addressError = document.getElementById('addressError');
+        if (address.trim() === '') {
+            addressError.textContent = 'Address cannot be empty';
+            return false;
+        } else {
+            addressError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateDistrict(district) {
+        const districtError = document.getElementById('districtError');
+        if (district.trim() === '') {
+            districtError.textContent = 'Please select a district.';
+            return false;
+        } else {
+            districtError.textContent = '';
+            return true;
+        }
+    }
+
+    function validatePlace(place) {
+        const placeError = document.getElementById('placeError');
+        if (place.trim() === '') {
+            placeError.textContent = 'Place cannot be empty';
+            return false;
+        } else if (!/^[a-zA-Z\s]+$/.test(place)) {
+            placeError.textContent = 'Place should contain only letters and spaces';
+            return false;
+        } else if (place.length < 4) {
+            placeError.textContent = 'Place should have at least 4 characters';
+            return false;
+        } else {
+            placeError.textContent = '';
+            return true;
+        }
+    }
+
+    function validateCity(city) {
+        const cityError = document.getElementById('cityError');
+        if (city.trim() === '') {
+            cityError.textContent = 'City cannot be empty';
+            return false;
+        } else if (!/^[a-zA-Z\s]+$/.test(city)) {
+            cityError.textContent = 'City should contain only letters and spaces';
+            return false;
+        } else if (city.length < 4) {
+            cityError.textContent = 'City should have at least 4 characters';
+            return false;
+        } else {
+            cityError.textContent = '';
+            return true;
+        }
+    }
+
+    const pincodeInput = document.getElementById('id_pincode');
+    pincodeInput.addEventListener('input', function () {
+        validatePINCode(pincodeInput.value);
+    });
+
+    const phoneNumberInput = document.getElementById('id_contact_no');
+    phoneNumberInput.addEventListener('input', function () {
+        validatePhoneNumber(phoneNumberInput.value);
+    });
+
+    const addressInput = document.getElementById('id_address');
+    addressInput.addEventListener('input', function () {
+        validateAddress(addressInput.value);
+    });
+
+    const placeInput = document.getElementById('id_place');
+    placeInput.addEventListener('input', function() {
+        validatePlace(placeInput.value);
+    });
+
+    const cityInput = document.getElementById('id_city');
+    cityInput.addEventListener('input', function() {
+        validateCity(cityInput.value);
+    });
+
+    const districtSelect = document.getElementById('district');
+    districtSelect.addEventListener('change', function() {
+        validateDistrict(districtSelect.value);
+    });
+
+    {% comment %} function validateForm() {
+        const isPincodeValid = validatePINCode(document.getElementById('id_pincode').value);
+        const isPhoneNumberValid = validatePhoneNumber(document.getElementById('id_contact_no').value);
+        const isAddressValid = validateAddress(document.getElementById('id_address').value);
+        const isDistrictValid = validateDistrict(document.getElementById('district').value);
+        const isPlaceValid = validatePlace(document.getElementById('id_place').value);
+        const isCityValid = validateCity(document.getElementById('id_city').value);
+
+        if (!isPincodeValid || !isPhoneNumberValid || !isAddressValid || !isDistrictValid || !isPlaceValid || !isCityValid) {
+            return false;
+        }
+        return true;
+    }
+
+    document.querySelector('form').addEventListener('submit', function(event) {
+        if (!validateForm()) {
+            event.preventDefault();
+            alert('Please correct the errors in the form.');
+            return false; // Add this line to prevent form submission
+        }
+    });
+</script> {% endcomment %}
+function validateForm() {
+    const isPincodeValid = validatePINCode(document.getElementById('id_pincode').value);
+    const isPhoneNumberValid = validatePhoneNumber(document.getElementById('id_contact_no').value);
+    const isAddressValid = validateAddress(document.getElementById('id_address').value);
+    const isDistrictValid = validateDistrict(document.getElementById('district').value);
+    const isPlaceValid = validatePlace(document.getElementById('id_place').value);
+    const isCityValid = validateCity(document.getElementById('id_city').value);
+
+    if (!isPincodeValid || !isPhoneNumberValid || !isAddressValid || !isDistrictValid || !isPlaceValid || !isCityValid) {
+        return false;
+    }
+    return true;
+}
+
+// Event listener for form submission
+document.querySelector('form').addEventListener('submit', function(event) {
+    if (!validateForm()) {
+        event.preventDefault();
+        alert('Please correct the errors in the form.');
+        return false; // Prevent form submission
+    }
+});
+
+// Event listener for HTMX form validation halt
+document.querySelector('form').addEventListener('htmx:validation:halted', function(event) {
+    const form = this;
+    const errors = form.querySelectorAll('.error-message');
+
+    for (let i = 0; i < errors.length; i++) {
+        if (errors[i].textContent.trim() !== '') {
+            event.preventDefault(); // Prevent form submission
+            alert('Please correct the errors in the form.');
+            return false;
+        }
+    }
+});
+
+// Disable submit button when the page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const submitButton = document.getElementById('submit_button');
+    submitButton.disabled = !validateForm(); // Disable if form is invalid
+});
+
+// Update submit button state when input changes
+document.querySelectorAll('form input, form select').forEach(function(element) {
+    element.addEventListener('input', function() {
+        const submitButton = document.getElementById('submit_button');
+        submitButton.disabled = !validateForm(); // Disable if form is invalid
+    });
+});
+</script>

@@ -15,8 +15,10 @@ from .mechanic_views import *
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
 import razorpay
+from django.utils import timezone
 from .regmail import *
 def index(request):
+    vehicleinfo = None
     if request.user.is_authenticated:
         if request.user.role == 'ADMIN':
            return redirect('admin_home')
@@ -26,7 +28,7 @@ def index(request):
            return redirect('manager_home')
         if not UserInfo.objects.filter(client=request.user).exists():
             return redirect('profile_setup')
-        
+        vehicleinfo=Vehicleinfo.objects.filter(client=request.user) 
     car =request.session.get('selected_car')
     if car :
         carvariant = ModelVariant.objects.get(variant_slug = car)
@@ -38,7 +40,8 @@ def index(request):
     context={
         'categories':categories,
         'makes':make,
-        'carvariant':carvariant
+        'carvariant':carvariant,
+        'vehicleinfo':vehicleinfo
         }
     return render(request,'client/index.html',context)
     
@@ -180,17 +183,19 @@ def map_view(request):
 def get_category_data(request, category_slug):
     variant = None
     vehicle = None
+    service_prices = ServicePrice.objects.all()
     if request.user.is_authenticated:
         vehicle = Vehicleinfo.objects.filter(client=request.user).first()
         variant = vehicle.model_variant
+    category = get_object_or_404(ServiceCategory, slug=category_slug)
     selcar = request.session.get('selected_car')
     if  selcar :
         variant = ModelVariant.objects.get(variant_slug = selcar)
-    category = get_object_or_404(ServiceCategory, slug=category_slug)
-    #category_data = ServiceList.objects.filter(service_category=category)
-    category_data=ServiceList.objects.filter(
+        category_data=ServiceList.objects.filter(
             serviceprice__variant=variant,service_category=category
         ).distinct()
+    else:
+        category_data = ServiceList.objects.filter(service_category=category)
     service_prices = ServicePrice.objects.filter(variant=variant)
     services_with_prices = []
     for service in category_data:
@@ -310,9 +315,13 @@ def set_default_vehicle(sender, user, request, **kwargs):
         pass
 
 from geopy.distance import geodesic
-
+@login_required
 def rsa (request):
     user =request.user
+    user_vehicle_ids = Vehicleinfo.objects.filter(client=user).values_list('id', flat=True)
+    has_roadside_assistance = RoadsideAssistance.objects.filter(vehicle_info__in=user_vehicle_ids).exists()
+    if has_roadside_assistance:
+        return redirect('rsadetails')
     vehicles = Vehicleinfo.objects.filter(client = user)
     service_centers = ServiceCenter.objects.all()
     if request.method == "POST":
@@ -346,8 +355,16 @@ def rsa (request):
 
     return render (request,'client/rsa.html',{'service_centers': service_centers,'vehicles':vehicles})
 
-from django.views.decorators.cache import cache_control
 
+def rsadetails(request):
+    user = request.user
+    vehicles = Vehicleinfo.objects.filter(client = user).first()
+    rsa = RoadsideAssistance.objects.filter(vehicle_info = vehicles)
+    return render(request,'client/rsa_details.html',{'v':rsa})
+
+current_time = timezone.now()
+print("Current time:", current_time)
+print("Current timezone:", timezone.get_current_timezone())
 #////////////////////////// BLOG START //////////////////////////////////////////////////////////
 
 def client_blog(request):
@@ -485,3 +502,20 @@ def service_history (request, vehicle_Regno):
         'order_items' : order_items_with_prices,
     }
     return render (request,'client/service_history.html',context)
+
+
+def uservehicle(request):
+    vehicleinfo=Vehicleinfo.objects.filter(client=request.user)
+    return render(request,'client/partials/user_vehicles.html',{'vehicles':vehicleinfo})
+
+
+
+import winsound  
+
+def warning_alarm(request):
+    # Trigger the alarm (for demonstration purposes)
+    winsound.Beep(1000, 1000)  # Beep sound for 1 second
+    
+    return HttpResponse("Warning alarm triggered!")
+
+    

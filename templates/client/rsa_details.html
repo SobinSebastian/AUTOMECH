@@ -1,0 +1,31 @@
+{% extends 'client/base.html' %}
+{%block content%}
+{% load static %}
+<div class="blog">
+    <div class="container mt-5">
+        <div class="section-header text-center">
+            <p>RSA Request</p>
+            <h3>Road Side Assistance</h3>
+            <ul class="nav justify-content-end">
+                <li class="nav-item">
+                  <a class="btn btn-success btn-sm" href="{% url "index" %}">< Go Back</a>
+                </li>
+            </ul>
+        </div>
+        <div class="row">
+            {% for vq in v %}
+            {{vq.created_at}}
+            {% endfor %}
+            <div class="alert alert-success" role="alert">
+                <h4 class="alert-heading">RSA Request has been processed successfully!</h4>
+                We're pleased to inform you that your request for roadside assistance has been processed successfully. A service center has been dispatched to your location to provide the necessary assistance. Help will soon be reaching you to address your situation.
+                <p>Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.</p>
+              </div>
+
+
+
+        </div>
+    </div>
+</div>   
+
+{% endblock %}

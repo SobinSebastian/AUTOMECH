@@ -30,7 +30,7 @@
                     {% elif user.socialaccount_set.all.0.get_avatar_url %}
                       <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="Google Profile">
                     {% else %}
-                      <img src="/media/profile_pictures/default.png" alt="Default Profile">
+                      <img src="/media/profile_pictures/default.jpg" alt="Default Profile">
                     {% endif %}  
                     </td>
                     <td>{{ user.first_name }}&nbsp;{{ user.last_name }}</td>
@@ -58,6 +58,30 @@
                       </button>
                     </td>
                 </tr>
+                <div class="modal fade" id="exampleModal{{user.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">User Info</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                      </div>
+                      <div class="modal-body">
+                        {{user.userinfo.contact_no}}
+                        {{user.userinfo.address}}
+                        {{user.userinfo.city}}
+                        {{user.userinfo.place}}
+                        {{user.userinfo.district}}
+                        {{user.userinfo.pincode}}
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary btn-sm">Save changes</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 {% endfor %}
             </tbody>
           </table>

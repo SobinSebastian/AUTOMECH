@@ -15,21 +15,83 @@
       {{ form.title.label_tag }}
       {{ form.title }}
       {{ form.title.errors }}
+      <span class="text-danger" id="titleError"></span>
       
       {{ form.content.label_tag }}
       {{ form.content }}
       {{ form.content.errors }}
-      
+      <span class="text-danger" id="contentError"></span>
       {{ form.image.label_tag }}
       {{ form.image }}
       {{ form.image.errors }}
-      
+      <span class="text-danger" id="imageError">jrr</span>
       {{ form.video.label_tag }}
       {{ form.video }}
       {{ form.video.errors }}
       
       <button type="submit">Save</button>
     </form>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          // Selecting form and input elements
+          var form = document.getElementById('myForm');
+          var titleInput = document.getElementById('id_title');
+          var contentTextarea = document.getElementById('id_content');
+          var imageInput = document.getElementById('id_image');
+          var titleError = document.getElementById('titleError');
+          var contentError = document.getElementById('contentError');
+          var imageError = document.getElementById('imageError');
+          
+          // Function to validate title field
+          function validateTitle() {
+              if (titleInput.value.trim() === '') {
+                  titleError.textContent = 'Title is required';
+                  return false;
+              } else {
+                  titleError.textContent = '';
+                  return true;
+              }
+          }
+          
+          // Function to validate content field
+          function validateContent() {
+              if (contentTextarea.value.trim() === '') {
+                  contentError.textContent = 'Content is required';
+                  return false;
+              } else {
+                  contentError.textContent = '';
+                  return true;
+              }
+          }
+          
+          // Function to validate image field
+          function validateImage() {
+              if (imageInput.files.length === 0) {
+                  imageError.textContent = 'Image is required';
+                  return false;
+              } else {
+                  imageError.textContent = '';
+                  return true;
+              }
+          }
+          
+          // Adding input event listeners for real-time validation
+          titleInput.addEventListener('input', validateTitle);
+          contentTextarea.addEventListener('input', validateContent);
+          
+          // Adding change event listener to the image input for real-time validation
+          imageInput.addEventListener('change', validateImage);
+          
+          // Adding submit event listener to the form
+          form.addEventListener('submit', function (event) {
+              // Validate form fields on submission
+              if (!(validateTitle() && validateContent() && validateImage())) {
+                  event.preventDefault(); // Prevent form submission if validation fails
+              }
+          });
+      });
+  </script>
+  
   </div>
 </div>
 </div>

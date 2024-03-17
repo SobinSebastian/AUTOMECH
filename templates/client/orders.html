@@ -34,8 +34,21 @@
                                 <td colspan="5" >
                                     <div class="rounded border border-primary">
                                         <div class="card-body">
-                                            <button class="btn btn-primary">Reschedule</button>
-                                    <B>Service Order Details</B>
+                                          <div class="row">
+                                          {%if oder.service_slot %}
+                                          <div class="col-3">
+                                           <b> Service Slot :</b><br>
+                                            {{oder.service_slot.slotname}}<br>
+                                            {{oder.service_center.place}},{{oder.service_center.city}}
+                                          </div>
+                                          <div class="col-3">
+                                            <b>Allocated Mechanic :</b><br>
+                                            {{oder.service_slot.allocated_mech}}
+                                          </div>
+                                          {%endif%}
+                                          </div>
+                                           
+                                    <B><u>Service Order Details</u></B>
                                     <table class="table table-info">
                                         <thead>
                                             <tr>

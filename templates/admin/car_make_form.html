@@ -142,12 +142,18 @@
                               <div class="col text-center">
                                  <h4 class="card-title">{{ car_make.make_name }} </h4>
                               </div>
-                              <form action="{% url 'car_make_model' %}" method="post">
-                                {% csrf_token %}
-                                <input type="hidden" name="make_id" value="{{ car_make.id }}">
-                                <input  class="btn btn-success btn-sm" type="submit" value="View Details">
-                              </form>
-                              <li>{{ car_make.name }} - <a href="{% url 'car_make_edit'  make_slug=car_make.make_slug %}">Edit</a></li>
+                              <div class="row">
+                                <div class="col-6">
+                                    <form action="{% url 'car_make_model' %}" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="make_id" value="{{ car_make.id }}">
+                                        <input  class="btn btn-success btn-sm" type="submit" value="View Details">
+                                    </form>
+                                </div>
+                                <div class="col-4">
+                                    <a href="{% url 'car_make_edit'  make_slug=car_make.make_slug %}" class="btn btn-success btn-sm">Edit</a>
+                                </div>
+                              </div>
                         </div>
                     </div>
                 </div>

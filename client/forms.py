@@ -343,8 +343,11 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ['title', 'content', 'image', 'video']
-        widgets = {'content': TinyMCE(attrs={'cols': 80, 'rows': 30})}
-
+        widgets = {'content': TinyMCE(attrs={'cols': 80, 'rows': 30},),
+                   'title': forms.TextInput(attrs={'placeholder': 'Enter the Price','class': 'form-control'}),
+                   'image' : forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
+                   'video' : forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
+                   }
     def __init__(self, *args, **kwargs):
         super(PostForm, self).__init__(*args, **kwargs)
         self.fields['image'].widget.attrs['accept'] = 'image/*'

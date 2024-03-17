@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import AbstractUser,BaseUserManager
-
+from django.utils import timezone
 
 class CustomUserManager(BaseUserManager):
     def create_superuser(self, email, first_name, last_name, password=None, **extra_fields):
@@ -340,6 +340,10 @@ class RoadsideAssistance(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES ,default='requested')
     slug = models.CharField(max_length=36, unique=True)
     description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True,null=True,blank=True) 
+    @property
+    def created_at_in_local_timezone(self):
+        return timezone.localtime(self.created_at)
 
     def save(self, *args, **kwargs):
         if not self.slug:

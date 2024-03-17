@@ -50,63 +50,53 @@
                 </form>
 
             </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var form = document.querySelector('form');
-    
-            form.addEventListener('submit', function (event) {
-                var vehicleSelect = document.getElementById('vehicle_info');
-                var descriptionInput = document.getElementById('description');
-    
-                // Validate vehicle selection
-                if (!validateVehicle(vehicleSelect)) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-    
-                // Validate description
-                if (!validateDescription(descriptionInput)) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-            });
-    
-            function validateVehicle(select) {
-                var errorContainer = document.getElementById('vehicleError');
-                var value = select.value;
-    
-                if (value === '') {
-                    errorContainer.textContent = "Please select a vehicle.";
-                    select.classList.add('is-invalid');
-                    return false;
-                } else {
-                    errorContainer.textContent = "";
-                    select.classList.remove('is-invalid');
-                    select.classList.add('is-valid');
-                    return true;
-                }
-            }
-    
-            function validateDescription(input) {
-                var errorContainer = document.getElementById('descriptionError');
-                var value = input.value.trim();
-    
-                if (value === '') {
-                    errorContainer.textContent = "Please provide a description.";
-                    input.classList.add('is-invalid');
-                    return false;
-                } else {
-                    errorContainer.textContent = "";
-                    input.classList.remove('is-invalid');
-                    input.classList.add('is-valid');
-                    return true;
-                }
-            }
-        });
-    </script> 
+  
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var form = document.getElementById('yourFormId');
+        var vehicleInfo = document.getElementById('vehicle_info');
+        var description = document.getElementById('description');
+        var vehicleError = document.getElementById('vehicleError');
+        var descriptionError = document.getElementById('descriptionError');
+
+        // Function to validate vehicle selection
+        function validateVehicle() {
+            if (!vehicleInfo.value) {
+                vehicleError.textContent = "Please select a vehicle.";
+            } else {
+                vehicleError.textContent = "";
+            }
+        }
+
+        // Function to validate description
+        function validateDescription() {
+            if (!description.value.trim()) {
+                descriptionError.textContent = "Please provide a description.";
+            } else {
+                descriptionError.textContent = "";
+            }
+        }
+
+        // Add event listeners for real-time validation
+        vehicleInfo.addEventListener('input', validateVehicle);
+        description.addEventListener('input', validateDescription);
+
+        // Add submit event listener for final validation before form submission
+        form.addEventListener('submit', function (event) {
+            validateVehicle();
+            validateDescription();
+
+            // Prevent form submission if validation fails
+            if (!vehicleInfo.value || !description.value.trim()) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -148,7 +138,8 @@
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(function(position) {
             var userLocation = [position.coords.latitude, position.coords.longitude];
-    
+            document.getElementById('latitude').value = userLocation[0];
+            document.getElementById('longitude').value = userLocation[1];
             L.marker(userLocation, { icon: userIcon }).addTo(map).bindPopup('Your Location');
             var bounds = L.latLngBounds(userLocation);
             var nearestCenter = null;
@@ -254,66 +245,5 @@
     }
 </script>
    
-   
-   
-   
-   
-   
-   
-    {% comment %} <form method="post" action="{% url 'rsarequest' %}">
-        {% csrf_token %}
-    
-        <label for="vehicle_info">Vehicle Info:</label>
-        <select name="vehicle_info" id="vehicle_info">
-            {% for vehicle in vehicles %} <option value="{{ vehicle.id }}">{{ vehicle.vehicle_Regno }}</option> {% endfor %}
-        </select>
-    
-        <br>
-        <input type="hidden" name="latitude" id="latitude" required>
-    
-        <br>
-        <input type="hidden" name="longitude" id="longitude" required>
-    
-        <br>
-    
-        <label for="description">Description:</label>
-        <textarea name="description" id="description" rows="4" required></textarea>
-    
-        <br>
-    
-        <button type="submit">Submit</button>
-    </form>
-</div>
-<div id="map" style="height: 400px;"></div>
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-            <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
-
-            <script>
-                var iconUrl = "{% static 'img/car_loc.png' %}";
-                var userIcon = L.icon({
-                    iconUrl: iconUrl,
-                    iconSize: [50, 60],
-                    iconAnchor: [25, 60],
-                    popupAnchor: [-3, -76]
-                });
-                var map = L.map('map').setView([0, 0], 2);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 70,
-                }).addTo(map);
-                
-                if (navigator.geolocation) {
-                    navigator.geolocation.getCurrentPosition(function(position) {
-                        var userLocation = [position.coords.latitude, position.coords.longitude];
-                
-                        // Set the latitude and longitude fields in the form
-                        document.getElementById('latitude').value = userLocation[0];
-                        document.getElementById('longitude').value = userLocation[1];
-                
-                        L.marker(userLocation, { icon: userIcon }).addTo(map).bindPopup('Your Location');
-                        var bounds = L.latLngBounds(userLocation);
-                        map.fitBounds(bounds, { padding: [100, 100] });
-                    });
-                }
-                </script> {% endcomment %}
 
 {%endblock%}
