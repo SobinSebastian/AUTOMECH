@@ -176,7 +176,7 @@
                       None
 
                       <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#slotModal{{service_slot.slotname}}" {% if mcount == 0 %}disabled{% endif %} >
-                        Add Slot
+                        Allocate
                       </button>
                       <div class="modal fade" id="slotModal{{service_slot.slotname}}" tabindex="-1" role="dialog" aria-labelledby="slotModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -257,6 +257,7 @@
                     link.addEventListener('click', confirmAction);
                 });
             </script>
+
             
           </div>
         </div>

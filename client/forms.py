@@ -107,8 +107,6 @@ class ServiceCategoryForm(forms.ModelForm):
             'category_name': forms.TextInput(attrs={'placeholder': 'Enter the Category name','class': 'form-control'}),
         }
 
-
-
 class ServiceListForm(forms.ModelForm):
     class Meta:
         model = ServiceList
@@ -118,7 +116,7 @@ class ServiceListForm(forms.ModelForm):
              'service_category': forms.Select(attrs={'class': 'form-control'}),
              'description' : forms.TextInput(attrs={'class': 'form-control'}),
              'service_Image' : forms.ClearableFileInput(attrs={'accept': 'image/*','class': 'form-control file-upload-info'}),
-             'tasks': forms.SelectMultiple(attrs={'class': 'form-check-input'}),
+             'tasks': forms.CheckboxSelectMultiple(),
         }
 
 

@@ -7,6 +7,10 @@
     {{form.address}}
     <div id="addressError" class="text-danger"></div>
     <br> 
+    {{form.pincode}}
+    {% comment %} {{ form.as_p }} {% endcomment %}
+    <div id="pincodeError" class="text-danger"></div>
+    <br>
     {{form.place}}
     <div id="placeError" class="text-danger"></div>
     <br>
@@ -31,10 +35,7 @@
         <option value="kasaragod">Kasaragod</option>
     </select>
     <div id="districtError" class="text-danger"></div>
-    <br>
-    {{form.pincode}}
-    {% comment %} {{ form.as_p }} {% endcomment %}
-    <div id="pincodeError" class="text-danger"></div>
+    
         
         <button type="submit" class="btn btn-dark w-100 my-4 mb-2" id="submit_button">Next</button>
     </form>

@@ -147,24 +147,8 @@
           emailError.textContent = 'Invalid email address';
           return false;
         } else {
-          
-          $.ajax({
-            type: 'GET',
-            url: '/check_email_exists/',
-            data: {
-                'email': email
-            },
-            success: function(response) {
-                if (response.exists) {
-                  emailError.textContent = 'Already exists';
-                  return false;
-                } else {
-                  emailError.textContent = '';
-                  return true;
-                }
-            }
-        });
-          
+          emailError.textContent = '';
+          return true;
         }
       }
       
@@ -247,9 +231,7 @@
             }
         });
     });
-    </script> 
- 
-          
+    </script>         
         <!-- JavaScript Libraries -->
         <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>

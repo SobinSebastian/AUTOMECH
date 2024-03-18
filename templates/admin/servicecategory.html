@@ -6,17 +6,85 @@
     <div class="card">
         <div class="card-body">
             <h2 class="card-title text-danger"> Service Categories </h2>
-            {{buttontext}} Service Category
-            <form method="post" id="categoryForm">
-              {% csrf_token %}
-              <div class="col-md-6">
-                {{ form.as_p }}
-                <div id="category_nameError" class="text-danger"></div>
-              </div>
-              <div class="col-md-6">
-                <button type="submit" class="btn btn-primary btn-sm">{{buttontext}}</button>
-              </div>
-              </form>
+            
+           
+
+            <!-- Button to trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+  {{buttontext}} Service Category
+</button>
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">{{buttontext}} Service Category</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <form method="post" id="categoryForm">
+          {% csrf_token %}
+          <div class="col-md-14">
+            {{ form.as_p }}
+            <div id="category_nameError" class="text-danger"></div>
+          </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary btn-sm">{{buttontext}}</button>
+      </form>
+
+      
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+          var form = document.getElementById('categoryForm');
+          var categoryNameInput = document.getElementById('id_category_name');
+          var categoryNameError = document.getElementById('category_nameError');
+          
+          // Function to validate category name
+          function validateCategoryName() {
+              var categoryName = categoryNameInput.value.trim();
+              var regex = /^[a-zA-Z\s]+$/; // Only allow alphabets and spaces
+              
+              if (categoryName.length < 4 || !regex.test(categoryName)) {
+                  categoryNameError.textContent = 'Category name must contain alphabets and spaces only with length greater than 3';
+                  categoryNameInput.classList.remove('is-valid');
+                  categoryNameInput.classList.add('is-invalid');
+                  return false;
+              } else {
+                  categoryNameError.textContent = '';
+                  categoryNameInput.classList.remove('is-invalid');
+                  categoryNameInput.classList.add('is-valid');
+                  return true;
+              }
+          }
+          
+          // Adding blur event listener for category name validation
+          categoryNameInput.addEventListener('input', validateCategoryName);
+          
+          // Adding submit event listener to the form
+          form.addEventListener('submit', function (event) {
+              // Validate category name on submission
+              var isCategoryNameValid = validateCategoryName();
+              
+              // Prevent form submission if category name is invalid
+              if (!isCategoryNameValid) {
+                  event.preventDefault();
+              }
+          });
+      });
+  </script>
+
+
+      </div>
+    </div>
+  </div>
+</div>
+
            
             {% if Categories %}
             <div class="row mt-5">
@@ -30,8 +98,8 @@
                             </div>      
                         </div>
                         <div class="card-footer">
-                          {% comment %} <a href="{% url 'service_category' slug=Category.slug %}" class="btn btn-primary btn-sm">Update</a> {% endcomment %}
-                          <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Update</a>
+                          <a href="{% url 'service_category' slug=Category.slug %}" class="btn btn-primary btn-sm">Update</a>
+                          {% comment %} <a href="#" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#myModal">Update</a> {% endcomment %}
                           <a href="{% url 'service_category_list' slug=Category.slug %}" class="btn btn-success btn-sm">view</a>
                         </div>
                     </div>
@@ -56,4 +124,25 @@
             </div>
     </div>
 </div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+  // Function to open modal when button text updates
+  function openModalIfTextChanged() {
+    // Check if the button text has changed
+    var previousButtonText = 'Add';
+    setInterval(function() {
+      if (previousButtonText !== "{{ buttontext }}") {
+        // Update the previous button text
+        previousButtonText = "{{ buttontext }}";
+        // Trigger modal opening
+        $('#exampleModal').modal('show');
+      }
+    }, 500); // Check every 0.5 seconds for changes
+  }
+
+  // Call the function when the document is ready
+  $(document).ready(function() {
+    openModalIfTextChanged();
+  });
+</script>
 {%endblock%}

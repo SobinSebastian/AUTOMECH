@@ -61,6 +61,7 @@ def manager_slots(request):
             mech = User.objects.get(id = man_id)
             services_slot = get_object_or_404(ServicesSlots, slug=slug)
             services_slot.allocated_mech = mech
+            services_slot.status = 'Active'
             services_slot.save()
         return redirect('service_slots')
     
@@ -159,9 +160,11 @@ def manager_bookings_json(request):
 @manager_required
 def manager_rsa(request):
     center = ServiceCenter.objects.get(manager=request.user)
-    list = RoadsideAssistance.objects.filter(service_center = center)
+    list = RoadsideAssistance.objects.filter(service_center = center).order_by('created_at').exclude(status='completed')
+    completed_orders = RoadsideAssistance.objects.filter(service_center = center,status='completed').order_by('created_at')
     context = {
-        'list':list
+        'list':list,
+        'completed_orders':completed_orders
     }
     return render(request, 'manager/manager_rsa.html',context)
 
@@ -181,3 +184,13 @@ def allocate_service_slot(request):
     sweetify.success(request, 'Slot allocated ', text= f'successfully.',timer=5000, persistent=False,)
     # Redirect to a success page or back to the same page
     return redirect('manager_booking')
+
+all_service_centers = ServiceCenter.objects.all()
+for service_center in all_service_centers:
+    if not ServicesSlots.objects.filter(service_center=service_center, slotname='RSA').exists():
+        rsa_slot = ServicesSlots.objects.create(
+            slotname="RSA",
+            service_center=service_center,
+            allocated_mech=None,
+            status="INACTIVE" 
+        )

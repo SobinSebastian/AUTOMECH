@@ -362,9 +362,6 @@ def rsadetails(request):
     rsa = RoadsideAssistance.objects.filter(vehicle_info = vehicles)
     return render(request,'client/rsa_details.html',{'v':rsa})
 
-current_time = timezone.now()
-print("Current time:", current_time)
-print("Current timezone:", timezone.get_current_timezone())
 #////////////////////////// BLOG START //////////////////////////////////////////////////////////
 
 def client_blog(request):
@@ -518,4 +515,10 @@ def warning_alarm(request):
     
     return HttpResponse("Warning alarm triggered!")
 
-    
+
+def check_email_exists(request):
+    email = request.GET.get('email', None)
+    data = {
+        'exists': User.objects.filter(email=email).exists()
+    }
+    return JsonResponse(data)

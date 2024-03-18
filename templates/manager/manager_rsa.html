@@ -1,25 +1,111 @@
 {% extends 'manager/managerbase.html' %}
+{% block conhead%}
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+{% endblock %}
 {%block content%}
 {% load static %}
   <div class="row">
     <div class="col-md-12 grid-margin stretch-card">
       <div class="card">
         <div class="card-body">
-          <h3 class="text-danger mt-3">Road Side Assistance </h3>
-          {% for i in list %}
-            {{i}}
-            {{i.longitude}}
-            {{i.latitude}}
-            {{i.description}}
-          {% endfor %}
+          <h3 class="text-danger mt-3">Road Side Assistance Requests</h3>
+
+          {% if list%}
+         
+            <div class="table-responsive mt-4">
+              <table id="myDataTable" class="display expandable-table dataTable no-footer">
+                <thead>
+                    <tr>
+                        <th>Vehicle Details</th>
+                        <th>Date & Time</th>
+                        <th>Status</th>
+                        <th>view</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  {% for i in list %}
+                  <tr>
+                    <td> {{i}} </td>
+                    <td>
+                      {{i.created_at}}
+                    </td>
+                    <td>{{i.status}} </td>
+                    <td class=" details-control"></td>
+                  </tr>
+                  {% endfor %}
+                    </tbody>
+              </table>
+              <script>
+                $(document).ready(function() {
+                    $('#myDataTable').DataTable({
+                        searching: true,
+                        ordering: true,
+                        
+                        // Add other options as needed
+                    });
+                });
+             </script>
+          {% else %}
           <div class="container mt-4">
             <div class="error-message text-center p-4 bg-light rounded">
               <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 200px; height: auto;">
-              <h2 class="text-danger"><strong>Oops! No Mechanic  found.</strong></h2>
+              <h2 class="text-danger"><strong>Oops! No RSA Request .</strong></h2>
               <p class="lead">It seems there are no RSA Request in Your Service Center.</p>
             </div>
           </div>
+          {%endif%}
+          <!--Completed Road Side Assistance-->
+          <h3 class="text-danger mt-3">Completed Road Side Assistance Requests</h3>
+          {% if completed_orders%}
+         
+          <div class="table-responsive mt-4">
+            <table id="myDataTable" class="display expandable-table dataTable no-footer">
+              <thead>
+                  <tr>
+                      <th>Vehicle Details</th>
+                      <th>Date & Time</th>
+                      <th>Status</th>
+                      <th>view</th>
+                  </tr>
+              </thead>
+              <tbody>
+                {% for i in completed_orders %}
+                <tr>
+                  <td> {{i}} </td>
+                  <td>
+                    {{i.created_at}}
+                  </td>
+                  <td>{{i.status}} </td>
+                  <td class=" details-control"></td>
+                </tr>
+                {% endfor %}
+                  </tbody>
+            </table>
+            <script>
+              $(document).ready(function() {
+                  $('#myDataTable').DataTable({
+                      searching: true,
+                      ordering: true,
+                      
+                      // Add other options as needed
+                  });
+              });
+           </script>
+        {% else %}
+        <div class="container mt-4">
+          <div class="error-message text-center p-4 bg-light rounded">
+            <img src="{% static 'img/Sad-face.png'%}" alt="Sad face icon" class="img-fluid mb-2" style="max-width: 100px; height: auto;">
+            <h3 class="text-danger"><strong>Oops! No Completed RSA Request Found.</strong></h3>
+          </div>
+        </div>
+        {%endif%}
 
+
+
+
+          <!--Completed Road Side Assistance End-->
         </div>
       </div>
     </div>

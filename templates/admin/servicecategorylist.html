@@ -34,7 +34,7 @@
                         <div class="form-group col">
                             <label >{{ form.service_name.label }} </label>
                             {{ form.service_name }} 
-                            <div id="service_name" class="text-danger"></div>
+                            <div id="service_nameError" class="text-danger"></div>
                         </div>
                       </div>
                       <div class="form-row">
@@ -43,21 +43,21 @@
                             <select name="service_category" class="form-control" required="" id="id_service_category">
                               <option value="{{service_category.id}}">{{service_category}}</option>
                             </select>
-                            <div id="service_category" class="text-danger"></div>
+                            <div id="service_categoryError" class="text-danger"></div>
                         </div>
                       </div>
                       <div class="form-row">
                         <div class="form-group col">
                             <label >{{ form.description.label }} </label>
                             {{ form.description }} 
-                            <div id="description" class="text-danger"></div>
+                            <div id="descriptionError" class="text-danger"></div>
                         </div>
                       </div>
                       <div class="form-row">
                         <div class="form-group col">
                             <label >{{ form.service_Image.label }} </label>
                             {{ form.service_Image }} 
-                            <div id="service_Image" class="text-danger"></div>
+                            <div id="service_ImageError" class="text-danger"></div>
                         </div>
                       </div>
                       
@@ -65,7 +65,10 @@
                         <div class="form-group col">
                             <label >{{ form.tasks.label }} </label>
                             <div class="form-check">
-                              {{ form.tasks }} 
+                              <div class="overflow-auto p-3 bg-light col"
+                            style="max-height: 100px;">
+                            {{ form.tasks }} 
+                            </div>
                             </div>
                             <div id="service_Image" class="text-danger"></div>
                         </div>
@@ -79,15 +82,7 @@
                 </div>
               </div>
             </div>
-            <script>
-              $(".chosen-select").chosen({no_results_text: "Oops, nothing found!"}); 
-              {% comment %} $(document).ready(function() {
-                  $('.chosen-select').chosen({
-                      disable_search_threshold: 10,
-                      width: '100%'
-                  });
-              }); {% endcomment %}
-              </script>
+          
   
            
             
@@ -136,4 +131,110 @@
             </div>
     </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+      var form = document.getElementById('serviceForm');
+      var serviceNameInput = document.getElementById('id_service_name');
+      var serviceCategorySelect = document.getElementById('id_service_category');
+      var descriptionInput = document.getElementById('id_description');
+      var serviceImageInput = document.getElementById('id_service_Image');
+
+      // Function to validate service name
+      function validateServiceName() {
+          var serviceName = serviceNameInput.value.trim();
+          var regex = /^[a-zA-Z\s]+$/; // Only allow alphabets and spaces
+
+          if (!serviceName || !regex.test(serviceName)) {
+              document.getElementById('service_nameError').textContent = 'Service name must contain alphabets and spaces only';
+              return false;
+          } else {
+              document.getElementById('service_nameError').textContent = '';
+              return true;
+          }
+      }
+
+      // Function to validate service category
+      function validateServiceCategory() {
+          if (!serviceCategorySelect.value) {
+              document.getElementById('service_categoryError').textContent = 'Please select a category';
+              return false;
+          } else {
+              document.getElementById('service_categoryError').textContent = '';
+              return true;
+          }
+      }
+
+      // Function to validate description
+      function validateDescription() {
+          var description = descriptionInput.value.trim();
+
+          if (!description) {
+              document.getElementById('descriptionError').textContent = 'Description is required';
+              return false;
+          } else {
+              document.getElementById('descriptionError').textContent = '';
+              return true;
+          }
+      }
+
+      // Function to validate service image
+      function validateServiceImage() {
+          var serviceImageInput = document.getElementById('id_service_Image');
+          var serviceImageError = document.getElementById('service_ImageError');
+
+          // Check if a file is selected
+          if (!serviceImageInput.files || !serviceImageInput.files[0]) {
+              serviceImageError.textContent = 'Please upload a service image';
+              return false;
+          }
+
+          // Get the uploaded image file
+          var file = serviceImageInput.files[0];
+
+          // Create a FileReader object to read the uploaded image
+          var reader = new FileReader();
+
+          // Set up the FileReader onload event handler
+          reader.onload = function(e) {
+              // Create an Image object to get the image dimensions
+              var img = new Image();
+              img.src = e.target.result;
+
+              // Check if the image meets the dimensions of 800x800 pixels
+              img.onload = function() {
+                  if (img.width !== 800 || img.height !== 800) {
+                      serviceImageError.textContent = 'Image dimensions must be 800x800 pixels';
+                  } else {
+                      serviceImageError.textContent = '';
+                  }
+              };
+          };
+
+          // Read the uploaded image as a data URL
+          reader.readAsDataURL(file);
+
+          return true;
+      }
+
+      // Adding blur event listeners for input fields
+      serviceNameInput.addEventListener('input', validateServiceName);
+      serviceCategorySelect.addEventListener('input', validateServiceCategory);
+      descriptionInput.addEventListener('input', validateDescription);
+      serviceImageInput.addEventListener('input', validateServiceImage);
+
+      // Adding submit event listener to the form
+      form.addEventListener('submit', function (event) {
+          // Validate fields on submission
+          var isServiceNameValid = validateServiceName();
+          var isServiceCategoryValid = validateServiceCategory();
+          var isDescriptionValid = validateDescription();
+          var isServiceImageValid = validateServiceImage();
+
+          // Prevent form submission if any field is invalid
+          if (!isServiceNameValid || !isServiceCategoryValid || !isDescriptionValid || !isServiceImageValid) {
+              event.preventDefault();
+          }
+      });
+  });
+</script>
 {%endblock%}

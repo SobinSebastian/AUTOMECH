@@ -145,9 +145,9 @@
           <img
               src="{{uinfo.profile_picture.url}}"
               alt="user-avatar"
-              width="200" height="200"
+              width="30" height="30"
               id="uploadedAvatar" 
-              class="card-img-top"
+              class="rounded-circle" 
               />
           {% elif user.socialaccount_set.all.0.get_avatar_url %}
             <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="rounded-circle" alt="Google Profile" width="30" height="30">

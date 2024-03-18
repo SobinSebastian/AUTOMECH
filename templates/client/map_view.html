@@ -9,6 +9,8 @@
                     <p>Service Centers</p>
                     <h2>AutoMech  Service Points</h2>
                 </div>
+                <div id="distance-error"   class="col-md-6" style="color: red; font-weight: bold;"></div>
+
                 <div class="row">
                   {% for center in service_centers %}
                   <div class="col-md-6">
@@ -55,7 +57,7 @@
     });
     
     var currentRoute = null;
-    
+    var distanceErrorDiv = document.getElementById('distance-error');
     var map = L.map('map').setView([0, 0], 2);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -67,7 +69,8 @@
     
             L.marker(userLocation, { icon: userIcon }).addTo(map).bindPopup('Your Location');
             var bounds = L.latLngBounds(userLocation);
-    
+            var nearestCenter = null;
+            var nearestDistance = Infinity;
             {% for center in service_centers %}
             var centerMarker = L.marker([{{ center.latitude }}, {{ center.longitude }}], { icon: cIcon })
                 .addTo(map)
@@ -94,8 +97,16 @@
                     }
                 }).addTo(map);
             });
+            var distance = map.distance(userLocation, centerMarker.getLatLng()) / 1000;
+    
+                // Update nearest center if closer
+                if (distance < nearestDistance) {
+                    nearestDistance = distance;
+                    nearestCenter =  '<div class="col-md-12"><div class="location-item"><i class="fa fa-map-marker-alt"></i><div class="location-text"><h3>Auto Mech {{ center.place }}</h3><p> {{ center.place }}, {{ center.city }}({{ center.pincode }})</p><p><strong>Call:</strong>{{center.phone_number}}</p><button class="btn btn-success  show-on-map" data-lat="{{ center.latitude }}" data-lng="{{ center.longitude }}">View on Map</button></div></div></div>';
+                }
             {% endfor %}
     
+            distanceErrorDiv.innerHTML=nearestCenter
             var buttons = document.getElementsByClassName('show-on-map');
             for (var i = 0; i < buttons.length; i++) {
                 buttons[i].addEventListener('click', function() {

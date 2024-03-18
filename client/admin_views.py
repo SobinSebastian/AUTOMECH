@@ -90,7 +90,7 @@ class CarMakes(CreateView, ListView):
     success_url = reverse_lazy('car_make')
     context_object_name = 'car_makes'
 
-    @method_decorator(staff_member_required)
+    @method_decorator(staff_member_required, cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0))
     def dispatch(self, *args, **kwargs):
        return super().dispatch(*args, **kwargs)
     
@@ -205,6 +205,7 @@ def service_category_list(request, slug=None):
     return render(request, 'admin/servicecategorylist.html', context)
 @staff_member_required
 def service_category_view(request, slug=None):
+    s_tasks = Task.objects.all()
     service = get_object_or_404(ServiceList, slug=slug)
     if request.method == 'POST':
         form = ServiceListForm(request.POST,request.FILES,instance = service)
@@ -213,7 +214,7 @@ def service_category_view(request, slug=None):
             form.save()
     else:
         form = ServiceListForm(instance = service )
-    context = {'service':service,'form': form}
+    context = {'service':service,'form': form,'s_tasks':s_tasks}
     return render(request, 'admin/serviceview.html', context)
 
 @staff_member_required
@@ -235,6 +236,7 @@ def service_center_add(request):
     return render(request,'admin/service_center_add.html',context)
 
 @staff_member_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def service_center_view(request):
     form = ServiceCenterUpdateForm()
     if request.method == 'POST':
@@ -274,7 +276,10 @@ def service_center_manager(request):
     if request.method == 'POST':
         form = MangaerAddFrom(request.POST)
         if form.is_valid():
+            email=form.cleaned_data['email'] 
             form.save()
+            employee_mail([email])
+
             sweetify.success(request, 'New Manager', text= f'is successfully Added',timer=5000, persistent=False,)
     else:
         form = MangaerAddFrom()
@@ -493,3 +498,4 @@ def insert_excel(request):
         form = ExcelUploadForm()
 
     return render(request, 'admin/model_excel_input.html', {'form': form})
+    

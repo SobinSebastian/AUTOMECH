@@ -91,4 +91,210 @@
       </div>
     </div>
   </div>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Selecting form and input elements
+        var form = document.getElementById('locationForm');
+        var placeInput = document.getElementById('id_place');
+        var cityInput = document.getElementById('id_city');
+        var pincodeInput = document.getElementById('id_pincode');
+        var pincodeError = document.getElementById('pincodeError');
+        var placeError = document.getElementById('placeError');
+        var cityError = document.getElementById('cityError');
+        
+        // Function to validate pincode using API
+        function validatePincode(pincode) {
+            // Make an HTTP GET request to the API endpoint
+            fetch(`https://api.postalpincode.in/pincode/${pincode}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Check if response is valid and contains data
+                    if (data && data[0] && data[0].Status === 'Success') {
+                        pincodeError.textContent = '';
+                        pincodeInput.classList.remove('is-invalid');
+                        pincodeInput.classList.add('is-valid');
+                    } else {
+                        pincodeError.textContent = 'Invalid pincode';
+                        pincodeInput.classList.remove('is-valid');
+                        pincodeInput.classList.add('is-invalid');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching pincode data:', error);
+                    pincodeError.textContent = 'Error validating pincode';
+                    pincodeInput.classList.remove('is-valid');
+                    pincodeInput.classList.add('is-invalid');
+                });
+        }
+        
+        // Function to handle pincode input validation
+        function handlePincodeValidation() {
+            var pincode = pincodeInput.value.trim();
+            if (pincode.length !== 6 || isNaN(pincode)) {
+                pincodeError.textContent = 'Pincode must be a 6-digit number';
+                pincodeInput.classList.remove('is-valid');
+                pincodeInput.classList.add('is-invalid');
+            } else {
+                validatePincode(pincode);
+            }
+        }
+        
+        // Function to validate place and city inputs
+        function validatePlaceCity(input, errorElement) {
+            var value = input.value.trim();
+            var regex = /^[a-zA-Z\s]+$/; // Only allow alphabets and spaces
+            
+            if (!regex.test(value)) {
+                errorElement.textContent = 'Only characters and spaces are allowed';
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                return false;
+            } else {
+                errorElement.textContent = '';
+                input.classList.remove('is-invalid');
+                input.classList.add('is-valid');
+                return true;
+            }
+        }
+        
+        // Adding blur event listeners for place and city validation
+        placeInput.addEventListener('blur', function () {
+            validatePlaceCity(placeInput, placeError);
+        });
+        
+        cityInput.addEventListener('blur', function () {
+            validatePlaceCity(cityInput, cityError);
+        });
+        
+        // Adding blur event listener for pincode validation
+        pincodeInput.addEventListener('blur', handlePincodeValidation);
+        
+        // Adding submit event listener to the form
+        form.addEventListener('submit', function (event) {
+            // Validate form fields on submission
+            var isPlaceValid = validatePlaceCity(placeInput, placeError);
+            var isCityValid = validatePlaceCity(cityInput, cityError);
+            handlePincodeValidation(); // Validate pincode before submission
+            // Add other field validations here
+            // ...
+            // Prevent form submission if any field is invalid
+            if (!isPlaceValid || !isCityValid || form.querySelectorAll('.is-invalid').length > 0) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+  {% comment %} <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Selecting form and input elements
+        var form = document.getElementById('locationForm');
+        var placeInput = document.getElementById('id_place');
+        var cityInput = document.getElementById('id_city');
+        var pincodeInput = document.getElementById('id_pincode');
+        var latitudeInput = document.getElementById('id_latitude');
+        var longitudeInput = document.getElementById('id_longitude');
+        var placeError = document.getElementById('placeError');
+        var cityError = document.getElementById('cityError');
+        var pincodeError = document.getElementById('pincodeError');
+        var latitudeError = document.getElementById('latitudeError');
+        var longitudeError = document.getElementById('longitudeError');
+        
+        // Function to validate place field
+        function validatePlace() {
+            var regex = /^[A-Za-z\s]+$/; // Only characters and spaces allowed
+            if (!regex.test(placeInput.value.trim())) {
+                placeError.textContent = 'Only characters and spaces are allowed';
+                placeInput.classList.remove('is-valid');
+                placeInput.classList.add('is-invalid');
+                return false;
+            } else {
+                placeError.textContent = '';
+                placeInput.classList.remove('is-invalid');
+                placeInput.classList.add('is-valid');
+                return true;
+            }
+        }
+        
+        // Function to validate city field
+        function validateCity() {
+            var regex = /^[A-Za-z\s]+$/; // Only characters and spaces allowed
+            if (!regex.test(cityInput.value.trim())) {
+                cityError.textContent = 'Only characters and spaces are allowed';
+                cityInput.classList.remove('is-valid');
+                cityInput.classList.add('is-invalid');
+                return false;
+            } else {
+                cityError.textContent = '';
+                cityInput.classList.remove('is-invalid');
+                cityInput.classList.add('is-valid');
+                return true;
+            }
+        }
+        
+        // Function to validate pincode field
+        function validatePincode() {
+            var regex = /^\d{6}$/; // 6 digits required
+            if (!regex.test(pincodeInput.value.trim())) {
+                pincodeError.textContent = 'Pincode must be 6 digits';
+                pincodeInput.classList.remove('is-valid');
+                pincodeInput.classList.add('is-invalid');
+                return false;
+            } else {
+                pincodeError.textContent = '';
+                pincodeInput.classList.remove('is-invalid');
+                pincodeInput.classList.add('is-valid');
+                return true;
+            }
+        }
+        
+        // Function to validate latitude field
+        function validateLatitude() {
+            var regex = /^\d+(\.\d+)?$/; // Digits with optional decimal point
+            if (!regex.test(latitudeInput.value.trim())) {
+                latitudeError.textContent = 'Latitude must be a number';
+                latitudeInput.classList.remove('is-valid');
+                latitudeInput.classList.add('is-invalid');
+                return false;
+            } else {
+                latitudeError.textContent = '';
+                latitudeInput.classList.remove('is-invalid');
+                latitudeInput.classList.add('is-valid');
+                return true;
+            }
+        }
+        
+        // Function to validate longitude field
+        function validateLongitude() {
+            var regex = /^\d+(\.\d+)?$/; // Digits with optional decimal point
+            if (!regex.test(longitudeInput.value.trim())) {
+                longitudeError.textContent = 'Longitude must be a number';
+                longitudeInput.classList.remove('is-valid');
+                longitudeInput.classList.add('is-invalid');
+                return false;
+            } else {
+                longitudeError.textContent = '';
+                longitudeInput.classList.remove('is-invalid');
+                longitudeInput.classList.add('is-valid');
+                return true;
+            }
+        }
+        
+        // Adding blur event listeners for real-time validation
+        placeInput.addEventListener('blur', validatePlace);
+        cityInput.addEventListener('blur', validateCity);
+        pincodeInput.addEventListener('blur', validatePincode);
+        latitudeInput.addEventListener('blur', validateLatitude);
+        longitudeInput.addEventListener('blur', validateLongitude);
+        
+        // Adding submit event listener to the form
+        form.addEventListener('submit', function (event) {
+            // Validate form fields on submission
+            if (!(validatePlace() && validateCity() && validatePincode() && validateLatitude() && validateLongitude())) {
+                event.preventDefault(); // Prevent form submission if validation fails
+            }
+        });
+    });
+</script> {% endcomment %}
+
 {%endblock%}
