@@ -1,11 +1,22 @@
 {% extends 'admin/adminbase.html' %}
 {%block content%}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
 {% load static %}
 <div class="row">
   <div class="col-md-6 grid-margin stretch-card ">
     <div class="card">
       <div class="card-body ">
         <h3 class="text-danger"> Service Center Details </h3>
+        <nav aria-label="breadcrumb"  class="warning">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'admin_home' %}">Dashboard</a></li>
+            <li class="breadcrumb-item active"><a href="{%url 'service_center_view'%}">Service Center</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Details</li>
+          </ol>
+        </nav>
+       
             <h4 class="text-primary mt-4"> Auto Mech  {{center.city}} Service Center </h4>
 
             <div class="col-10">
@@ -80,5 +91,92 @@
       </div>
     </div>
   </div>
+  <div class="col-md-12 grid-margin stretch-card ">
+    <div class="card">
+      <div class="card-body ">
+        <h3 class="text-danger">Service Slot List </h3>
+
+        <div class="table-responsive mt-4">
+          <table id="myDataTable" class="display expandable-table dataTable no-footer">
+            <thead>
+                <tr>
+                    <th>Slot Name</th>
+                    <th>Allocated Mechanic</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+              {%for service_slot in slots %}
+              <tr>
+                <td>{{service_slot.slotname}} </td>
+                <td>
+                  {%if service_slot.allocated_mech %}
+                    {{service_slot.allocated_mech.get_full_name}} ( {{service_slot.allocated_mech}})
+                    {% comment %} <a href="{% url 'remove_alloc_mech' solt_slug=service_slot.slug %}" class="btn btn-outline-danger btn-fw confirmation-link">remove</a> {% endcomment %}
+                  {%else%}
+                  None
+
+                  {% comment %} <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#slotModal{{service_slot.slotname}}" {% if mcount == 0 %}disabled{% endif %} >
+                    Allocate
+                  </button>
+                  <div class="modal fade" id="slotModal{{service_slot.slotname}}" tabindex="-1" role="dialog" aria-labelledby="slotModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                      <div class="modal-content">
+                        <div class="modal-header">
+                          <h5 class="modal-title" id="slotModalLabel">Add New Slot</h5>
+                          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                        </div>
+                        <div class="modal-body">
+                          <form method="post" action="" id="myForm">
+                            {% csrf_token %}
+                            <input type="hidden" name="slotslug" required="" aria-invalid="true" id="id_slotslug" value="{{service_slot.slug}}">
+                            {{ form1.Mechanic.label }}
+                            {{ form1.Mechanic}}
+                            <input type="hidden" name="form-services-slots-submit" value="true">
+                            <div id="allocatedMechError" class="text-danger"></div>
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                          <button type="submit" class="btn btn-primary btn-sm">Add Slot</button>
+                        </form> {% endcomment %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+      
+
+
+
+
+
+                  {%endif%}
+                </td>
+                <td>{{service_slot.status}} </td>
+                {% comment %} <td class=" details-control"></td> {% endcomment %}
+              </tr>
+              {% endfor %}
+                </tbody>
+          </table>
+          <script>
+            $(document).ready(function() {
+                $('#myDataTable').DataTable({
+                    searching: true,
+                    ordering: true,
+                    
+                    // Add other options as needed
+                });
+            });
+         </script>
+        </div>
+
+
+      </div>
+    </div>
+  </div>
+
+
+
 </div>
 {%endblock%}

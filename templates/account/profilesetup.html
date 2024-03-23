@@ -50,8 +50,11 @@
                     <img src="{% static 'img/Hello.png'%}" width="250" height="250">
                     <form hx-get="{% url 'step1_view' %}" hx-target="#form-container">
                       {% csrf_token %}
-                      plz complete the Following  details to Sign In
-                      <button type="submit" class="btn btn-dark w-100 my-4 mb-2">Next</button>
+                      <div class="text-center text-danger">
+                      Please provide the following details 
+                      to proceed with the sign-in process
+                      </div>
+                      <button type="submit" id="pro_con" class="btn btn-dark w-100 my-4 mb-2">Next</button>
                     </form>
                   </div>
                 </div>

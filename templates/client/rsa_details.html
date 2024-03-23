@@ -14,6 +14,11 @@
         </div>
         <div class="row">
             {% for vq in v %}
+              <div class="alert alert-success" role="alert">
+                <h4 class="alert-heading">RSA Request has been processed successfully!</h4>
+                We're pleased to inform you that your request for roadside assistance has been processed successfully. A service center has been dispatched to your location to provide the necessary assistance. Help will soon be reaching you to address your situation.
+                <p>Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.</p>
+              </div>
             <div class="col-4">
                 <h6>Request Information</h6>
                 <hr class="mt-0 mb-4">
@@ -69,7 +74,7 @@
                   </div>
                 </div>
                 
-                <div class="card" style="border-radius: 15px;">
+                {% comment %} <div class="card" style="border-radius: 15px;">
                     <div class="card-body p-4">
                       <div class="d-flex text-black">
                         <div class="flex-shrink-0">
@@ -102,18 +107,14 @@
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> {% endcomment %}
           
 
 
 
             </div>
             {% endfor %}
-            <div class="alert alert-success" role="alert">
-                <h4 class="alert-heading">RSA Request has been processed successfully!</h4>
-                We're pleased to inform you that your request for roadside assistance has been processed successfully. A service center has been dispatched to your location to provide the necessary assistance. Help will soon be reaching you to address your situation.
-                <p>Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.</p>
-              </div>
+            
 
 
 

@@ -29,7 +29,7 @@
                         <div class="form-group col">
                             <label >{{ form.service_name.label }} </label>
                             {{ form.service_name }} 
-                            <div id="service_name" class="text-danger"></div>
+                            <div id="service_nameError" class="text-danger"></div>
                         </div>
                       </div>
                       <div class="form-row">
@@ -38,21 +38,21 @@
                             <select name="service_category" class="form-control" required="" id="id_service_category">
                               <option value="{{service.service_category.id}}">{{service.service_category}}</option>
                             </select>
-                            <div id="service_category" class="text-danger"></div>
+                            <div id="service_categoryError" class="text-danger"></div>
                         </div>
                       </div>
                       <div class="form-row">
                         <div class="form-group col">
                             <label >{{ form.description.label }} </label>
                             {{ form.description }} 
-                            <div id="description" class="text-danger"></div>
+                            <div id="descriptionError" class="text-danger"></div>
                         </div>
                       </div>
                       <div class="form-row">
                         <div class="form-group col">
                             <label >{{ form.service_Image.label }} </label>
                             {{ form.service_Image }} 
-                            <div id="service_Image" class="text-danger"></div>
+                            <div id="service_ImageError" class="text-danger"></div>
                         </div>
                       </div>
                        
@@ -64,7 +64,7 @@
                             style="max-height: 100px;">
                             {{ form.tasks }} 
                             </div>
-                            
+                            <div id="service_Image" class="text-danger"></div>
                             </div>
                             <div id="service_Image" class="text-danger"></div>
                         </div>

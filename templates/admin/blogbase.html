@@ -306,48 +306,19 @@
              <span class="menu-title">Dashboard</span>
             </a>
           </li>
-          {% comment %} <li class="nav-item {% if request.path == '/clients/list' %}active {%endif%}">
-            <a class="nav-link" href="{%url 'client_list'%}">
+          <li class="nav-item {% if request.path == '/customadmin/blog/' %}active {%endif%}">
+            <a class="nav-link" href="{%url 'admin_blog'%}">
               <i class="icon-head menu-icon"></i>
-              <span class="menu-title">Users</span>
-            </a>
-          </li> {% endcomment %}
-          {% comment %} <li class="nav-item {% if request.path == '/customadmin/service_center/manager/' %}active {%endif%}">
-            <a class="nav-link" href="{%url 'service_center_manager'%}">
-              <i class="icon-head menu-icon"></i>
-              <span class="menu-title">Manager</span>
-            </a>
-          </li> {% endcomment %}
-          <li class="nav-item {% if request.path == '/customadmin/car_make/' %}active {%endif%}">
-            <a class="nav-link" href="{%url 'car_make'%}" id="vidadd">
-              <i class="icon-grid-2 menu-icon"></i>
-              <span class="menu-title">Vehicle</span>
-            </a>
-          </li>
-          {% comment %} <li class="nav-item {% if request.path == 'admin_booking' %}active {%endif%}">
-            <a class="nav-link" href="">
-              <i class="icon-grid-2 menu-icon"></i>
-              <span class="menu-title">Bookings</span>
-            </a>
-          </li> {% endcomment %}
-          <li class="nav-item {% if request.path == '/customadmin/service_center/' or request.path == '/customadmin/service_center/add'  %}active {%endif%}">
-            <a class="nav-link" href="{% url 'service_center_view'%}">
-              <i class="icon-grid-2 menu-icon"></i>
-              <span class="menu-title">Service Centers</span>
-            </a>
-          </li>
-          <li class="nav-item {% if request.path == '/customadmin/service/category/' %}active {%endif%}">
-            <a class="nav-link" href="{% url 'service_category'%}">
-              <i class="icon-circle-plus menu-icon"></i>
-              <span class="menu-title">Service</span>
-            </a>
-          </li>
-          <li class="nav-item {% if request.path == '/customadmin/service/category/' %}active {%endif%}">
-            <a class="nav-link" href="{% url 'admin_blog'%}">
-              <i class="icon-circle-plus menu-icon"></i>
               <span class="menu-title">Blogs</span>
             </a>
           </li>
+          <li class="nav-item {% if request.path == '/customadmin/post/' %}active {%endif%}">
+            <a class="nav-link" href="{%url 'create_post'%}" id="vidadd">
+              <i class="icon-grid-2 menu-icon"></i>
+              <span class="menu-title">New Blog</span>
+            </a>
+          </li>
+          
           {% comment %} <li class="nav-item {% if request.path == '/add_slot/' %}active {%endif%}">
             <a class="nav-link" href="">
               <i class="icon-circle-plus menu-icon"></i>

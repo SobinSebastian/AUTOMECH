@@ -9,6 +9,7 @@ path('account/profile/',views.profileview,name="account_profile"),
 path('account/profilesetup/',views.profilesetup,name="profile_setup"),
 path('step1/',views.step1_view, name='step1_view'),
 path('step2/', views.step2_view, name='step2_view'),
+path('step3/',views.step3_view,name="step3_view"),
 path('vehicle/',views.vehicle,name="vehicle"),
 path('vehicle/add',views.add_vehicle,name="vehicle_add"),
 path('vehicle/edit/<int:id>/', views.edit_vehicle, name='vehicle_edit'),
@@ -43,4 +44,5 @@ path('setcar/<slug:var_slug>', views.setcar, name='setcar'),
 path('check_vehicle_exists/', views.check_vehicle_exists, name='check_vehicle_exists'),
 path('warning-alarm/',views.warning_alarm, name='warning_alarm'),
 path('check_email_exists/', views.check_email_exists, name='check_email_exists'),
+path('table',views.table_page,name='table'),#need to removed
 ]

@@ -1,4 +1,4 @@
-{% extends 'admin/adminbase.html' %}
+{% extends 'admin/blogbase.html' %}
 {% block conhead%}
 {{ form.media }}
 {% endblock %}
@@ -8,7 +8,14 @@
   <div class="col-md-12 grid-margin stretch-card ">
     <div class="card">
       <div class="card-body ">
-    <h1>{% if post %}Edit Post{% else %}Create Post{% endif %}</h1>
+        <h3 class="text-danger"> {% if post %}Edit Post{% else %}Create Post{% endif %} </h3>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{%url 'admin_blog'%}"> Blog</a></li>
+              <li class="breadcrumb-item active" aria-current="page">Create or Edit</li>
+            </ol>
+          </nav>
+
     <form method="post" enctype="multipart/form-data">
       {% csrf_token %}
       
@@ -24,7 +31,7 @@
       {{ form.image.label_tag }}
       {{ form.image }}
       {{ form.image.errors }}
-      <span class="text-danger" id="imageError">jrr</span>
+      <span class="text-danger" id="imageError"></span>
       {{ form.video.label_tag }}
       {{ form.video }}
       {{ form.video.errors }}

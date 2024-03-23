@@ -35,6 +35,7 @@ path('create_service_price/',create_service_form,name='create_service_price'),
 path('post/<slug:slug>/', create_or_edit_post, name='edit_post'),#FOR BLOG EDIT
 path('post/', create_or_edit_post, name='create_post'),#FOR BLOG CREATION
 path('blog/',view_blog,name='admin_blog'),#blog
+path('blog/<slug:blog_slug>/',blog_details,name='blog_details'),
 path('tasks/', TaskListViewAndCreateView, name='task_list_create_update'),
 path('tasks/<slug:slug>/', TaskListUpdateView, name='edit_task'),
 #URLS FOR Bluk upload

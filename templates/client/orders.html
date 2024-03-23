@@ -58,7 +58,8 @@
                                                 <th>Actions</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
+                                        <tbody >
+                                
                                         {%for item in order_items%}
                                             {%if oder.id == item.order_item.service_order.id%}
                                             <tr>
@@ -66,6 +67,7 @@
                                                 <td>₹ {{ item.price }}</td> 
                                                 <td>{{item.order_item.status}}</td>
                                                 <td>
+                                                  <a href="{% url 'order_cancel'  item.order_item.slug%}">order_cancel</a>
                                                     <button type="button" class="btn btn-danger" {% if item.order_item.status == 'completed' %} disabled {% endif %}>
                                                         Cancel
                                                     </button>

@@ -1,4 +1,4 @@
-<form hx-post="{% url 'step2_view' %}" hx-target="#form-container" id="myForm1">
+<form hx-post="{% url 'step2_view' %}" hx-target="#form-container" hx-redirect="true" id="myForm1">
     {% csrf_token %}
     <div class="mb-3"> 
         {{ form.vehicle_Regno.label}}
@@ -21,6 +21,7 @@
         <div id="modelVariantError" class="text-danger"></div>
     </div>
     <button type="submit" class="btn btn-dark w-100 my-4 mb-2">Finsh</button>
+    <a href="{% url 'index' %}">efqrq</a>
 </form>
  <script>
 $(document).ready(function () {
@@ -132,7 +133,4 @@ document.addEventListener('change', function (event) {
         validateSelect(event.target, 'modelVariantError');
     }
 });
-
-
-
 </script>

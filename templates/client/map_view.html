@@ -102,7 +102,7 @@
                 // Update nearest center if closer
                 if (distance < nearestDistance) {
                     nearestDistance = distance;
-                    nearestCenter =  '<div class="col-md-12"><div class="location-item"><i class="fa fa-map-marker-alt"></i><div class="location-text"><h3>Auto Mech {{ center.place }}</h3><p> {{ center.place }}, {{ center.city }}({{ center.pincode }})</p><p><strong>Call:</strong>{{center.phone_number}}</p><button class="btn btn-success  show-on-map" data-lat="{{ center.latitude }}" data-lng="{{ center.longitude }}">View on Map</button></div></div></div>';
+                    nearestCenter =  '<div class="col-md-12"><div class="location-item"><i class="fa fa-map-marker-alt"></i><div class="location-text"><h3>Auto Mech {{ center.place }}(Nearest)</h3><p> {{ center.place }}, {{ center.city }}({{ center.pincode }})</p><p><strong>Call:</strong>{{center.phone_number}}</p><button class="btn btn-success  show-on-map" data-lat="{{ center.latitude }}" data-lng="{{ center.longitude }}">View on Map</button></div></div></div>';
                 }
             {% endfor %}
     

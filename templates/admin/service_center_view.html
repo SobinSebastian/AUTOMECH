@@ -13,6 +13,12 @@
       <div class="card">
         <div class="card-body">
           <h3 class="text-danger">Service Centers </h3>
+          <nav aria-label="breadcrumb"  class="warning">
+            <ol class="breadcrumb">
+              <li class="breadcrumb-item"><a href="{% url 'admin_home' %}">Dashboard</a></li>
+              <li class="breadcrumb-item active"><a href="{% url 'service_center_view'%}">Service Center</a></li>
+            </ol>
+          </nav>
           <div class="row mt-4">
             <div class="col-md-6 mb-4 stretch-card transparent">
               <div class="card card-tale">
@@ -20,6 +26,7 @@
                   <p class="mb-4">Add New Service Center</p>
                   <p class="fs-30 mb-2">  <a href="{%url 'service_center'%}" class="btn btn-success btn-sm">New Service Center</a></p>
                   <p>Expand The Service Center</p>
+                  <a  href="{%url 'service_center_manager'%}" class="btn btn-success btn-sm">Add new Manager</a>
                 </div>
               </div>
             </div>

@@ -13,7 +13,13 @@
           <p class="card-title">Service Centers Manager</p>
           <div class="row">
             <div class="col-12">
-             
+                <nav aria-label="breadcrumb"  class="warning">
+                  <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'admin_home' %}">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'service_center_view'%}">Service Center</a></li>
+                    <li class="breadcrumb-item active" aria-current="page"> Service Centers Manager</li>
+                  </ol>
+                </nav>
              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
                 Add New Manager
               </button>
@@ -115,16 +121,33 @@
              
                          // Check if the value is a valid email address
                          if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-                             errorContainer.textContent = 'Enter a valid email address.';
-                             input.classList.remove('is-valid');
-                             input.classList.add('is-invalid');
-                             return false;
-                         } else {
-                             errorContainer.textContent = '';
-                             input.classList.remove('is-invalid');
-                             input.classList.add('is-valid');
-                             return true;
-                         }
+                          errorContainer.textContent = 'Enter a valid email address.';
+                          input.classList.remove('is-valid');
+                          input.classList.add('is-invalid');
+                          return false;
+                      } else {
+                          // Perform AJAX check for existing email
+                          $.ajax({
+                              type: 'GET',
+                              url: '/check_email_exists/',
+                              data: {
+                                  'email': value
+                              },
+                              success: function(response) {
+                                  if (response.exists) {
+                                      emailError.textContent = 'Already exists';
+                                      input.classList.remove('is-valid');
+                                      input.classList.add('is-invalid');
+                                      return false;
+                                  } else {
+                                      emailError.textContent = '';
+                                      input.classList.remove('is-invalid');
+                                      input.classList.add('is-valid');
+                                      return true;
+                                  }
+                              }
+                          });
+                      }
                      }
              
                      function validateName(input, fieldName) {

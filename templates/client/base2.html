@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <title>AutoMech</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <meta content="AutoMech template" name="keywords" />
+    <meta content="Free Website Template" name="keywords" />
     <meta content="Free Website Template" name="description" />
 
     <!-- Favicon -->
@@ -25,12 +25,20 @@
     <!-- Template Stylesheet -->
     <link href="{% static 'css/style.css' %}" rel="stylesheet" />
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+
+    {% comment %} Datatable code {% endcomment %}
+   
+
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/dataTables.bootstrap4.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
+    
+
     {% comment %}sweetify{% endcomment %}
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
 
     <script src="https://unpkg.com/htmx.org@1.6.1"></script>
-   
-    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
 
     {% block cstyle %}
 
@@ -122,9 +130,6 @@
               <!-- This link will be hidden on the 'my_page' page -->
               {% if user.is_authenticated %}
                 <a href="{% url 'custom_logout' %}" class="nav-item nav-link">Sign Out</a>
-                {% comment %}
-                <a href="{% url 'account_logout' %}" class="nav-item nav-link">Sign Out</a>
-                {% endcomment %}
               {% endif %}
             </div>
             <div class="ml-auto">
@@ -270,7 +275,8 @@
       }
     </script>
     <!-- JavaScript Libraries -->
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.7.1.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/2.0.2/js/dataTables.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
     <script src="{% static 'lib/easing/easing.min.js' %}"></script>
     <script src="{% static 'lib/owlcarousel/owl.carousel.min.js' %}"></script>
@@ -284,7 +290,6 @@
     <!-- Template Javascript -->
     <script src="{% static 'js/main.js' %}"></script>
     <script>
-      // Add this JavaScript code in your template
       document.addEventListener('DOMContentLoaded', function () {
         let toastContainer = document.getElementById('toast-container')
         let messages = document.querySelectorAll('.messages')

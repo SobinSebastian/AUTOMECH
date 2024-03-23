@@ -66,7 +66,8 @@ def view_cart(request):
     }
     return render(request, 'client/cart.html',context)
 
- 
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def add_to_cart(request, slug):
     client = request.user
     service = ServiceList.objects.get(slug = slug)
@@ -80,6 +81,9 @@ def add_to_cart(request, slug):
 
 
     return redirect('index')
+
+#///////////////////////////////// Odeer View ///////////////////////////////////////////////////
+
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def orders (request):
@@ -130,7 +134,7 @@ def orders (request):
         }
     return  render(request,'client/orders.html',context)
 
-
+# ////////////////////////// CART ITEM REMOVAL ////////////////////////////////////////////////////////
 def remove_from_cart(request, slug):
     cart_item = Cart.objects.get(slug=slug)
     cart_item.delete()
@@ -138,10 +142,17 @@ def remove_from_cart(request, slug):
     return redirect('view_cart')
 
 
+# ////////////////////////// CART ITEM REMOVAL ////////////////////////////////////////////////////////
+def order_cancel(request,slug):
+    oitem = ServiceOrderItem.objects.get(slug = slug)
+    sweetify.toast(request, f'{oitem.service_list} Service Order is canceled', icon='error', timer=3000)
+    oitem.delete()
+    return redirect (orders)
+
 def book(request):
     return redirect('view_cart')
 
-#basic setup for payment it will handle with pay id in database
+#To add the payment id in database
 def pay(request,slug):
     det = ServiceOrder.objects.get(slug=slug)
     price = det.price

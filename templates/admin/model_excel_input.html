@@ -5,13 +5,37 @@
 {%block content%}
 {% load static %}
 <div class="row">
-    <h2>Insert Edited Excel</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
+  <div class="col-md-12 grid-margin stretch-card">
+    <h2>Variant Upload By Excel</h2><br>
     
-    {{ form.as_p }}
-    
-    <button type="submit" class="btn btn-primary">Insert Data</button>
-  </form>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6 grid-margin stretch-card">
+      <div class="card">
+          <div class="card-body">
+            <nav aria-label="breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{%url 'car_make'%}">Vehicles</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Upload</li>
+              </ol>
+            </nav>
+            <form method="post" enctype="multipart/form-data">
+              {% csrf_token %}
+              
+              {{ form.as_p }}
+              
+              <button type="submit" class="btn btn-primary btn-sm">Insert Data</button>
+            </form>
+          </div>
+      </div>
+  </div>
+  <div class="col-md-6 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+          <a href="{% url 'download_excel_with_headers' %}">DownloadExcel</a>
+        </div>
+    </div>
+</div>
 </div>
 {%endblock%}

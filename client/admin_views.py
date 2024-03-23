@@ -259,9 +259,11 @@ def service_center_view(request):
 def service_center_details(request, slug):
     if slug :
         center = ServiceCenter.objects.get(slug=slug)
+        slots = ServicesSlots.objects.filter(service_center=center)
     else :
         center = None
-    context= { 'center' : center}
+    context= { 'center' : center,
+              'slots' : slots}
     return render (request,'admin/service_center_details.html',context)
 
 
@@ -347,6 +349,14 @@ def view_blog (request):
     }
     return render(request,'admin/blog.html',context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
+def blog_details (request,blog_slug):
+    post = Post.objects.get(slug = blog_slug)
+    context={
+        'post':post
+    }
+    return render(request,'admin/blog_details.html',context)
+
 
 def create_or_edit_post(request, slug=None):
     post = get_object_or_404(Post, slug=slug) if slug else None
@@ -357,7 +367,8 @@ def create_or_edit_post(request, slug=None):
             post = form.save(commit=False)
             post.author = request.user
             post.save()
-            return redirect('post_detail', slug=post.slug)
+            sweetify.toast(request, 'Post is Updated', icon='success', timer=3000)
+            return redirect('admin_blog')
     else:
         form = PostForm(instance=post)
 

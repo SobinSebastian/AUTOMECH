@@ -46,7 +46,7 @@ def index(request):
     return render(request,'client/index.html',context)
     
 def profilesetup(request):
-   return render(request,'account/profilesetup.html') 
+    return render(request,'account/profilesetup.html') 
 
 class CustomSignupView(SignupView):
     template_name = 'account/signup.html'
@@ -238,6 +238,8 @@ def get_models(request):
 
 
 def step1_view(request):
+    if UserInfo.objects.filter(client=request.user).exists():
+        return redirect('step2_view')
     if request.method == 'POST':
         user =  request.user
         user_info = UserInfo()
@@ -250,7 +252,7 @@ def step1_view(request):
             user_info.district = form.cleaned_data['district']
             user_info.pincode = form.cleaned_data['pincode']
             user_info.client=user   
-            user_info.save()
+            #user_info.save()
             return redirect('step2_view')
     else:
         form = ProfilesetupForm()
@@ -269,13 +271,16 @@ def step2_view(request):
                 model_variant=variant_id,  # Assign variant_id directly
                 vehicle_Regno=reg_no
             )
-            vehicle_info.save()
-            sweetify.toast(request, 'Completed', icon='error', timer=3000)
-            return redirect('index')
+            #vehicle_info.save()
+            sweetify.toast(request, 'Completed', timer=3000)
+            return redirect('step3_view')
 
     else:
         form = VehicleaddForm()
     return render(request, 'account/step2.html', {'form': form})
+    
+def step3_view(request):
+    return render(request, 'account/step3.html')
 
 def servicecost_estimation(request):
     variant = None
@@ -316,6 +321,7 @@ def set_default_vehicle(sender, user, request, **kwargs):
 
 from geopy.distance import geodesic
 @login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def rsa (request):
     user =request.user
     user_vehicle_ids = Vehicleinfo.objects.filter(client=user).values_list('id', flat=True)
@@ -355,7 +361,8 @@ def rsa (request):
 
     return render (request,'client/rsa.html',{'service_centers': service_centers,'vehicles':vehicles})
 
-
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def rsadetails(request):
     user = request.user
     vehicles = Vehicleinfo.objects.filter(client = user).first()
@@ -363,7 +370,7 @@ def rsadetails(request):
     return render(request,'client/rsa_details.html',{'v':rsa})
 
 #////////////////////////// BLOG START //////////////////////////////////////////////////////////
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def client_blog(request):
     posts = Post.objects.all()
     context={
@@ -371,6 +378,7 @@ def client_blog(request):
     }
     return render(request,'client/blog.html',context)
 
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def client_blog_details (request,blog_slug):
     post = Post.objects.get(slug = blog_slug)
     context={
@@ -383,15 +391,15 @@ def like_post(request, post_slug):
     post = get_object_or_404(Post, slug=post_slug)
     if request.user in post.likes.all():
         post.likes.remove(request.user)
-        sweetify.toast(request, 'Unlike', icon='error', timer=3000)
     else:
         post.likes.add(request.user)
-        sweetify.toast(request, 'Liked', timer=3000)
     return redirect('client_blog_details', blog_slug=post.slug)
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\ BLOG END  \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #////////////////////////// CLIENT VEHICLE DETAILS       ///////////////////////////////////////////////////
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def vehicel_details(request):
     user = request.user
     vehicles = Vehicleinfo.objects.filter(client = user) 
@@ -522,3 +530,7 @@ def check_email_exists(request):
         'exists': User.objects.filter(email=email).exists()
     }
     return JsonResponse(data)
+
+
+def table_page(request):
+    return render(request,'client/table.html')

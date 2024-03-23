@@ -14,7 +14,9 @@
     {{form.place}}
     <div id="placeError" class="text-danger"></div>
     <br>
-    {{form.city}}
+    <select id="id_city" name="city" class="form-control" required>
+    </select>
+
     <div id="cityError" class="text-danger"></div>
     <br>
     <select id="district" name="district" class="form-control"  placeholder="District" maxlength="100" required="" id="id_district">
@@ -41,7 +43,7 @@
     </form>
 </div>
 <script>
-    function validatePINCode(pincode) {
+    function validatePINCode(pincode,city) {
         const pincodeError = document.getElementById('pincodeError');
         const pinRegex = /^[1-9][0-9]{5}$/;
         if (pincode.trim() === '') {
@@ -51,8 +53,31 @@
             pincodeError.textContent = 'Invalid PIN code. It should be a 6-digit number.';
             return false;
         } else {
+
+            var url = "https://api.postalpincode.in/pincode/" + pincode;
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data[0].Status === "Success") {
+                        var district = data[0].PostOffice[0].District;
+                        city = district;
+                        document.getElementById("district").value = district;
+                        var postOffices = data[0].PostOffice;
+                        var cityDropdown = document.getElementById("id_city");
+                        cityDropdown.innerHTML = "<option value=''>Select City</option>";
+                        postOffices.forEach(postOffice => {
+                            var option = document.createElement("option");
+                            option.text = postOffice.Name;
+                            option.value = postOffice.Name;
+                            cityDropdown.add(option);
+                        })
+                    } else {
+                        alert("Invalid PIN Code. Please enter a valid PIN Code.");
+                    }
+                });
             pincodeError.textContent = '';
-            return true;
+           
         }
     }
 
