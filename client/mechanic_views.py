@@ -42,10 +42,13 @@ def service_details(request, service_slug):
     if order.status == 'pending':
         order.status = 'processing'
         order.save()
+    rec_details = Servicerecommendation.objects.filter(service_order =  order)
     context = {
         'order': order,
         'order_items' : order_items,
-        'completed_percentage' : completed_percentage
+        'completed_percentage' : completed_percentage ,
+        'rec_details' : rec_details,
+        'form' : ServicerecommendationForm()
         }
     return render(request, 'mechanic/service_details.html',context)
 
@@ -87,3 +90,24 @@ class ServiceSlotJsonView(View):
         service_slots = ServicesSlots.objects.all()
         resources = [{'id': slot.id, 'title': str(slot.slotname)} for slot in service_slots]
         return JsonResponse(resources, safe=False)
+     
+
+def ServiceRec(request,order_slug):
+    order = ServiceOrder.objects.get(slug=order_slug)
+    form = ServicerecommendationForm(request.POST)
+    sevrec = Servicerecommendation()
+    if form.is_valid():
+        sevrec.service_list = form.cleaned_data['service_list']
+        sevrec.service_order = form.cleaned_data['service_order']
+        sevrec.save()
+        sweetify.toast(request, 'Service Recommended', timer=3000)
+        return redirect('ServiceRec', order_slug=order_slug)
+    else:
+        form = ServicerecommendationForm()
+    rec_details = Servicerecommendation.objects.filter(service_order =  order)
+    context ={
+        'form' : form,
+        'od':order,
+        'rec_details' : rec_details ,
+    }
+    return render ( request,'mechanic/service_rec.html',context)

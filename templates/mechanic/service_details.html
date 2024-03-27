@@ -2,6 +2,8 @@
 {%block content%}
 {% load tz %}
 {% load static %}
+<script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
+
 <div class="row">
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
@@ -121,6 +123,31 @@
       </div>
     </div>
   </div>
+
+<!-- Service Recommendation -->
+  
+<div class="col-md-12 grid-margin stretch-card">
+    <div class="card">
+      <div class="card-body">
+        <p class="card-title">Service Recommendation</p>
+        {% comment %} {{order}} {% endcomment %}
+
+        <div id="form-container">
+          <form hx-post="{% url 'ServiceRec' order_slug=order.slug %}" hx-target="#form-container">
+            {% csrf_token %}
+            <input type="hidden" name="service_order" required="" id="id_service_order" value="{{order.id}}">
+            {{ form.service_list.label }}
+            {{ form.service_list }}
+            <button type="submit">Recommend</button>
+            </form>
+            {% for rec in rec_details  %}
+            {{rec.service_list}}
+            {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">

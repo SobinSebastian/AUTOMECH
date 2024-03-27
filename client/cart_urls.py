@@ -11,4 +11,6 @@ urlpatterns = [
     path('pay/<slug:slug>',views.pay,name='bill_pay'),
     path('razorpay_callback/',views.razorpay_callback,name='razorpay_callback'),
     path('generate-bill-pdf/<slug:slug>', views.generate_bill_pdf, name='generate_bill_pdf'),
+    path('add_rec_order<slug:slug>',views.add_rec_to_order,name='add_rec_to_order'),
+
 ]

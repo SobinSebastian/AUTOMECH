@@ -83,6 +83,7 @@ def add_to_cart(request, slug):
     return redirect('index')
 
 #///////////////////////////////// Odeer View ///////////////////////////////////////////////////
+from django.db.models import F
 
 @login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
@@ -90,7 +91,7 @@ def orders (request):
     id = request.session.get('selected_vehicle')
     vehicle = Vehicleinfo.objects.get(id=id)
     service_prices = ServicePrice.objects.filter(variant = vehicle.model_variant)
-    serviceorders = ServiceOrder.objects.filter(vehicle_id=id).exclude( status__in=['closed', 'cancelled']).order_by('date')
+    serviceorders = ServiceOrder.objects.filter(vehicle_id=id).exclude( status__in=['closed', 'cancelled']).order_by(F('date').desc())
     order_items =ServiceOrderItem.objects.all()
 
     serviceorder_prices = []
@@ -127,10 +128,13 @@ def orders (request):
                     'order_item': order_item,
                     'price': service_p.price
                 })
+    rec_details = Servicerecommendation.objects.all()
     context = {
         'serviceorder_prices':serviceorder_prices,
         'serviceorders': serviceorders,
         'order_items' : order_items_with_prices,
+        'rec_details' : rec_details,
+        'ser_prices'  : service_prices,
         }
     return  render(request,'client/orders.html',context)
 
@@ -424,4 +428,17 @@ def Cancel_Service_order(request,slug):
     orders.status = 'cancelled'
     orders.save()
     sweetify.toast(request, 'Service Order cancelled ', timer=3000)
+    return redirect('orders')
+
+#//////////////////////////// SERVICE RECOMMENDATION ADD TO ORDER /////////////////
+def add_rec_to_order(request,slug):
+    rec = Servicerecommendation.objects.get(recslug = slug)
+    service_order_item = ServiceOrderItem(
+                service_order=rec.service_order,
+                vehicle_info=rec.service_order.vehicle,
+                service_list=rec.service_list,
+            )
+    service_order_item.save()
+    rec.delete()
+    sweetify.toast(request, 'Add To Order', icon='success', timer=3000)
     return redirect('orders')

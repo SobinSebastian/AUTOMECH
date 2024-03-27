@@ -28,7 +28,7 @@
                                 <td>
                                     {{oder.status}}
                                 </td>
-                                <td><button type="button" class="btn btn-success">View More</button></td>
+                                <td><button type="button" class="btn btn-success btn-sm">View More</button></td>
                             </tr>
                             <tr id="details{{oder.slug}}" class="collapse">
                                 <td colspan="5" >
@@ -47,7 +47,33 @@
                                           </div>
                                           {%endif%}
                                           </div>
-                                           
+                                          <B><u>Service Recommendation</u></B> <br>
+                                          <table>
+                                            <thead>
+                                              <tr>
+                                                <th>Service </th>
+                                                <th>Price</th>
+                                                <th></th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                          {% for rec in rec_details  %}
+                                           <tr> 
+                                          {% if rec.service_order == oder %}
+                                              <td>{{rec.service_list}}</td>
+                                              {% for ser_price in ser_prices %} 
+                                                  {% if ser_price.service == rec.service_list %}  
+                                                    <td>{{ser_price.price}}</td>
+                                                    <td>
+                                                      <a href="{% url 'add_rec_to_order' rec.recslug %}" class="btn btn-success btn-sm">Add To Order</a>
+                                                    </td>
+                                                  {% endif %}
+                                              {% endfor %}
+                                            {% endif %}
+                                           </tr>
+                                          {% endfor %}
+                                            </tbody>
+                                          </table>
                                     <B><u>Service Order Details</u></B>
                                     <table class="table table-info">
                                         <thead>
@@ -67,10 +93,13 @@
                                                 <td>₹ {{ item.price }}</td> 
                                                 <td>{{item.order_item.status}}</td>
                                                 <td>
-                                                  <a href="{% url 'order_cancel'  item.order_item.slug%}">order_cancel</a>
-                                                    <button type="button" class="btn btn-danger" {% if item.order_item.status == 'completed' %} disabled {% endif %}>
-                                                        Cancel
+                                                  {% if item.order_item.status == 'completed' or item.order_item.status == 'Processing' %}
+                                                    <button type="button" class="btn btn-danger btn-sm"  {% if item.order_item.status == 'completed' %} disabled {% endif %}>
+                                                      Cancel
                                                     </button>
+                                                  {% else %}
+                                                    <a href="{% url 'order_cancel'  item.order_item.slug%}" class="btn btn-danger btn-sm">Cancel</a>
+                                                  {% endif %}
                                                 </td>
                                                 
                                             </tr>
@@ -98,7 +127,7 @@
                                       {% endif %}
                                       {% endfor %}
                                         <!-- Button trigger modal -->
-                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal{{oder.slug}}">
+                                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal{{oder.slug}}">
                                           Cancel Order
                                         </button>
                                     </div>

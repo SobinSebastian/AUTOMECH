@@ -364,3 +364,13 @@ class TaskForm(forms.ModelForm):
 #//////////////////////// FORM FOR EXCEL UPLOAD ////////////////////////////////
 class ExcelUploadForm(forms.Form):
     excel_file = forms.FileField(label='Select Excel File')
+
+
+# //////////////////////////////// FORM FOR Service recommendationForm
+class ServicerecommendationForm(forms.ModelForm):
+    class Meta:
+        model = Servicerecommendation
+        fields = ['service_order', 'service_list']
+        widgets = {
+            'service_list': forms.Select(attrs={'class': 'form-control'}),
+        }

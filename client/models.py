@@ -385,3 +385,14 @@ class Post(models.Model):
         return self.title
 
 #////////////////////////// Model FOE SERVICE RECMENDATION /////////////////////////////
+class Servicerecommendation(models.Model):
+    service_order = models.ForeignKey(ServiceOrder, on_delete=models.CASCADE)
+    service_list = models.ForeignKey(ServiceList, on_delete=models.CASCADE)
+    recslug = models.SlugField(unique=True, default=uuid.uuid4, editable=False, max_length=36)
+
+    def save(self, *args, **kwargs):
+        if not self.recslug:
+            self.recslug = str(uuid.uuid4())
+        super(Servicerecommendation, self).save(*args, **kwargs)
+    class Meta:
+        unique_together = ['service_order', 'service_list']

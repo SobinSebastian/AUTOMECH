@@ -1,0 +1,9 @@
+<form hx-post="{% url 'ServiceRec' order_slug=od.slug %}" hx-target="#form-container">
+    {% csrf_token %}
+    Select Service
+    {{od}}
+    <input type="hidden" name="service_order" required="" id="id_service_order" value="{{od.id}}">
+    {{ form.service_list.label }}
+    {{ form.service_list }}
+    <button type="submit">Recommend</button>
+</form>
