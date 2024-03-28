@@ -111,3 +111,11 @@ def ServiceRec(request,order_slug):
         'rec_details' : rec_details ,
     }
     return render ( request,'mechanic/service_rec.html',context)
+
+
+def ServiceRecDel(request,rec_slug):
+    del_item = Servicerecommendation.objects.get(recslug = rec_slug)
+    order_slug = del_item.service_order.slug
+    del_item.delete()
+    sweetify.toast(request, 'Service Recommendation is Removed!', timer=3000)
+    return redirect('service_details', service_slug=order_slug)

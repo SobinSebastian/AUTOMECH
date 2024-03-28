@@ -5,6 +5,11 @@ from django.contrib.auth.models import User
 from django.test import LiveServerTestCase
 from django.urls import reverse
 from selenium import webdriver
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+import time
 # class LoginTest(LiveServerTestCase):
 #     def setUp(self):
 #         self.driver  = webdriver.Chrome()
@@ -35,7 +40,7 @@ class AddtoCartTest(LiveServerTestCase):
         self.driver.quit()
     def test_login(self):
         expected_url = 'http://127.0.0.1:8000/' 
-        print('Testing Started')
+        print('Testing Started Add to Cart')
         self.driver.get('http://127.0.0.1:8000//accounts/login/')
         
         self.driver.find_element("id", "id_login")
@@ -45,12 +50,21 @@ class AddtoCartTest(LiveServerTestCase):
         password_field.send_keys('!Mynameis22')
         submit = self.driver.find_element("id","log_sub")
         submit.click()
-        cartb = self.driver.find_element("id","basic-service")
-        current_url = self.driver.current_url
-        print(current_url)
-        print(expected_url)
-        self.assertEqual(current_url, expected_url)
+        time.sleep(5)
+        cartbutton = self.driver.find_element("id","standard-service")
+        cartbutton.click()
+        wait = WebDriverWait(self.driver, 10)  
 
+        try:
+            toast_message = wait.until(EC.presence_of_element_located((By.ID, "swal2-title")))
+            toast_text = toast_message.text
+            if toast_text == "Item added to the cart":
+                print("Toast message verified: 'Item added to the cart'")
+                print('Item add to Cart')
+            else:
+                print("Unexpected toast message:", toast_text)
+        except TimeoutException:
+            print("Toast message not found within 10 seconds")
 
 
 # class SigninTest(LiveServerTestCase):

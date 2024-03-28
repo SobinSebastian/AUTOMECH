@@ -136,13 +136,41 @@
           <form hx-post="{% url 'ServiceRec' order_slug=order.slug %}" hx-target="#form-container">
             {% csrf_token %}
             <input type="hidden" name="service_order" required="" id="id_service_order" value="{{order.id}}">
-            {{ form.service_list.label }}
-            {{ form.service_list }}
-            <button type="submit">Recommend</button>
+            <div class="row">
+              <div class="col-6">
+                Select Service
+                {{ form.service_list }}
+              </div>
+              <div class="col-6 mt-4 mb-1">
+                <button type="submit" class="btn btn-primary btn-sm">Recommend</button>
+              </div>
+            </div>
             </form>
-            {% for rec in rec_details  %}
-            {{rec.service_list}}
-            {% endfor %}
+            <BR>
+            <p class="card-title">Recommended Items</p>
+            
+            <table class="w-100">
+              <thead>
+                  <tr>
+                    <th>Service Image</th>  
+                    <th>Service</th>
+                    <th>Action</th>
+                  </tr>
+              </thead>
+              <tbody>
+                {% for rec in rec_details  %}
+                <tr>
+                  <td>
+                    <img src="{{ rec.service_list.service_Image.url }}" alt="Service Image" width="50">
+                  </td>  
+                  <td>{{rec.service_list}}</td>
+                  <td>
+                    <a  class="btn btn-light btn-sm text-danger" href="{% url 'ServiceRecdelete' rec_slug=rec.recslug %}">Remove</a>
+                  </td>
+                {% endfor %}
+              </tbody>
+            </table>
+
         </div>
       </div>
     </div>
