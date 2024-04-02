@@ -279,6 +279,10 @@ class ServiceOrder(models.Model):
         ('cancelled', 'Cancelled'),
         ('closed', 'Closed'),
     )
+    TYPE_CHOICES = (
+        ('normal', 'Normal'),
+        ('rsa', 'Rsa'),
+    )
     vehicle = models.ForeignKey(Vehicleinfo, on_delete=models.CASCADE)
     service_center = models.ForeignKey(ServiceCenter, on_delete=models.CASCADE)
     date = models.DateField()
@@ -290,6 +294,7 @@ class ServiceOrder(models.Model):
     razorpay_order_id=models.CharField(max_length=100, null=True,blank=True)
     razorpay_signature=models.CharField(max_length=100, null=True,blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2,null=True,blank=True)
+    service_type = models.CharField(max_length=20, choices=TYPE_CHOICES, default='normal')
 
     def __str__(self):
         return f"{self.vehicle.vehicle_Regno} - {self.service_center.place} - {self.date} {self.time}"
@@ -301,11 +306,13 @@ class ServiceOrderItem(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     )
+   
     service_order = models.ForeignKey(ServiceOrder, on_delete=models.CASCADE)
     vehicle_info = models.ForeignKey(Vehicleinfo, on_delete=models.CASCADE)
     service_list = models.ForeignKey(ServiceList, on_delete=models.CASCADE)
     slug = models.SlugField(unique=True, default=uuid.uuid4, editable=False, max_length=36)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='created')
+   
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -330,6 +337,7 @@ class RoadsideAssistance(models.Model):
     STATUS_CHOICES = [
         ('requested', 'Requested'),
         ('accepted', 'Accepted'),
+        ('At Location','At Location'),
         ('processing', 'Processing'),
         ('completed', 'Completed'),
     ]
@@ -341,6 +349,7 @@ class RoadsideAssistance(models.Model):
     slug = models.CharField(max_length=36, unique=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True,null=True,blank=True) 
+    service_order = models.ForeignKey(ServiceOrder, on_delete=models.CASCADE,null=True,blank=True)
     @property
     def created_at_in_local_timezone(self):
         return timezone.localtime(self.created_at)

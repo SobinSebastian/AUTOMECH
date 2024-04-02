@@ -119,3 +119,20 @@ def ServiceRecDel(request,rec_slug):
     del_item.delete()
     sweetify.toast(request, 'Service Recommendation is Removed!', timer=3000)
     return redirect('service_details', service_slug=order_slug)
+
+
+def Roadsideassist (request) :
+    mech = request.user
+    center_details = mechanicList.objects.get(mechanic =mech)
+    rsa_detials =  RoadsideAssistance.objects.filter(service_center =  center_details.service_center)
+    context ={
+        'rsa_detials' : rsa_detials,
+    }
+    return render (request,'mechanic/roadsideassist.html',context)
+
+def Roadsidedetails (request,slug) :
+    rsa = RoadsideAssistance.objects.get( slug = slug )
+    context = {
+        'rsa' : rsa,
+    }
+    return render (request,'mechanic/rsadetials.html',context)

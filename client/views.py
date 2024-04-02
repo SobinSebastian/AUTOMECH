@@ -335,8 +335,6 @@ def rsa (request):
         latitude = request.POST.get('latitude')
         longitude = request.POST.get('longitude')
         description = request.POST.get('description')
-        print(latitude)
-        print(longitude)
         # Calculate the distance for each service center and store it in a dictionary
         distances = {}
         user_location = (latitude, longitude)
@@ -349,6 +347,15 @@ def rsa (request):
         nearest_center_id = min(distances, key=distances.get)
         
         nearest_service_center = ServiceCenter.objects.get(id=nearest_center_id)
+
+        service_order = ServiceOrder.objects.create(
+            vehicle_id=vehicle_info_id,
+            service_center=nearest_service_center,
+            date=datetime.now().date(), 
+            time=datetime.now().time(), 
+            status='on hold', 
+            service_type='rsa', 
+        )
         rsa_request = RoadsideAssistance.objects.create(
             vehicle_info_id=vehicle_info_id,
             service_center=nearest_service_center,
@@ -356,9 +363,9 @@ def rsa (request):
             longitude=longitude,
             status='requested',  # You can set the default status or adjust as needed
             description=description,
+             service_order=service_order,
         )
-        print("Nearest Service Center:", nearest_service_center.place)
-
+        return redirect('rsadetails')
     return render (request,'client/rsa.html',{'service_centers': service_centers,'vehicles':vehicles})
 
 @login_required
@@ -531,6 +538,3 @@ def check_email_exists(request):
     }
     return JsonResponse(data)
 
-
-def table_page(request):
-    return render(request,'client/table.html')

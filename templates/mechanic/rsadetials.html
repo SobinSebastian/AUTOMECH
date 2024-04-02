@@ -1,0 +1,148 @@
+{% extends 'mechanic/base.html' %}
+{% block conhead %}
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+{% endblock %}
+
+{%block content%}
+{% load tz %}
+{% load static %}
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title text-danger">RSA Requests For  {{rsa.vehicle_info.vehicle_Regno}} ({{rsa.vehicle_info.model_variant}})</p>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card ">
+                      <div class="card-body">
+                        <div class="border-bottom text-center pb-4">
+                          <div class="mb-3">
+                            <h4>Vehicle Details</h4>
+                          </div>
+                        </div>
+                          <div class="py-4">
+                            <p class="clearfix">
+                              <span class="float-left">
+                                Vehicle RegNo
+                              </span>
+                              <span class="float-right text-muted">
+                                {{rsa.vehicle_info.vehicle_Regno}}
+                              </span>
+                              </p>
+                              <p class="clearfix">
+                                <span class="float-left">
+                                  Vehicle Model
+                                </span>
+                                <span class="float-right text-muted">
+                                  {{rsa.vehicle_info.model_variant}}
+                                </span>
+                                </p>
+                                <p class="clearfix">
+                                  <span class="float-left">
+                                    Vehicle Manufacture
+                                  </span>
+                                  <span class="float-right text-muted">
+                                    {{rsa.vehicle_info.model_variant.model.make_company}}
+                                  </span>
+                                  </p>
+                          </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body">
+                        <div class="col-lg-12">
+                          <div class="border-bottom text-center pb-4">
+                            
+                            <div class="mb-3">
+                              <h4>{{rsa.vehicle_info.client.get_full_name}}</h4>
+                            </div>
+                          </div>
+                          <div class="py-4">
+                            <p class="clearfix">
+                              <span class="float-left">
+                                Email
+                              </span>
+                              <span class="float-right text-muted">
+                                {{rsa.vehicle_info.client}}
+                              </span>
+                              </p>
+                              <p class="clearfix">
+                                <span class="float-left">
+                                  Phone
+                                </span>
+                                <span class="float-right text-muted">
+                                  {{rsa.vehicle_info.client.userinfo.contact_no}}
+                                </span>    
+                              </p>
+                              <p class="clearfix">
+                                <span class="float-left">
+                                 Address
+                                </span>
+                                <span class="float-right text-muted">
+                                  {{rsa.vehicle_info.client.userinfo.address}} , 
+                                  {{rsa.vehicle_info.client.userinfo.place}} ,<br>
+                                  {{rsa.vehicle_info.client.userinfo.city}} ,
+                                  {{rsa.vehicle_info.client.userinfo.pincode}}
+                                </span>    
+                          </p>
+                        </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title text-danger"> Service Request Location</p>
+                <div id="map" style="height: 400px;"></div>
+                <div id="routing" style="margin-top: 10px;"></div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+<script>
+    var map = L.map('map').setView([0, 0], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    }).addTo(map);
+
+    // Get user's current position
+    navigator.geolocation.getCurrentPosition(function (position) {
+      var userLat = position.coords.latitude;
+      var userLng = position.coords.longitude;
+
+      // Add marker for user's position
+      L.marker([userLat, userLng]).addTo(map).bindPopup('Your Location');
+      
+      // Destination location (replace with your provided latitude and longitude)
+      var destLat = {{rsa.latitude}}; 
+      var destLng = {{rsa.longitude}};
+
+      // Add marker for destination
+      L.marker([destLat, destLng]).addTo(map).bindPopup('Destination');
+
+      // Create routing control and add it to the separate div
+      L.Routing.control({
+        waypoints: [
+          L.latLng(userLat, userLng),
+          L.latLng(destLat, destLng)
+        ],
+        routeWhileDragging: false,
+        container: '#routing' // specify the id of the div where routing control should be placed
+      }).addTo(map);
+    });
+  </script>
+{%endblock%}

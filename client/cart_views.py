@@ -91,7 +91,7 @@ def orders (request):
     id = request.session.get('selected_vehicle')
     vehicle = Vehicleinfo.objects.get(id=id)
     service_prices = ServicePrice.objects.filter(variant = vehicle.model_variant)
-    serviceorders = ServiceOrder.objects.filter(vehicle_id=id).exclude( status__in=['closed', 'cancelled']).order_by(F('date').desc())
+    serviceorders = ServiceOrder.objects.filter(vehicle_id=id).exclude( status__in=['closed', 'cancelled']).exclude(service_type='rsa').order_by(F('date').desc())
     order_items =ServiceOrderItem.objects.all()
 
     serviceorder_prices = []
