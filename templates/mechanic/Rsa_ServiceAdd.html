@@ -1,0 +1,14 @@
+<form method="post" action="{% url 'serviceRsaAdd' %}">
+    {% csrf_token %}
+    <input type="hidden" name="service_order" required="" id="id_service_order" value="{{order.id}}">
+    
+    <div class="row">
+        <div class="col-6">
+          Select Service
+          {{ addForm.service_list }}
+        </div>
+        <div class="col-6 mt-4 mb-1">
+          <button type="submit" class="btn btn-primary btn-sm">Add Service</button>
+        </div>
+    </div>
+</form>

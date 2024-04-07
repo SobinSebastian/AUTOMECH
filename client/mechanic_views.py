@@ -48,7 +48,8 @@ def service_details(request, service_slug):
         'order_items' : order_items,
         'completed_percentage' : completed_percentage ,
         'rec_details' : rec_details,
-        'form' : ServicerecommendationForm()
+        'form' : ServicerecommendationForm(),
+        'addForm' : ServiceMechAddForm()
         }
     return render(request, 'mechanic/service_details.html',context)
 
@@ -112,6 +113,25 @@ def ServiceRec(request,order_slug):
     }
     return render ( request,'mechanic/service_rec.html',context)
 
+def RsaserviceAdd(request,order_slug):
+    order = ServiceOrder.objects.get( slug = order_slug )
+    order_item = ServiceOrderItem()
+    addForm = ServiceMechAddForm(request.POST)
+    if addForm.is_valid():
+        service_list = addForm.cleaned_data['service_list']
+        order_item.service_order = order
+        order_item.vehicle_info = order.vehicle
+        order_item.service_list = service_list
+        order_item.save()
+        print (service_list)
+        sweetify.toast(request, 'Service  Added', timer=3000)
+        return redirect('service_details', service_slug=order_slug)
+    else:
+        addForm = ServiceMechAddForm()
+    context = {
+        'addForm' : addForm, 
+    }
+    return render ( request,'mechanic/Rsa_ServiceAdd.html',context)
 
 def ServiceRecDel(request,rec_slug):
     del_item = Servicerecommendation.objects.get(recslug = rec_slug)
@@ -136,3 +156,26 @@ def Roadsidedetails (request,slug) :
         'rsa' : rsa,
     }
     return render (request,'mechanic/rsadetials.html',context)
+
+#for showing dynamically the service orders
+def service_order_items_view(request, service_order_slug):
+    service_order = get_object_or_404(ServiceOrder, slug=service_order_slug)
+    order_items = ServiceOrderItem.objects.filter(service_order=service_order)
+    return render(request, 'mechanic/service_order_items.html', {'order_items': order_items, 'service_order_slug': service_order.slug})
+
+
+
+def get_orderitems(request, service_slug):
+    order = ServiceOrder.objects.get(slug=service_slug)
+    order_items = ServiceOrderItem.objects.filter(service_order=order)
+    order_items_json = [
+        {
+            'service_Image': item.service_list.service_Image.url,
+            'service_list_name': item.service_list.service_name,
+            'status': item.status,
+            'service_category': item.service_list.service_category.category_name,
+            'slug': item.slug
+        }
+        for item in order_items
+    ]
+    return JsonResponse(order_items_json, safe=False)

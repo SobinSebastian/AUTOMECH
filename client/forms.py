@@ -374,3 +374,11 @@ class ServicerecommendationForm(forms.ModelForm):
         widgets = {
             'service_list': forms.Select(attrs={'class': 'form-control'}),
         }
+
+class ServiceMechAddForm(forms.ModelForm):
+    class Meta:
+        model = Servicerecommendation
+        fields = ['service_order', 'service_list']
+        widgets = {
+            'service_list': forms.Select(attrs={'class': 'form-control'}),
+        }

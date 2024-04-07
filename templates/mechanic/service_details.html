@@ -8,11 +8,17 @@
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <p class="card-title">Service Order Details </p>
+        <p class="card-title text-danger">
+          {%if order.service_type == 'rsa'%}RSA {% endif %}Service Order Details </p>
         <nav aria-label="breadcrumb">
           <ol class="breadcrumb">
+            {%if order.service_type == 'rsa'%}
+              <li class="breadcrumb-item"><a href="{% url 'mech_rsa' %}">Rsa</a></li>
+            {% else %}
             <li class="breadcrumb-item"><a href="{% url 'mechanic_slot' %}">Your Slot</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Service Order of {{order.vehicle.vehicle_Regno}}</li>
+            {% endif %}
+            <li class="breadcrumb-item active" aria-current="page"> {%if order.service_type == 'rsa'%}Rsa 
+              {% endif %}Service Order of {{order.vehicle.vehicle_Regno}}</li>
           </ol>
         </nav>
         <div class="col-lg-6">
@@ -25,6 +31,16 @@
               {{order.date}} , {{order.time}} 
             </span>
           </p>
+
+          <p class="clearfix">
+            <span class="float-left">
+              Service Order Type
+            </span>
+            <span class="float-right text-muted">
+              {{order.service_type}} 
+            </span>
+          </p>
+
           <p class="clearfix">
             <span class="float-left">
               Service Order Status
@@ -33,6 +49,7 @@
               {{order.status}} 
             </span>
           </p>
+          
           <div class="progress" style="height: 15px;">
             <div class="progress-bar bg-success" role="progressbar" style="width: {{completed_percentage}}%;" aria-valuemin="0" aria-valuemax="100"> {{completed_percentage}} %</div>
           </div>
@@ -170,6 +187,22 @@
                 {% endfor %}
               </tbody>
             </table>
+          
+          <p class="card-title text-primary">Add Service To Order</p> 
+          <form method="post" action="{% url 'serviceRsaAdd' order_slug=order.slug %}">
+            {% csrf_token %}
+            <input type="hidden" name="service_order" required="" id="id_service_order" value="{{order.id}}">
+            
+            <div class="row">
+                <div class="col-6">
+                  Select Service
+                  {{ addForm.service_list }}
+                </div>
+                <div class="col-6 mt-4 mb-1">
+                  <button type="submit" class="btn btn-primary btn-sm">Add Service</button>
+                </div>
+            </div>
+          </form>
 
         </div>
       </div>
@@ -179,7 +212,7 @@
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
-            <p class="card-title">Service Orders Items</p>
+            <p class="card-title text-primary">Service Orders Items</p>
             <table id="orderItemsTable" class="w-100">
               <thead>
                   <tr>
@@ -216,6 +249,10 @@
           </div>
         </div>
       </div>
+{% comment %} 
+      {% include 'mechanic/service_order_items.html' with service_order_slug=order.slug %} {% endcomment %}
+      
   </div></div>
+  
 </div>
 {%endblock%}

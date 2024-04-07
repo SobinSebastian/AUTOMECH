@@ -1,0 +1,132 @@
+
+<div class="col-md-12 grid-margin stretch-card" hx-get="{% url 'service_order_items' service_order_slug %}">
+    <div class="card">
+        <div class="card-body">
+            <p class="card-title text-primary">Service Orders Items</p>
+            <table id="orderItemsTable" class="w-100">
+                <thead>
+                    <tr>
+                        <th>Service Image</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th>Service Category</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order_item in order_items %}
+                    <tr hx-target="this" hx-swap="outerHTML">
+                        <td>
+                            <img src="{{ order_item.service_list.service_Image.url }}" alt="Service Image" width="100">
+                        </td>
+                        <td>{{ order_item.service_list }}</td>
+                        <td>{{ order_item.status }}</td>
+                        <td>{{ order_item.service_list.service_category }}</td>
+                        <td>
+                            {% if order_item.status == 'created' %}
+                            <a class="btn btn-success btn-sm" href="{% url 'order_start' order_slug=order_item.slug %}">Start</a>
+                            {% elif order_item.status == 'pending' %}
+                            <a class="btn btn-success btn-sm" href="{% url 'order_start' order_slug=order_item.slug %}">Complete</a>
+                            {% else %}
+                            Complete
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{service_order_slug}}
+        </div>
+    </div>
+</div>
+</div>
+</div>
+
+<!-- Include htmx library -->
+<script src="https://unpkg.com/htmx.org/dist/htmx.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+const ws = new WebSocket('ws://' + window.location.host + '/ws/notifications/');
+
+ws.onmessage = function (event) {
+    const data = JSON.parse(event.data);
+    if (data.type === 'cancel_notification') {
+        loadServiceOrderItems();
+    }
+};
+
+function loadServiceOrderItems() {
+    fetch('/mechanic/get-order-items/{{service_order_slug}}/')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.querySelector('#orderItemsTable tbody');
+            tbody.innerHTML = ''; // Clear existing data
+            data.forEach(order_item => {
+                const row = `
+                    <tr>
+                        <td>
+                            <img src="${order_item.service_Image}" alt="Service Image" width="100">
+                        </td>
+                        <td>${order_item.service_list}</td>
+                        <td>${order_item.status}</td>
+                        <td>${order_item.service_category}</td>
+                        <td>
+                            ${
+                                order_item.status === 'created' ?
+                                `<a class="btn btn-success btn-sm" href="/mechanic/service/start/${order_item.slug}">Start</a>` :
+                                (order_item.status === 'pending' ?
+                                `<a class="btn btn-success btn-sm" href="/mechanic/service/start/${order_item.slug}">Complete</a>` :
+                                'Complete')
+                            }
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        });
+}
+
+loadServiceOrderItems();
+});
+</script>
+
+{% comment %} <div class="col-md-12 grid-margin stretch-card" hx-get="{% url 'service_order_items' service_order_slug %}">
+    <div class="card">
+        <div class="card-body" >
+            <p class="card-title text-primary">Service Orders Items</p>
+            {{service_order_slug }}
+            <table id="orderItemsTable" class="w-100" >
+                <thead>
+                    <tr>
+                        <th>Service Image</th>
+                        <th>Service</th>
+                        <th>Status</th>
+                        <th>Service Category</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order_item in order_items %}
+                    <tr hx-target="this" hx-swap="outerHTML">
+                        <td>
+                            <img src="{{ order_item.service_list.service_Image.url }}" alt="Service Image" width="100">
+                        </td>
+                        <td>{{ order_item.service_list }}</td>
+                        <td>{{ order_item.status }}</td>
+                        <td>{{ order_item.service_list.service_category }}</td>
+                        <td>
+                            {% if order_item.status == 'created' %}
+                            <a class="btn btn-success btn-sm" href="{% url 'order_start' order_slug=order_item.slug %}">Start</a>
+                            {% elif order_item.status == 'pending' %}
+                            <a class="btn btn-success btn-sm" href="{% url 'order_start' order_slug=order_item.slug %}">Complete</a>
+                            {% else %}
+                            Complete
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div> {% endcomment %}

@@ -149,8 +149,18 @@ def remove_from_cart(request, slug):
 # ////////////////////////// CART ITEM REMOVAL ////////////////////////////////////////////////////////
 def order_cancel(request,slug):
     oitem = ServiceOrderItem.objects.get(slug = slug)
-    sweetify.toast(request, f'{oitem.service_list} Service Order is canceled', icon='error', timer=3000)
-    oitem.delete()
+    if oitem.status == 'created' :
+        v = oitem.vehicle_info.model_variant
+        s_list = oitem.service_list
+        price = ServicePrice.objects.get(service= s_list  ,variant = v)
+        s_order=oitem.service_order.price-price.price
+        order =  oitem.service_order
+        order.price = s_order 
+        order.save()
+        sweetify.toast(request, f'{oitem.service_list} Service Order is canceled', icon='error', timer=3000)
+        oitem.delete()
+    else :
+        sweetify.toast(request, f'{oitem.service_list} Service Order is Under Processing', icon='error', timer=3000)
     return redirect (orders)
 
 def book(request):

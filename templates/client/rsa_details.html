@@ -13,7 +13,6 @@
             </ul>
         </div>
         <div class="row">
-            {% for vq in v %}
               <div class="alert alert-success" role="alert">
                 <h4 class="alert-heading">RSA Request has been processed successfully!</h4>
                 We're pleased to inform you that your request for roadside assistance has been processed successfully. A service center has been dispatched to your location to provide the necessary assistance. Help will soon be reaching you to address your situation.
@@ -25,15 +24,15 @@
                 <div class="row pt-1">
                   <div class="col-6 mb-3">
                     <h6>Date</h6>
-                    <p class="text-muted"> {{vq.created_at|date:"Y-m-d"}}</p>
+                    <p class="text-muted"> {{v.created_at|date:"Y-m-d"}}</p>
                   </div>
                   <div class="col-6 mb-3">
                     <h6>time</h6>
-                    <p class="text-muted">{{vq.created_at|time:"H:i:s" }}</p>
+                    <p class="text-muted">{{v.created_at|time:"H:i:s" }}</p>
                   </div>
                   <div class="col-6 mb-3">
                     <h6>Status</h6>
-                    <p class="text-muted">{{vq.status }}</p>
+                    <p class="text-muted">{{v.status }}</p>
                   </div>
                 </div>
             </div>
@@ -43,11 +42,11 @@
                 <div class="row pt-1">
                   <div class="col-6 mb-3">
                     <h6>Registration No</h6>
-                    <p class="text-muted">{{vq.vehicle_info.vehicle_Regno}}</p>
+                    <p class="text-muted">{{v.vehicle_info.vehicle_Regno}}</p>
                   </div>
                   <div class="col-6 mb-3">
                     <h6>Vehicle</h6>
-                    <p class="text-muted">{{vq.vehicle_info.model_variant}}</p>
+                    <p class="text-muted">{{v.vehicle_info.model_variant}}</p>
                   </div>
                 </div>
 
@@ -58,27 +57,49 @@
                 <div class="row pt-1">
                     <div class="col-12 mb-3">
                         <h6>Center Name</h6>
-                        <p class="text-muted">{{vq.service_center}}, {{vq.service_center.place}},{{vq.service_center.city}}<br>
-                            {{vq.service_center.pincode}}
+                        <p class="text-muted">{{v.service_center}}, {{v.service_center.place}},{{v.service_center.city}}<br>
+                            {{v.service_center.pincode}}
                         </p>
                     </div>
                   <div class="col-8">
                     <h6>Email</h6>
                     <p class="text-muted">
-                        {{vq.service_center.manager}}
+                        {{v.service_center.manager}}
                     </p>
                   </div>
                   <div class="col-2 ">
                     <h6>Phone</h6>
-                    <p class="text-muted">{{vq.service_center.phone_number}}</p>
+                    <p class="text-muted">{{v.service_center.phone_number}}</p>
                   </div>
                 </div>
-            </div>
-            {% endfor %}
+            </div>    
+            {%if order%}
+            <table class="table table-info">
+              <thead>
+                  <tr>
+                      <th>Service Name</th>
+                      <th>Price</th>
+                      <th>Status</th>
+                  </tr>
+              </thead>
+              <tbody >
             
-
-
-
+              {%for item in order %}
+                  <tr>
+                      <td>{{item.service_list}}</td>
+                      <td>₹ {% for p in service_prices %} 
+                        {% if item.service_list == p.service %}
+                          {{p.price}}
+                        {% endif %}
+                        {% endfor %}
+                      </td> 
+                      <td>{{item.status}}</td>
+                  </tr>
+              {%endfor%}
+              </tbody>
+          </table>
+            
+            {% endif %}
         </div>
     </div>
 </div>   

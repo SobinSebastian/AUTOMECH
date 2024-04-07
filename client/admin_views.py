@@ -510,3 +510,6 @@ def insert_excel(request):
 
     return render(request, 'admin/model_excel_input.html', {'form': form})
     
+
+
+

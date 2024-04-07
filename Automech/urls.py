@@ -29,6 +29,7 @@ urlpatterns = [
     path('accounts/',include('allauth.urls')),
     path ('account/ signup/', CustomSignupView.as_view(), name='account_signup'),
     path('tinymce/', include('tinymce.urls')),
+   
 ]
 if settings.DEBUG:  
         urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)  

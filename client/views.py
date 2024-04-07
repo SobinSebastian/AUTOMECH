@@ -34,7 +34,7 @@ def index(request):
         carvariant = ModelVariant.objects.get(variant_slug = car)
     else :
         carvariant = None
-    categories = ServiceCategory.objects.all()
+    categories = ServiceCategory.objects.all().exclude(category_name='RSA Request')
     # services = ServiceList.objects.all()
     make = CarMake.objects.all()
     context={
@@ -356,6 +356,15 @@ def rsa (request):
             status='on hold', 
             service_type='rsa', 
         )
+        servicelist = ServiceList.objects.get(service_name = 'Rsa')
+        vinfo = Vehicleinfo.objects.get(id = vehicle_info_id)
+        service_order_item = ServiceOrderItem.objects.create(
+        service_order=service_order,
+        vehicle_info=vinfo,
+        service_list=servicelist,
+        status='created',
+        )
+
         rsa_request = RoadsideAssistance.objects.create(
             vehicle_info_id=vehicle_info_id,
             service_center=nearest_service_center,
@@ -373,8 +382,10 @@ def rsa (request):
 def rsadetails(request):
     user = request.user
     vehicles = Vehicleinfo.objects.filter(client = user).first()
-    rsa = RoadsideAssistance.objects.filter(vehicle_info = vehicles)
-    return render(request,'client/rsa_details.html',{'v':rsa})
+    rsa = RoadsideAssistance.objects.get(vehicle_info = vehicles)
+    orderitem = ServiceOrderItem.objects.filter( service_order = rsa.service_order)
+    service_prices = ServicePrice.objects.filter(variant = vehicles.model_variant)
+    return render(request,'client/rsa_details.html',{'v':rsa,'order':orderitem ,'service_prices': service_prices})
 
 #////////////////////////// BLOG START //////////////////////////////////////////////////////////
 @cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)

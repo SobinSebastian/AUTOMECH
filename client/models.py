@@ -136,6 +136,8 @@ class ModelVariant(models.Model):
     class Meta:
         unique_together = ('model', 'variant_name',)
 
+
+
 class Vehicleinfo(models.Model):
     client = models.ForeignKey(User, on_delete=models.CASCADE)
     model_variant = models.ForeignKey(ModelVariant, on_delete=models.CASCADE)
@@ -405,3 +407,17 @@ class Servicerecommendation(models.Model):
         super(Servicerecommendation, self).save(*args, **kwargs)
     class Meta:
         unique_together = ['service_order', 'service_list']
+
+
+
+
+# For automatically assign RSA TO each variant
+from .models import ModelVariant, ServiceList, ServicePrice
+@receiver(post_save, sender=ModelVariant)
+def create_service_prices(sender, instance, created, **kwargs):
+    if created:
+        service = ServiceList.objects.filter(service_name = 'Rsa')
+        ServicePrice.objects.create(variant=instance, service=service, price=250)
+
+
+

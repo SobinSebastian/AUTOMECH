@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,6 +48,7 @@ INSTALLED_APPS = [
     'sweetify',
     'tinymce',
     'chosen',
+    
 ]
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -91,7 +93,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Automech.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

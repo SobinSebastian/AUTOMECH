@@ -10,8 +10,11 @@ urlpatterns = [
     path('service-order-json/', ServiceOrderJsonView.as_view(), name='service-order-json'),
     path('service-slot-json/', ServiceSlotJsonView.as_view(), name='service-slot-json'),
     path('serviceRec/<slug:order_slug>',views.ServiceRec,name='ServiceRec'),
+    path('serviceRsaAdd/<slug:order_slug>',views.RsaserviceAdd,name='serviceRsaAdd'),
     path('serviceRecdel/<slug:rec_slug>',views.ServiceRecDel,name='ServiceRecdelete'),
     path('Rsa',views.Roadsideassist,name='mech_rsa'),
     path('Rsa/<slug:slug>',views.Roadsidedetails,name='mech_rsa_det'),
     # path('rsa/',views.manager_rsa,name="rsa_request_view"),
+    path('service-order-items/<slug:service_order_slug>/', service_order_items_view, name='service_order_items'),
+    
 ]

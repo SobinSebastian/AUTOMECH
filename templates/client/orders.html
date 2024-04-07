@@ -93,7 +93,7 @@
                                                 <td>₹ {{ item.price }}</td> 
                                                 <td>{{item.order_item.status}}</td>
                                                 <td>
-                                                  {% if item.order_item.status == 'completed' or item.order_item.status == 'Processing' %}
+                                                  {% if item.order_item.status == 'completed' or item.order_item.status == 'pending' %}
                                                     <button type="button" class="btn btn-danger btn-sm"  {% if item.order_item.status == 'completed' %} disabled {% endif %}>
                                                       Cancel
                                                     </button>
