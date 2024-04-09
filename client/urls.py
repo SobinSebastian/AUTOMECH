@@ -44,4 +44,5 @@ path('setcar/<slug:var_slug>', views.setcar, name='setcar'),
 path('check_vehicle_exists/', views.check_vehicle_exists, name='check_vehicle_exists'),
 path('warning-alarm/',views.warning_alarm, name='warning_alarm'),
 path('check_email_exists/', views.check_email_exists, name='check_email_exists'),
+path('tables/',views.tablepage,name="tables"),
 ]

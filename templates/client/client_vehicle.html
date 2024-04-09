@@ -1,4 +1,4 @@
-{% extends 'client/base.html' %}
+{% extends 'client/fortables.html' %}
 {% block cstyle %}
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.24/css/dataTables.bootstrap4.min.css">
 {% endblock %}
@@ -14,8 +14,8 @@
                       <a class="btn btn-success btn-sm" href="{% url "index" %}">< Go Back</a>
                     </li>
                     
-                    <li class="nav-item ml-2">
-                        <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#exampleModal">
+                    <li class="nav-item ">
+                        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal">
                             Add Vehicle
                         </button>
                     </li>
@@ -45,50 +45,54 @@
             </div>
         </div>
     </div>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('#vehicleTable').DataTable();
+        });
+     </script>
       <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Add New Vehicle</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+      <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add New Vehicle</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="myForm1" method="post" action="{% url 'my_vehicles' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="vehicle_Regno" class="form-label">{{ form.vehicle_Regno.label }}</label>
+                            {{ form.vehicle_Regno }}
+                            <div id="vehicleRegnoError" class="text-danger"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="make_company" class="form-label">{{ form.make_company.label }}</label>
+                            {{ form.make_company }}
+                            <div id="makeCompanyError" class="text-danger"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="model_name" class="form-label">{{ form.model_name.label }}</label>
+                            {{ form.model_name }}
+                            <div id="modelNameError" class="text-danger"></div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="model_variant" class="form-label">{{ form.model_variant.label }}</label>
+                            {{ form.model_variant }}
+                            <div id="modelVariantError" class="text-danger"></div>
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Add Vehicle</button>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-            <form id="myForm1" method="post" action="{% url 'my_vehicles' %}"> 
-                {% csrf_token %}
-                <div class="mb-3"> 
-                    {{ form.vehicle_Regno.label}}
-                    {{ form.vehicle_Regno }}
-                    <div id="vehicleRegnoError" class="text-danger"></div>
-                </div>
-                <div class="mb-3"> 
-                    {{ form.make_company.label }}
-                    {{ form.make_company }}
-                    <div id="makeCompanyError" class="text-danger"></div>
-                </div>
-                <div class="mb-3"> 
-                    {{ form.model_name.label }}
-                    {{ form.model_name }}
-                    <div id="modelNameError" class="text-danger"></div>
-                </div>
-                <div class="mb-3"> 
-                    {{ form.model_name.lable }}
-                    {{ form.model_variant }}
-                    <div id="modelVariantError" class="text-danger"></div>
-                </div>
-            
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary">Add Vehicle</button>
-        </form>
-        </div>
-      </div>
     </div>
-  </div>
+    
 <script>
         document.addEventListener('DOMContentLoaded', function () {
             var myForm = document.querySelector('#myForm1');

@@ -549,3 +549,6 @@ def check_email_exists(request):
     }
     return JsonResponse(data)
 
+def tablepage(request):
+    sweetify.toast(request, 'New Vehicle is Added',timer=3000)
+    return render(request,'client/fortables.html')
