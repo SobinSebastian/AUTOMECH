@@ -98,7 +98,15 @@
               {%endfor%}
               </tbody>
           </table>
-            
+          <div class="text-right">
+            <h4>Total   Amount: ₹ {{p_total}}</h4>
+          </div>
+          {{item.service_order}}
+          {% if od.service_order.status == 'completed' %}
+            <br>
+              <a href="{% url 'bill_pay' od.service_order.slug %}" class=" btn btn-primary btn-sm">PAY</a>
+          {% endif %}
+
             {% endif %}
         </div>
     </div>

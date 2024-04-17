@@ -176,15 +176,21 @@ def service_category(request, slug=None):
     if slug:
         instance = get_object_or_404(ServiceCategory, slug=slug)
         button_text = 'Update'
+        msg = "ServiceCategory Is Updated"
     else:
         instance = ServiceCategory()
         button_text = 'Add'
-        
+        msg = "New ServiceCategory Is Added"
     if request.method == 'POST':
         form = ServiceCategoryForm(request.POST, instance=instance)
         if form.is_valid():
             form.save()
+            sweetify.toast(request, f'{msg}')
             return redirect('service_category')
+        else:
+            print(form.errors) 
+            sweetify.toast(request, f'Service category with this Category name already exists.', icon='error', timer=3000)
+            
     else:
         form = ServiceCategoryForm(instance=instance)
     
@@ -210,7 +216,6 @@ def service_category_view(request, slug=None):
     if request.method == 'POST':
         form = ServiceListForm(request.POST,request.FILES,instance = service)
         if form.is_valid():
-            print(form.errors) 
             form.save()
     else:
         form = ServiceListForm(instance = service )
@@ -510,6 +515,21 @@ def insert_excel(request):
 
     return render(request, 'admin/model_excel_input.html', {'form': form})
     
+from django.http import JsonResponse
+def service_order_events(request):
+    service_orders = ServiceOrder.objects.all()
+    events = []
+    for order in service_orders:
+        event = {
+            'title': str(order),
+            'start': order.date.strftime('%Y-%m-%d') + 'T' + order.time.strftime('%H:%M:%S'),
+            'end': None,  # Add end time if necessary
+            'allDay': False,  # Adjust as needed
+            'className': order.status.lower(),  # Assign class based on status
+            'url': f'/service_order/{order.slug}/detail',  # Add URL to view order detail
+        }
+        events.append(event)
+    return JsonResponse(events, safe=False)
 
-
-
+def full_schedule(request):
+    return render (request,'admin/full.html')

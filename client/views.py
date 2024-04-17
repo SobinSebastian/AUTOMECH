@@ -385,7 +385,13 @@ def rsadetails(request):
     rsa = RoadsideAssistance.objects.get(vehicle_info = vehicles)
     orderitem = ServiceOrderItem.objects.filter( service_order = rsa.service_order)
     service_prices = ServicePrice.objects.filter(variant = vehicles.model_variant)
-    return render(request,'client/rsa_details.html',{'v':rsa,'order':orderitem ,'service_prices': service_prices})
+    p_total = 0
+    for i in orderitem:
+        for p in service_prices:
+            if i.service_list == p.service :
+                p_total = p_total + p.price 
+    od = orderitem.first()
+    return render(request,'client/rsa_details.html',{'v':rsa,'order':orderitem ,'service_prices': service_prices,'p_total' : p_total,'od':od})
 
 #////////////////////////// BLOG START //////////////////////////////////////////////////////////
 @cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
@@ -433,6 +439,12 @@ def vehicel_details(request):
             )
             vehicle_info.save()
             sweetify.toast(request, 'New Vehicle is Added',timer=3000)
+        else :
+            if form.errors:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        sweetify.toast(request, f"{error}", icon='error', timer=5000)
+
     context = {
         'vehicles' : vehicles,
         'form' : VehicleaddForm()

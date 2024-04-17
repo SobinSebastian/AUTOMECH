@@ -42,4 +42,6 @@ path('tasks/<slug:slug>/', TaskListUpdateView, name='edit_task'),
 path('download-excel-with-headers/',download_excel_with_headers, name='download_excel_with_headers'),
 path('insert_data',insert_excel,name="excelin"),
 path('car_make/<slug:make_slug>/edit/', CarMakeUpdateView.as_view(), name='car_make_edit'),
+path('api/service-order-events/', service_order_events, name='service_order_events'),
+path('full_schedule',full_schedule,name = 'full_schedule')
 ]

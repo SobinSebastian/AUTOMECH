@@ -59,6 +59,14 @@ def start_order(request, order_slug):
     if order.status == 'created':
         order.status = 'pending'
         order.save()
+        if order.service_order.service_type == 'rsa' :
+            sp = ServiceOrder.objects.get(id=order.service_order.id)
+            service_price = ServicePrice.objects.get(variant=order.vehicle_info.model_variant, service=order.service_list)
+            if sp.price is None:
+                sp.price = service_price.price
+            else:
+                sp.price = sp.price + service_price.price
+            sp.save()
         sweetify.toast(request, 'Service order has started processing', timer=3000)
     elif order.status == 'pending':
         order.status = 'completed'

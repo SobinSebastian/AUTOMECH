@@ -302,7 +302,7 @@
             </a>
           </li>
           <li class="nav-item {% if request.path == '/manager/mechanic/' %}active {%endif%}">
-            <a class="nav-link" href="{%url 'manager_mechanic'%}">
+            <a class="nav-link" href="{%url 'manager_mechanic'%}" id="mech_add">
               <i class="icon-head menu-icon"></i>
               <span class="menu-title">Mechanic</span>
             </a>
@@ -320,7 +320,7 @@
             </a>
           </li>
           <li class="nav-item {% if request.path == 'account/logout' %}active {%endif%}">
-            <a class="nav-link" href="{%url 'account_logout'%}">
+            <a class="nav-link" href="{% url 'custom_logout' %}">
               <i class="ti-power-off  menu-icon"></i>
               <span class="menu-title">Logout</span>
             </a>

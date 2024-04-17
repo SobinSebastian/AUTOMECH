@@ -331,8 +331,11 @@ def update_service_order_status(sender, instance, **kwargs):
     if service_order.serviceorderitem_set.filter(status='completed').count() == service_order.serviceorderitem_set.count():
         service_order.status = 'completed'
         service_order.save()
-
-
+        if service_order.service_type =='rsa':
+            rs=RoadsideAssistance.objects.get(service_order = service_order )
+            rs.status = 'completed'
+            rs.save()
+            
 
 
 class RoadsideAssistance(models.Model):

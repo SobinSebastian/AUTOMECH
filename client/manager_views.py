@@ -7,8 +7,10 @@ from .decorators import manager_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.shortcuts import render,redirect, get_object_or_404
+from django.views.decorators.cache import cache_control
 
 @manager_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def manager_dashboard(request):
     user = request.user
     center = ServiceCenter.objects.get(manager = user)
@@ -44,6 +46,7 @@ def available_mechanics(user):
 #         }
 #     return render(request, 'manager/manager_slots.html',context)
 @manager_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def manager_slots(request):
     if request.method == 'POST':
         # Handling ServicesSlotsForm
@@ -88,6 +91,8 @@ def remove_alloc_mech(request, solt_slug):
     services_slot.save()
     return redirect('service_slots')
 @manager_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
+
 def manager_mechanic(request):
     user = request.user
     service_center_instance = ServiceCenter.objects.get(manager = user)
@@ -98,9 +103,12 @@ def manager_mechanic(request):
             mechanic_list_instance = mechanicList.objects.create(
                 mechanic=client_instance,
                 service_center=service_center_instance,)
-            sweetify.success(request, 'New Mechanic', text= f'is successfully Added',timer=5000, persistent=False,)
+            sweetify.success(request, 'New Mechanic is Added', text= f'New Mechanic is successfully Added',timer=5000, persistent=False,)
             return redirect('manager_mechanic')
-        
+        else :
+            form = MechanicAddFrom()
+            sweetify.error(request, 'Error', text="Failed to add new mechanic. Please try again later.", timer=5000, persistent=False)
+            return redirect('manager_mechanic')
     else:
         form = MechanicAddFrom()
     mec_list = mechanicList.objects.filter(service_center=service_center_instance)
@@ -123,6 +131,8 @@ def check_unique_slotname(request):
     return JsonResponse({'error': 'Invalid request method'})
 
 @manager_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
+
 def manager_bookings(request):
     user = request.user
     center = ServiceCenter.objects.get(manager = user)
@@ -158,6 +168,8 @@ def manager_bookings_json(request):
 
 
 @manager_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
+
 def manager_rsa(request):
     center = ServiceCenter.objects.get(manager=request.user)
     list = RoadsideAssistance.objects.filter(service_center = center).order_by('created_at').exclude(status='completed')

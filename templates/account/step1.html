@@ -14,8 +14,9 @@
     {{form.place}}
     <div id="placeError" class="text-danger"></div>
     <br>
-    <select id="id_city" name="city" class="form-control" required>
-    </select>
+    <input type="text" name="city" id="id_city" class="form-control" required>
+    {% comment %} <select id="id_city" name="city" class="form-control" required>
+    </select> {% endcomment %}
 
     <div id="cityError" class="text-danger"></div>
     <br>
@@ -55,14 +56,14 @@
         } else {
 
             var url = "https://api.postalpincode.in/pincode/" + pincode;
-
+            const selectedCity = document.getElementById("id_city").value;
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     if (data[0].Status === "Success") {
                         var district = data[0].PostOffice[0].District;
                         city = district;
-                        document.getElementById("district").value = district;
+                        {% comment %} document.getElementById("district").value = district; {% endcomment %}
                         var postOffices = data[0].PostOffice;
                         var cityDropdown = document.getElementById("id_city");
                         cityDropdown.innerHTML = "<option value=''>Select City</option>";
