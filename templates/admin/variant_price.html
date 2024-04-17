@@ -64,7 +64,8 @@
                       </p>
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                  <a href="{% url 'car_variant_service' slug=variant.variant_slug %}"  class="btn btn-secondary btn-sm" >Close</a>
+                  
                   <button type="submit" class="btn btn-primary btn-sm">Save </button>
                 </form>
                 </div>
@@ -117,7 +118,7 @@
                     var errorContainer = document.getElementById('priceError');
                     var value = input.value.trim();
         
-                    if (value === '' || isNaN(value)) {
+                    if (value === '' || isNaN(value) || value <= 0) {
                         errorContainer.textContent = "Please enter a valid price.";
                         input.classList.add('is-invalid');
                         return false;
@@ -162,14 +163,17 @@
                   {{price.price}}
                 </td>
                <td>
-                
+                <div id="priceError" class="text-danger"></div>
                 <form method="post" id="price" >
                   {% csrf_token %}
                   {{form2.price}}
                   <input type="hidden" name="slugval" maxlength="15" required="" id="id_slugval" value="{{price.slug}}">
+                  
                   <button class="btn btn-success btn-sm" type="submit"> Edit Price</button>
-                  <div id="priceError" class="invalid-feedback"></div>
+                 
                 </form>
+                
+              
                </td>
               </tr>
               {% endfor %}

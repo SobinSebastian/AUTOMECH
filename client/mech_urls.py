@@ -16,5 +16,6 @@ urlpatterns = [
     path('Rsa/<slug:slug>',views.Roadsidedetails,name='mech_rsa_det'),
     # path('rsa/',views.manager_rsa,name="rsa_request_view"),
     path('service-order-items/<slug:service_order_slug>/', service_order_items_view, name='service_order_items'),
+    path('mechservice-history/<slug:service_order_slug>/', views.mechservice_history, name='t_service_history'),
     
 ]

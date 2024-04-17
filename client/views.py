@@ -17,6 +17,7 @@ from django.dispatch import receiver
 import razorpay
 from django.utils import timezone
 from .regmail import *
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def index(request):
     vehicleinfo = None
     if request.user.is_authenticated:
@@ -25,7 +26,8 @@ def index(request):
         elif request.user.role == 'MECHANIC':
            return redirect('mechanic_home')
         elif request.user.role == 'MANAGER':
-           return redirect('manager_home')
+           return redirect('manager_home') 
+        u =UserInfo.objects.filter(client=request.user).exists()
         if not UserInfo.objects.filter(client=request.user).exists():
             return redirect('profile_setup')
         vehicleinfo=Vehicleinfo.objects.filter(client=request.user) 
@@ -252,7 +254,7 @@ def step1_view(request):
             user_info.district = form.cleaned_data['district']
             user_info.pincode = form.cleaned_data['pincode']
             user_info.client=user   
-            #user_info.save()
+            user_info.save()
             return redirect('step2_view')
     else:
         form = ProfilesetupForm()
@@ -271,7 +273,7 @@ def step2_view(request):
                 model_variant=variant_id,  # Assign variant_id directly
                 vehicle_Regno=reg_no
             )
-            #vehicle_info.save()
+            vehicle_info.save()
             sweetify.toast(request, 'Completed', timer=3000)
             return redirect('step3_view')
 

@@ -2,11 +2,19 @@
 {%block content%}
 {% load tz %}
 {% load static %}
+
+{% block conhead%}
+  <!-- Bootstrap CSS -->
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+{% endblock %}
 <div class="row">
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <p class="card-title">Slot  Details</p>
+        <h3 class="card-title text-primary">Slot  Details</h3>
         {% if slot%}
         
         <div class="alert alert-warning" role="alert">
@@ -17,15 +25,14 @@
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
-            <p class="card-title">Service Orders</p>
+            <p class="card-title text-danger"><U>Active Service Orders</U></p>
             <div class="table-responsive">
-          <table class="display expandable-table dataTable no-footer w-100">
+          <table  id = "orderTable" class="display expandable-table dataTable no-footer w-100">
             <thead>
               <tr >
                 <th scope="col">Vehicle</th>
                 <th scope="col">Date & Time</th>
                 <th scope="col">Status</th>
-                <th scope="col">View</th>
                 <th scope="col">Action</th>
               </tr>
             </thead>
@@ -46,10 +53,7 @@
                   {% endif %}">
                   {{ order.status}}
                 </label></td>
-                <td>
-                  <button class="btn btn-light btn-sm"  data-toggle="collapse" data-target="#details{{order.slug}}" class="clickable">
-                    <i class="ti-eye text-primary"></i> View
-                  </button></td>
+            
                 <td>
                   <a class="btn btn-success btn-sm"  href="{% url 'service_details' service_slug=order.slug %}">
                     {% if  order.status == 'created'%}
@@ -63,48 +67,62 @@
                   </a>
                 </td>
               </tr>
-              <tr id="details{{order.slug}}" class="collapse">
-                <td colspan="5" >
-                  <div class="row">
-                    <div class="col-md-4 grid-margin stretch-card">
-                      <div class="card card-tale">
-                        <div class="card-body">
-                          <p class="mb-4">Vehicle Details</p>
-                          <p>{{order.vehicle.vehicle_Regno}}
-                            {{order.vehicle.model_variant.model.make_company}}
-                            {{order.vehicle.model_variant}}</p>
-                            <br>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-6 grid-margin stretch-card">
-                      <div class=" card card-light-danger">
-                        <div class="card-body">
-                          <p class="mb-4"> User Details</p>
-                          {{order.vehicle.client.get_full_name}}({{order.vehicle.client}})<br>
-                          {{order.vehicle.client.userinfo.address}} , 
-                          {{order.vehicle.client.userinfo.place}} ,
-                          {{order.vehicle.client.userinfo.city}} ,
-                          {{order.vehicle.client.userinfo.pincode}}<br>
-                          {{order.vehicle.client.userinfo.contact_no}}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+              {%endfor%}
+            </tbody>
+          </table>
 
+          <br><br>
+          <p class="card-title text-danger"><U>Completed Service Orders</U></p>
+            {% comment %} Table for showing Closed Orders {% endcomment %}
+            <div class="table-responsive">
+          <table id = "closed_orders" class="display expandable-table dataTable no-footer w-100">
+            <thead>
+              <tr >
+                <th scope="col">Vehicle</th>
+                <th scope="col">Date & Time</th>
+                <th scope="col">Status</th>
+                <th scope="col">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for  corder in closed_orders %}
+              <tr >
+                <td>{{corder.vehicle.vehicle_Regno}}</td>
+                <td> {{corder.date}}{{ corder.time|time:"H:i A" }}</td>
+                <td> 
+                  {{ corder.status}}
+                </td>
+            
+                <td>
+                  <a class="btn btn-success btn-sm"  href="{% url 'service_details' service_slug=corder.slug %}">
+                    View Service
+                  </a>
                 </td>
               </tr>
               {%endfor%}
             </tbody>
           </table>
-        
+
+
           </div>
         </div>
       </div>
+
+     
+     
 
           {% else %}
         No slots allocted to u
         {% endif %}
 
 </div>
+<script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#orderTable').DataTable();
+  });
+  $(document).ready(function() {
+    $('#closed_orders').DataTable();
+  });
+</script>
 {%endblock%}

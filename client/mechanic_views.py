@@ -7,6 +7,10 @@ from .decorators import manager_required
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render,redirect, get_object_or_404
 from django.core.serializers import serialize
+from django.views.decorators.cache import cache_control
+from django.contrib.auth.decorators import login_required
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def mechanic_dashboard (request):
     mech = request.user
     center_details = mechanicList.objects.get(mechanic =mech)
@@ -14,25 +18,28 @@ def mechanic_dashboard (request):
         'center_details':center_details
     }
     return render (request,'mechanic/dashboard.html',context)
-
-
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def mechanic_slot(request):
     slot= ServicesSlots.objects.get(allocated_mech=request.user)
-    orders=ServiceOrder.objects.filter(service_slot=slot)
+    orders=ServiceOrder.objects.filter(service_slot=slot).exclude(status = 'closed')
+    closed_orders = ServiceOrder.objects.filter(service_slot=slot,status = 'closed')
     context ={
         'slot' : slot,
-        'orders': orders 
+        'orders': orders,
+        'closed_orders' : closed_orders,
     }
     return render(request,'mechanic/mech_slot.html',context)
-
-
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def service_orders(request):
     service_orders = ServiceOrder.objects.all()
     context ={
         ' service_orders': service_orders
     }
     return render(request,'mechanic/service_orders.html',context)
-
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def service_details(request, service_slug):
     order = ServiceOrder.objects.get(slug=service_slug)
     order_items = ServiceOrderItem.objects.filter(service_order=order)
@@ -99,8 +106,8 @@ class ServiceSlotJsonView(View):
         service_slots = ServicesSlots.objects.all()
         resources = [{'id': slot.id, 'title': str(slot.slotname)} for slot in service_slots]
         return JsonResponse(resources, safe=False)
-     
-
+@login_required     
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def ServiceRec(request,order_slug):
     order = ServiceOrder.objects.get(slug=order_slug)
     form = ServicerecommendationForm(request.POST)
@@ -120,7 +127,8 @@ def ServiceRec(request,order_slug):
         'rec_details' : rec_details ,
     }
     return render ( request,'mechanic/service_rec.html',context)
-
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def RsaserviceAdd(request,order_slug):
     order = ServiceOrder.objects.get( slug = order_slug )
     order_item = ServiceOrderItem()
@@ -147,17 +155,21 @@ def ServiceRecDel(request,rec_slug):
     del_item.delete()
     sweetify.toast(request, 'Service Recommendation is Removed!', timer=3000)
     return redirect('service_details', service_slug=order_slug)
-
-
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def Roadsideassist (request) :
     mech = request.user
     center_details = mechanicList.objects.get(mechanic =mech)
-    rsa_detials =  RoadsideAssistance.objects.filter(service_center =  center_details.service_center)
+    rsa_detials =  RoadsideAssistance.objects.filter(service_center =  center_details.service_center).exclude(status = 'completed')
+    rsa_detials_completed=  RoadsideAssistance.objects.filter(service_center =  center_details.service_center,status = 'completed')
+    
     context ={
         'rsa_detials' : rsa_detials,
+        'rsa_detials_completed' : rsa_detials_completed
     }
     return render (request,'mechanic/roadsideassist.html',context)
-
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def Roadsidedetails (request,slug) :
     rsa = RoadsideAssistance.objects.get( slug = slug )
     context = {
@@ -166,6 +178,8 @@ def Roadsidedetails (request,slug) :
     return render (request,'mechanic/rsadetials.html',context)
 
 #for showing dynamically the service orders
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def service_order_items_view(request, service_order_slug):
     service_order = get_object_or_404(ServiceOrder, slug=service_order_slug)
     order_items = ServiceOrderItem.objects.filter(service_order=service_order)
@@ -187,3 +201,14 @@ def get_orderitems(request, service_slug):
         for item in order_items
     ]
     return JsonResponse(order_items_json, safe=False)
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
+def mechservice_history(request,service_order_slug):
+    od = ServiceOrder.objects.get(slug = service_order_slug)
+    odvehicle = od.vehicle
+    listoit = ServiceOrderItem.objects.filter(vehicle_info = odvehicle,status = 'completed')
+    context = {
+        'listoit' : listoit ,
+        'vehicle' : odvehicle
+    }
+    return render (request,'mechanic/history.html',context)

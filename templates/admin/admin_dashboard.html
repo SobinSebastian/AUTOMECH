@@ -7,6 +7,7 @@
         alert("Welcome, Admin! You have successfully logged in.");
     </script>
 {% endif %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="row">
     <div class="col-md-12 grid-margin">
       <div class="row">
@@ -46,7 +47,6 @@
     </div>
   </div>
   <div class="row">
-    
     <div class="col-md-6 grid-margin transparent">
       <div class="row">
         <div class="col-md-6 mb-4 stretch-card transparent">
@@ -81,17 +81,70 @@
             <div class="card-body">
               <p class="mb-4">Number of Clients</p>
               <p class="fs-30 mb-2">{{ ucount }}</p>
+             
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <div class="col-md-6 grid-margin transparent">
+      <div class="row">
+        <div class="col-md-8 stretch-card transparent">
+          <div class="card card-light-primary">
+            <canvas id="myPieChart" width="150px" height="50px"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
   
   <div class="row">
     <div class="col-md-12 grid-margin stretch-card">
-      
+      {{nor_oder_num}}
+      {{rsa_no}}
+      {{order_no}}
+      {{ucount}}
+    
     </div>
+    
+
+<script>
+    var data = {
+        labels: ['User','Managers','Mechanics'],
+        datasets: [{
+            data: [{{ucount}},{{man_count}}, {{mcount}}],
+            backgroundColor: [
+                'blue',
+                'green',
+                'Yellow'
+ 
+            ]
+        }]
+    };
+
+    // Render pie chart
+    var ctx = document.getElementById('myPieChart').getContext('2d');
+    var myPieChart = new Chart(ctx, {
+        type: 'pie',
+        data: data,
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            title: {
+              display: true,
+              text: 'Users'
+            }
+          }
+        },
+
+    });
+</script>
   </div>
   {% comment %} <div class="row">
     <div class="col-md-12 grid-margin stretch-card">

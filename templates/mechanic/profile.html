@@ -1,0 +1,705 @@
+{% extends "client/base.html" %}
+{%block content%}
+
+<section class="vh-100" style="background-color: #f4f5f7;">
+  <div class="container py-5 h-100">
+    <div class="row d-flex justify-content-center align-items-center h-100">
+      <div class="col col-lg-8 mb-4 mb-lg-0">
+        <div class="card mb-3" style="border-radius: .5rem;">
+          <div class="row g-0">
+            <div class="col-md-4 gradient-custom text-center text-white"
+              style="border-top-left-radius: .5rem; border-bottom-left-radius: .5rem;">
+                {% if uinfo.profile_picture %}
+                <img src="{{uinfo.profile_picture.url}}" alt="Avatar" class="img-fluid my-5" style="width: 100px;" />
+                {% elif user.socialaccount_set.all.0.get_avatar_url %}
+                  <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}"  alt="Avatar" class="img-fluid my-5" style="width: 100px;" >
+                {% else %}
+                  <img src="/media/profile_pictures/default.jpg"   alt="Avatar" class="img-fluid my-5" style="width: 100px;" >
+                  
+                {% endif %}
+              <h5> {{ user.first_name }} {{ user.last_name }} </h5>
+              <div class="col-12 mb-3">
+                <div class="row">
+                  <div class="col-12">
+                    <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#exampleModal1">
+                      Change Profile Picture
+                    </button>
+                  </div>
+                </div>
+                <div class="row mt-2">
+                  <div class="col-12">
+                    {% comment %} <button type="button" class="btn btn-primary btn-sm btn-block" >
+                      Change Password <use xlink:href="#tools"></use>
+                    </button> {% endcomment %}
+                  </div> 
+                </div>
+              </div>
+
+
+            </div>
+            <div class="col-md-8">
+              <div class="card-body p-4">
+                <h6>Information</h6>
+                <hr class="mt-0 mb-4">
+                <div class="row pt-1">
+                  <div class="col-6 mb-3">
+                    <h6>Email</h6>
+                    <p class="text-muted">{{ user.email }}</p>
+                  </div>
+                  <div class="col-6 mb-3">
+                    <h6>Phone</h6>
+                    <p class="text-muted">{{uinfo.contact_no}}</p>
+                  </div>
+                </div>
+                <h6>Address</h6>
+                <hr class="mt-0 mb-4">
+                <div class="row pt-1">
+                  <div class="col-6 mb-3">
+                    <h6>{{uinfo.address}}</h6>
+                    <p class="text-muted">{{uinfo.place}} ,{{uinfo.city}}</p>
+                    <p class="text-muted">{{uinfo.district}} , {{uinfo.pincode}}</p>
+                  </div>
+                  
+                
+                  <div class="col-6 mb-3">
+                    <div class="row">
+                      <div class="col-12">
+                        <button type="button" class="btn btn-primary btn-sm btn-block" data-toggle="modal" data-target="#exampleModal">
+                          Edit Profile
+                        </button>
+                      </div>
+                    </div>
+                    <div class="row mt-2">
+                      <div class="col-12">
+                        <a href="{% url 'my_vehicles' %}" id="" class="btn btn-primary btn-sm btn-block" > Vehicles </a>
+                    
+                      </div> 
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog  " role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Edit Profile</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        
+        <form role="form text-left" method="post" action="{% url 'account_profile' %}" id="updateForm" >
+              {% csrf_token %}
+              <input class="form-control" type="hidden" id="firstName" name="f_name" value="{{ user.first_name }}">
+              <input class="form-control" type="hidden" name="l_name" id="lastName" value="{{ user.last_name }}"  required/>
+
+              <div class="row mt-2 gy-4">
+                {% comment %} <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="firstName">First Name</label>
+                    <input class="form-control" type="text" id="firstName" name="f_name" value="{{ user.first_name }}"
+                      autofocus required />
+                      <p id="firstNameError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="lastName">Last Name</label>
+                    <input class="form-control" type="text" name="l_name" id="lastName" value="{{ user.last_name }}"  required/>
+                    <p id="lastNameError" class="text-danger"></p>
+                  </div>
+                </div> {% endcomment %}
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <input
+                      class="form-control"
+                      type="hidden"
+                      value="{{ user.email }}"
+                      placeholder="john.doe@example.com"  readonly/>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-floating form-floating-outline">
+                      <label for="place">Phone Number</label>
+                      <input
+                        type="text"
+                        id="phoneNumber"
+                        name="contact_no"
+                        class="form-control"
+                        placeholder="202 555 0111" 
+                        value="{{uinfo.contact_no}}"
+                        required/>
+                        <p id="phoneNumberError" class="text-danger"></p>
+                      </div>
+                  </div>
+                </div>
+                <div class="col-md-12">
+                  <div class="form-floating form-floating-outline">
+                    <label for="place">Address</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="address"
+                      name="address"
+                      placeholder="Address" 
+                      value="{{uinfo.address}}"
+                      required
+                      />
+                       <p id="addressError" class="text-danger"></p>
+                      <br>
+                  </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <label for="place">Place</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="place"
+                      name="place"
+                      placeholder="Place" 
+                      value="{{uinfo.place}}"
+                      required
+                      />
+                      <p id="placeError" class="text-danger"></p>
+                      <br>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <label for="city">City</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="city"
+                      name="city"
+                      placeholder="City" 
+                      value="{{uinfo.city}}"
+                      required/> 
+                      <p id="cityError" class="text-danger"></p>
+                  </div>
+                </div>
+                </div>
+                <div class="row">
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <label for="zipCode">Pincode</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="pincode"
+                      name="pincode"
+                      placeholder="pincode"
+                      maxlength="6" 
+                      value="{{uinfo.pincode}}" required/>
+                      <p id="pincodeError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-floating form-floating-outline">
+                    <label for="country">District</label>
+                    <select id="district" name="district" class="form-control" >
+                        <option value="">select</option>
+                        <option value="{{uinfo.district}}" selected>{{uinfo.district}}</option>
+                        <option value="thiruvananthapuram">Thiruvananthapuram</option>
+                        <option value="kollam">Kollam</option>
+                        <option value="pathanamthitta">Pathanamthitta</option>
+                        <option value="alappuzha">Alappuzha</option>
+                        <option value="kottayam">Kottayam</option>
+                        <option value="idukki">Idukki</option>
+                        <option value="ernakulam">Ernakulam</option>
+                        <option value="thrissur">Thrissur</option>
+                        <option value="palakkad">Palakkad</option>
+                        <option value="malappuram">Malappuram</option>
+                        <option value="kozhikode">Kozhikode</option>
+                        <option value="wayanad">Wayanad</option>
+                        <option value="kannur">Kannur</option>
+                        <option value="kasaragod">Kasaragod</option>
+                    </select>
+                    <p id="districtError" class="text-danger"></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-warning btn-sm me-2">Update </button>
+      </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="exampleModal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Change Profile Picture</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form method="post" enctype="multipart/form-data">  
+          {% csrf_token %}  
+          {{ form1.as_p }}              
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+        <button type="submit" class="btn btn-primary btn-sm">Change </button>
+      </form>  
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+
+{% comment %} <div class="bgimg h-100">
+  <div class="container">
+    <!-- First Row -->
+    <div class="row">
+      <br>
+    </div>
+    <div class="row">
+      <div class="col-md-4">
+        <div class="card" style="width: 18rem;">
+          {% if uinfo.profile_picture %}
+          <img
+              src="{{uinfo.profile_picture.url}}"
+              alt="user-avatar"
+              width="200" height="200"
+              id="uploadedAvatar" 
+              class="card-img-top"
+              />
+          {% elif user.socialaccount_set.all.0.get_avatar_url %}
+            <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" class="rounded-circle" alt="Google Profile">
+          {% else %}
+            <img src="/media/profile_pictures/default.jpg"  class="rounded-circle" alt="Default Profile">
+            
+          {% endif %}
+          <br>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
+              Change Profile Picture
+            </button>
+          <br>
+          <!-- Modal -->
+          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="exampleModalLabel">Change Profile Picture</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <form method="post" enctype="multipart/form-data">  
+                    {% csrf_token %}  
+                    {{ form1.as_p }}              
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Close</button>
+                  <button type="submit" class="btn btn-primary btn-sm">Change </button>
+                </form>  
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="col-md-8">
+        <div class="card mb-4">
+          <ul class="nav nav-pills flex-column flex-md-row mb-4 gap-2 gap-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" href="javascript:void(0);"
+              ><i class="mdi mdi-account-outline mdi-20px me-1"></i>Account</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="pages-account-settings-notifications.html">
+              <i class="mdi mdi-bell-outline mdi-20px me-1"></i>Notifications</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="password_change/"
+              ><i class="mdi mdi-link mdi-20px me-1"></i>Change Password</a
+            >
+          </li>
+        </ul>
+          <h4 class="card-header">Profile Details</h4>
+          <!-- Account -->
+          {% if user.is_authenticated %}
+          <div class="card-body pt-2 mt-1">
+            <form role="form text-left" method="post" action="{% url 'account_profile' %}" id="updateForm" >
+              {% csrf_token %}
+              <div class="row mt-2 gy-4">
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="firstName">First Name</label>
+                    <input class="form-control" type="text" id="firstName" name="f_name" value="{{ user.first_name }}"
+                      autofocus required />
+                      <p id="firstNameError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="lastName">Last Name</label>
+                    <input class="form-control" type="text" name="l_name" id="lastName" value="{{ user.last_name }}"  required/>
+                    <p id="lastNameError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="email">E-mail</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      value="{{ user.email }}"
+                      placeholder="john.doe@example.com"  readonly/>
+                      <br>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                    <div class="form-floating form-floating-outline">
+                      <label for="phoneNumber">Phone Number</label>
+                      <input
+                        type="text"
+                        id="phoneNumber"
+                        name="contact_no"
+                        class="form-control"
+                        placeholder="202 555 0111" 
+                        value="{{uinfo.contact_no}}"
+                        required/>
+                        <p id="phoneNumberError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-10">
+                  <div class="form-floating form-floating-outline">
+                    <label for="place">Address</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="address"
+                      name="address"
+                      placeholder="Address" 
+                      value="{{uinfo.address}}"
+                      required
+                      />
+                       <p id="addressError" class="text-danger"></p>
+                      <br>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="place">Place</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="place"
+                      name="place"
+                      placeholder="Place" 
+                      value="{{uinfo.place}}"
+                      required
+                      />
+                      <p id="placeError" class="text-danger"></p>
+                      <br>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="city">City</label>
+                    <input
+                      class="form-control"
+                      type="text"
+                      id="city"
+                      name="city"
+                      placeholder="City" 
+                      value="{{uinfo.city}}"
+                      required/> 
+                      <p id="cityError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="zipCode">Pincode</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="pincode"
+                      name="pincode"
+                      placeholder="pincode"
+                      maxlength="6" 
+                      value="{{uinfo.pincode}}" required/>
+                      <p id="pincodeError" class="text-danger"></p>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-floating form-floating-outline">
+                    <label for="country">District</label>
+                    <select id="district" name="district" class="form-control" >
+                        <option value="">select</option>
+                        <option value="{{uinfo.district}}" selected>{{uinfo.district}}</option>
+                        <option value="thiruvananthapuram">Thiruvananthapuram</option>
+                        <option value="kollam">Kollam</option>
+                        <option value="pathanamthitta">Pathanamthitta</option>
+                        <option value="alappuzha">Alappuzha</option>
+                        <option value="kottayam">Kottayam</option>
+                        <option value="idukki">Idukki</option>
+                        <option value="ernakulam">Ernakulam</option>
+                        <option value="thrissur">Thrissur</option>
+                        <option value="palakkad">Palakkad</option>
+                        <option value="malappuram">Malappuram</option>
+                        <option value="kozhikode">Kozhikode</option>
+                        <option value="wayanad">Wayanad</option>
+                        <option value="kannur">Kannur</option>
+                        <option value="kasaragod">Kasaragod</option>
+                    </select>
+                    <p id="districtError" class="text-danger"></p>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-4">
+                <button type="submit" class="btn btn-warning me-2">Update Profile</button>
+              </div>
+            </form>
+          </div>
+          {% endif %}
+          <!-- /Account -->
+        </div>  
+      </div>
+    </div>
+  </div> {% endcomment %}
+<!-- / Content -->
+
+<script>
+  // Function to validate First Name in real-time
+function validateFirstName(firstName) {
+  const firstNameError = document.getElementById('firstNameError');
+  if (firstName.trim() === '') {
+      firstNameError.textContent = 'First Name cannot be empty';
+      return false;
+  } 
+  else if (/^\s/.test(firstName)) {
+    firstNameError.textContent = 'First Name cannot start with a space';
+    return false;
+  }
+  else if (!/^[a-zA-Z]+$/.test(firstName)) {
+    firstNameError.textContent = 'First Name should contain only letters (no numbers, special characters, or spaces)';
+    return false;
+  }
+  
+  else {
+      firstNameError.textContent = '';
+      return true;
+  }
+}
+
+
+function validateLastName(lastName) {
+  const firstNameError = document.getElementById('lastNameError');
+  if (lastName.trim() === '') {
+      lastNameError.textContent = 'Last Name cannot be empty';
+      return false;
+  } 
+  else if (/^\s/.test(lastName)) {
+    lastNameError.textContent = 'Last Name cannot start with a space';
+    return false;
+  }
+  else if (!/^[a-zA-Z]+$/.test(lastName)) {
+    lastNameError.textContent = 'Last Name should contain only letters (no numbers, special characters, or spaces)';
+    return false;
+  }
+  
+  else {
+      lastNameError.textContent = '';
+      return true;
+  }
+}
+
+function validatePINCode(pincode) {
+  const pincodeError = document.getElementById('pincodeError');
+  
+  // Regular expression for a 6-digit Indian PIN code
+  const pinRegex = /^[1-9][0-9]{5}$/;
+
+  if (pincode.trim() === '') {
+    pincodeError.textContent = 'PIN code cannot be empty';
+    return false;
+  } 
+  else if (!pinRegex.test(pincode)) {
+    pincodeError.textContent = 'Invalid PIN code. It should be a 6-digit number.';
+    return false;
+  } 
+  else {
+    pincodeError.textContent = '';
+    return true;
+  }
+}
+function validatePhoneNumber(phoneNumber) {
+  const phoneNumberError = document.getElementById('phoneNumberError');
+  
+  // Regular expression for a 10-digit Indian phone number (adjust as needed for your country)
+  const phoneRegex = /^[6-9]\d{9}$/;
+
+  if (phoneNumber.trim() === '') {
+    phoneNumberError.textContent = 'Phone number cannot be empty';
+    return false;
+  } 
+  else if (!phoneRegex.test(phoneNumber)) {
+    phoneNumberError.textContent = 'Invalid phone number. It should be a 10-digit number.';
+    return false;
+  } 
+  else {
+    phoneNumberError.textContent = '';
+    return true;
+  }
+}
+function validateAddress(address) {
+  const addressError = document.getElementById('addressError');
+  
+  if (address.trim() === '') {
+    addressError.textContent = 'Address cannot be empty';
+    return false;
+  } else {
+    addressError.textContent = '';
+    return true;
+  }
+}
+
+function validateDistrict() {
+  const districtSelect = document.getElementById('district');
+  const districtError = document.getElementById('districtError');
+
+  if (districtSelect.value === '') {
+    districtError.textContent = 'Please select a district.';
+    return false;
+  } else {
+    districtError.textContent = '';
+    return true;
+  }
+}
+
+const pincodeInput = document.getElementById('pincode');
+pincodeInput.addEventListener('input', function () {
+  validatePINCode(pincodeInput.value);
+});
+// Add an event listener to validate First Name on input change
+const firstNameInput = document.getElementById('firstName');
+firstNameInput.addEventListener('input', function () {
+  validateFirstName(firstNameInput.value);
+});
+const lastNameInput = document.getElementById('lastName');
+lastNameInput.addEventListener('input', function () {
+  validateLastName(lastNameInput.value);
+});
+
+const phoneNumberInput = document.getElementById('phoneNumber');
+phoneNumberInput.addEventListener('input', function () {
+  validatePhoneNumber(phoneNumberInput.value);
+});
+
+const addressInput = document.getElementById('address');
+addressInput.addEventListener('input', function () {
+  validateAddress(addressInput.value);
+});
+
+const placeInput = document.getElementById('place');
+  const placeError = document.getElementById('placeError');
+
+  placeInput.addEventListener('input', function() {
+    validatePlace(placeInput.value);
+  });
+
+  function validatePlace(place) {
+    if (place.trim() === '') {
+      placeError.textContent = 'Place cannot be empty';
+    } else if (/^\s/.test(place)) {
+      placeError.textContent = 'Place cannot start with a space';
+    } else if (!/^[a-zA-Z\s]+$/.test(place)) {
+      placeError.textContent = 'Place should contain only letters and spaces';
+    }
+    else if (place.length < 4) {
+      placeError.textContent = 'Place should have at least 4 characters';
+    }
+    else {
+      placeError.textContent = '';
+    }
+  }
+
+  const cityInput = document.getElementById('city');
+  const cityError = document.getElementById('cityError');
+
+  cityInput.addEventListener('input', function() {
+    validateCity(cityInput.value);
+  });
+
+  function validateCity(city) {
+    if (city.trim() === '') {
+      cityError.textContent = 'City cannot be empty';
+    } else if (/^\s/.test(city)) {
+      cityError.textContent = 'City cannot start with a space';
+    } else if (!/^[a-zA-Z\s]+$/.test(city)) {
+      cityError.textContent = 'City should contain only letters and spaces';
+    } else if (city.length < 4) {
+      cityError.textContent = 'City should have at least 4 characters';
+    } else {
+      cityError.textContent = '';
+    }
+  }
+    const districtSelect = document.getElementById('district');
+    const districtError = document.getElementById('districtError');
+  
+    districtSelect.addEventListener('change', function() {
+      validateDistrict(districtSelect.value);
+    });
+  
+    function validateDistrict(selectedValue) {
+      if (selectedValue === '') {
+        districtError.textContent = 'Please select a district';
+      } else {
+        districtError.textContent = '';
+      }
+    }
+
+const form = document.getElementById('updateForm');
+districtSelect.addEventListener('submit', function() {
+  validateDistrict(districtSelect.value);
+});
+form.addEventListener('submit', function (event) {
+  const firstNameError = document.getElementById('firstNameError');
+  const lastNameError = document.getElementById('lastNameError');
+  const pincodeError = document.getElementById('pincodeError');
+  const phoneNumberError = document.getElementById('phoneNumberError');
+  const addressError = document.getElementById('addressError');
+  if (firstNameError.textContent.trim() !== '' || lastNameError.textContent.trim() !== '' ||
+      pincodeError.textContent.trim() !== '' || phoneNumberError.textContent.trim() !== '' ||
+      addressError.textContent.trim() !== ''|| placeError.textContent.trim() !== '') {
+      event.preventDefault(); // Prevent form submission if the error field is not empty
+  }
+});
+
+
+
+
+
+// Similar functions and event listeners can be added for other fields like Last Name, Phone Number, and Pincode.
+
+
+
+</script>
+{%endblock%}

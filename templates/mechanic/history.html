@@ -1,0 +1,62 @@
+{% extends 'mechanic/base.html' %}
+{% block conhead %}
+  
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+{% endblock %}
+
+{%block content%}
+{% load tz %}
+{% load static %}
+<div class="row">
+    <div class="col-md-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                <p class="card-title text-danger">Sevice History of {{vehicle.vehicle_Regno}} ( {{vehicle.model_variant}} )</p>
+            </div>
+            {%if listoit%}
+              
+            <table id="orderItemsTable" class="display expandable-table dataTable no-footer w-100">
+              <thead>
+                  <tr>
+                    <th>Service Image</th>  
+                    <th>Service</th>
+                    <th> Status</th>
+                    <th>Service Category</th>  
+                    <th>Date</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  {% for order_item in listoit %}
+                      <tr>
+                        <td>
+                          <img src="{{ order_item.service_list.service_Image.url }}" alt="Service Image" width="100">
+                        </td>  
+                        <td>{{ order_item.service_list }}</td>
+                        <td>{{order_item.status}}</td>
+                        <td>{{ order_item.service_list.service_category }}</td>
+                        <td>
+                          {{ order_item.service_order.date }}
+                          
+                        </td>
+                      </tr>
+                  {% endfor %}
+              </tbody>
+          </table>          
+
+            {% else %}
+              No Service  History found 
+            {% endif %}
+          </div>
+    </div>
+   
+    
+</div>
+<script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#orderItemsTable').DataTable();
+  });
+</script>
+{%endblock%}

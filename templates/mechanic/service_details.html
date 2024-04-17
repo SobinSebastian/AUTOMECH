@@ -4,6 +4,13 @@
 {% load static %}
 <script src="https://unpkg.com/htmx.org@1.7.0/dist/htmx.min.js"></script>
 
+{% block conhead%}
+  <!-- Bootstrap CSS -->
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.css">
+  <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.js"></script>
+{% endblock %}
 <div class="row">
   <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
@@ -130,23 +137,28 @@
                           {{order.vehicle.client.userinfo.city}} ,
                           {{order.vehicle.client.userinfo.pincode}}
                         </span>    
+                      
                   </p>
                 </div>
                 </div>
               </div>
             </div>
           </div>
+          
+          &nbsp;&nbsp;&nbsp;&nbsp;<a class="btn btn-danger btn-sm " href="{% url 't_service_history' service_order_slug=order.slug %}" target="_blank">
+            View History Service
+          </a>
         </div>
       </div>
     </div>
   </div>
 
 <!-- Service Recommendation -->
-  
+{% if order.status != 'closed' %}
 <div class="col-md-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <p class="card-title">Service Recommendation</p>
+        <h3 class="card-title text-danger">Service Recommendation</h3>
         {% comment %} {{order}} {% endcomment %}
 
         <div id="form-container">
@@ -208,12 +220,15 @@
       </div>
     </div>
   </div>
-
+{% endif %}
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
-            <p class="card-title text-primary">Service Orders Items</p>
-            <table id="orderItemsTable" class="w-100">
+            <br>
+            <br>
+            <h2 class="text-primary">Service Orders Items</h2>
+            <br>
+            <table id="orderItemsTable" class="display expandable-table dataTable no-footer w-100">
               <thead>
                   <tr>
                     <th>Service Image</th>  
@@ -238,7 +253,7 @@
                           {% elif order_item.status == 'pending' %}
                             <a class="btn btn-success btn-sm"  href="{% url 'order_start' order_slug=order_item.slug %}">Complete</a></td>
                           {% else %}
-                          Complete
+                           <button class="btn btn-primary btn-sm" disabled >Completed</button>
                           {%endif%} 
                         </td>
                       </tr>
@@ -255,4 +270,10 @@
   </div></div>
   
 </div>
+<script src="https://cdn.datatables.net/1.11.6/js/jquery.dataTables.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#orderItemsTable').DataTable();
+  });
+</script>
 {%endblock%}

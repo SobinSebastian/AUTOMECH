@@ -10,6 +10,7 @@ from django.contrib.admin.models import LogEntry
 from django.contrib.admin.views import main as default_admin_index
 from django.contrib.admin.views.decorators import staff_member_required
 from django.utils.decorators import method_decorator
+from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView, UpdateView
 from django.urls import reverse_lazy
@@ -27,8 +28,21 @@ from django.views.decorators.cache import cache_control
 @cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 @staff_member_required
 def admin_dashboard(request):
-    u_count = User.objects.filter(is_active=True).count()
+    #user count
+    u_count = User.objects.filter(role=User.Role.CLIENT).count()
     mcount = User.objects.filter(role=User.Role.MECHANIC).count()
+    man_count = User.objects.filter(role=User.Role.MANAGER).count()
+    #order
+    order_no = ServiceOrder.objects.count()
+    rsa_no = ServiceOrder.objects.filter(service_type='rsa').count()
+    nor_oder_num = ServiceOrder.objects.filter(service_type='normal').count()
+    #profit
+    total_price = 0
+    rsa_price = 0
+    nor_price = 0
+    closed_orders = ServiceOrder.objects.filter(status='closed')
+    for i in closed_orders:
+        total_price = total_price + i.price
     recent_actions = LogEntry.objects.select_related('user', 'content_type').order_by('-action_time')[:10]
     today = timezone.now().date()
     bookings_today =10 
@@ -40,7 +54,21 @@ def admin_dashboard(request):
     # ServiceBooking.objects.count()
     percentage= (bookings_30_days / total) * 100
     #bookings=ServiceBooking.objects.all().order_by('booking_date')
-    return render(request, 'admin/admin_dashboard.html', {'bookings':'','ucount': u_count, 'mcount': mcount, 'actions': recent_actions,'tbooking':bookings_today,'total':total,'per':percentage})
+    no_centers = ServiceCenter.objects.count()
+    context ={
+        'bookings':'',
+        'ucount': u_count, 
+        'mcount': mcount,
+        'man_count' : man_count,
+        'order_no'  : order_no,
+        'rsa_no'    : rsa_no,
+        'nor_oder_num'  : nor_oder_num,
+        'actions': recent_actions,
+        'tbooking':bookings_today,
+        'total':total,
+        'per':percentage
+    }
+    return render(request, 'admin/admin_dashboard.html', context)
 
 
 @staff_member_required
@@ -347,6 +375,8 @@ def variant_serviceprice_view(request,slug=None):
 
 
 #/////////////////////////////  VIEWS FOR BLOG  START /////////////////////////////////////////////////
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def view_blog (request):
     posts = Post.objects.all()
     context ={
@@ -354,6 +384,7 @@ def view_blog (request):
     }
     return render(request,'admin/blog.html',context)
 
+@login_required
 @cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def blog_details (request,blog_slug):
     post = Post.objects.get(slug = blog_slug)
@@ -362,7 +393,8 @@ def blog_details (request,blog_slug):
     }
     return render(request,'admin/blog_details.html',context)
 
-
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def create_or_edit_post(request, slug=None):
     post = get_object_or_404(Post, slug=slug) if slug else None
 
@@ -382,8 +414,8 @@ def create_or_edit_post(request, slug=None):
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\  VIEWS FOR BLOG END    \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 
 #\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\ TASK \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-
-    
+@login_required
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)   
 def TaskListViewAndCreateView(request):
     if request.method == 'POST':
         form = TaskForm(request.POST)
@@ -400,7 +432,7 @@ def TaskListViewAndCreateView(request):
         'tasks': tasks,
     }
     return render(request, 'admin/task_list_create_update.html', context)
-
+@cache_control(no_cache=True, must_revalidate=True, no_store=True, max_age=0)
 def TaskListUpdateView(request, slug=None):
     if slug:
         task = get_object_or_404(Task, slug=slug)

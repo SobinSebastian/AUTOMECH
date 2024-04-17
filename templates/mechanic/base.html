@@ -291,12 +291,12 @@
                 <span class="menu-title">Your Slot</span>
               </a>
             </li>
-            <li class="nav-item {% if request.path == '/manager/service/booking/' %}{% endif %}">
+            {% comment %} <li class="nav-item {% if request.path == '/manager/service/booking/' %}{% endif %}">
               <a class="nav-link" href="{% url 'service_orders' %}" id="vidadd">
                 <i class="icon-grid-2 menu-icon"></i>
                 <span class="menu-title">Service Orders</span>
               </a>
-            </li>
+            </li> {% endcomment %}
             <li class="nav-item {% if request.path == '/manager/rsa/' %}{% endif %}">
               <a class="nav-link" href="{% url 'mech_rsa' %}">
                 <i class="icon-grid-2 menu-icon"></i>
@@ -304,7 +304,7 @@
               </a>
             </li>
             <li class="nav-item {% if request.path == 'account/logout' %}{% endif %}">
-              <a class="nav-link" href="{% url 'account_logout' %}">
+              <a class="nav-link" href="{% url 'custom_logout' %}">
                 <i class="ti-power-off menu-icon"></i>
                 <span class="menu-title">Logout</span>
               </a>

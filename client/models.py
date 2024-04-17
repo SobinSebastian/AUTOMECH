@@ -419,7 +419,7 @@ from .models import ModelVariant, ServiceList, ServicePrice
 @receiver(post_save, sender=ModelVariant)
 def create_service_prices(sender, instance, created, **kwargs):
     if created:
-        service = ServiceList.objects.filter(service_name = 'Rsa')
+        service = ServiceList.objects.get(service_name = 'Rsa')
         ServicePrice.objects.create(variant=instance, service=service, price=250)
 
 
