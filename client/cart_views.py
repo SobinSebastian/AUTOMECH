@@ -334,7 +334,7 @@ def generate_bill_pdf(request,slug):
 
     userinfo = UserInfo.objects.get(client = request.user)
     customer_phone = "Customer Phone"
-    customer_date = "MM/DD/YYYY"
+    customer_date = f'{orders.date}'
     customer_address = "Customer Address"
     car_make = f"{orders.vehicle.model_variant.model.make_company}"
     car_model = f"{orders.vehicle.model_variant}"
@@ -394,10 +394,18 @@ def generate_bill_pdf(request,slug):
 
     # # Draw the estimate table
     col_widths = [100, 150]
-    row_heights = 15
+    row_heights = 25
     table_top = 600
-    table_left = 50
+    table_left = 100
     draw_table(table_data, table_left, table_top, col_widths, row_heights)
+
+    number_of_rows = len(table_data)
+    total_table_height = number_of_rows * row_heights
+    text_x = 400
+    text_y = table_top - total_table_height - 50  
+    pdf.setFont("Helvetica-Bold", 15)
+    pdf.drawString(text_x, text_y, f"Total Price : {orders.price}")
+
 
     pdf.showPage()
     pdf.save()

@@ -350,13 +350,19 @@ def variant_serviceprice_view(request,slug=None):
         if form.is_valid():
             form.save()
             sweetify.toast(request, f'New Service Is Added for  {variant}', icon='success', timer=3000)
+        else :
+            sweetify.toast(request, 'Already In the list', icon='error', timer=3000)
         if form2.is_valid():
             p = form2.cleaned_data['price']
             val = request.POST.get('slugval')
             ser_price = ServicePrice.objects.get(slug=val)
             ser_price.price =p
-            ser_price.save()
-            sweetify.toast(request, f' Service Is Updated for  {ser_price}', icon='success', timer=3000)
+            from decimal import Decimal
+            if Decimal(p) <= 0 :
+                sweetify.toast(request, ' Invalid Price', icon='error', timer=3000)
+            else :
+                ser_price.save()
+                sweetify.toast(request, f' Service Is Updated for  {ser_price}', icon='success', timer=3000)
         return redirect('car_variant_service', slug=variant.variant_slug)
     else:
         form = ServicePriceForm()

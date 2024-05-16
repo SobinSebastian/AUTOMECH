@@ -18,7 +18,7 @@
             <form method="post" action="" id="yourForm">
                 {% csrf_token %}
                 <div class="form-row">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="id_make_company">Make Company:</label>
                         <select id="id_make_company" name="make_company" class="form-control" onchange="validateMakeCompany()">
                             <option value="">--Please choose an option--</option>
@@ -28,7 +28,7 @@
                         </select>
                         <span id="makeCompanyError" class="text-danger"></span>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="id_model_name">Model Name:</label>
                         <select id="id_model_name" name="model_name" class="form-control">
                             <option value="">--Please choose an option--</option>
@@ -37,7 +37,7 @@
                             {% endfor %}
                         </select>
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-3">
                         <label for="id_model_variant">Vehicle</label>
                         <select id="id_model_variant" name="model_variant" class="form-control" onchange="validateModelVariant()">
                             <option value="">--Please choose an option--</option>
@@ -47,8 +47,8 @@
                         </select>
                         <span id="modelVariantError" class="text-danger"></span>
                     </div>
-                    <div class="form-group col-md-4 d-flex justify-content-center">
-                        <input type="submit" class="btn btn-primary mt-4" value="Submit" onclick="validateForm()">
+                    <div class="form-group col-md-3">
+                        <input type="submit" class="btn btn-primary mt-4  p-3" value="Search" onclick="validateForm()">
                         <p id="validationMessage" class="text-danger"></p>
                     </div>
                 </div>
@@ -86,8 +86,8 @@
                     </div>
                 {%endfor%}     {% endcomment %}
                 {%for service, price in services_with_prices %}
-                    <div class="col-md-3">
-                        <div class="price-item featured-item">
+                    <div class="col-md-3 mb-2">
+                        <div class="price-item featured-item d-flex flex-column h-100">
                             <div class="image-model-container">
                                 <div class="duration-container">
                                     4 Hrs Taken
@@ -102,7 +102,7 @@
                                 These service Unavailable
                                 {%endif%}
                             </div>
-                            <div class="price-footer">
+                            <div class="price-footer mt-auto">
                                 <a class="btn btn-custom" href="">Book Now</a>
                             </div>
                         </div>

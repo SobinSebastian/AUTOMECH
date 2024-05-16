@@ -162,17 +162,58 @@
                 <td>
                   {{price.price}}
                 </td>
-               <td>
-                <div id="priceError" class="text-danger"></div>
-                <form method="post" id="price" >
+               <td class="p-3">
+                <form method="post" id="price{{price.slug}}" >
                   {% csrf_token %}
                   {{form2.price}}
                   <input type="hidden" name="slugval" maxlength="15" required="" id="id_slugval" value="{{price.slug}}">
-                  
+                  <p class="text-danger sm" id="error-message{{price.slug}}"></p>
                   <button class="btn btn-success btn-sm" type="submit"> Edit Price</button>
                  
                 </form>
-                
+
+              
+                  
+
+
+
+
+                {% comment %} <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                      var priceField = document.getElementById('id_price');
+                      var errorMessage = document.getElementById('error-message{{price.slug}}');
+          
+                      priceField.addEventListener('input', function() {
+                          var price = priceField.value;
+                          if (isValidPrice(price)) {
+                              errorMessage.textContent = "";
+                              priceField.classList.remove('is-invalid');
+                              priceField.classList.add('is-valid');
+                              
+                          } else {
+                              errorMessage.textContent = "Invalid input: Price must be a valid decimal number greater than 0 and less than 100,000,000.";
+                              priceField.classList.remove('is-valid');
+                              priceField.classList.add('is-invalid');
+                          }
+                      });
+          
+                      document.getElementById('price{{price.slug}}').addEventListener('submit', function(event) {
+                          var price = priceField.value;
+                          if (!isValidPrice(price)) {
+                              event.preventDefault();
+                              errorMessage.textContent = "Invalid input: Price must be a valid decimal number greater than 0 and less than 100,000,000.";
+                          }
+                        else {
+                          errorMessage.textContent = "";
+                      }
+                      });
+          
+                      function isValidPrice(value) {
+                          var num = parseFloat(value);
+                          return !isNaN(num) && num > 0 && num < 100000000;
+                      }
+                  });
+              </script> {% endcomment %}
               
                </td>
               </tr>
@@ -187,6 +228,7 @@
             });
           });
         </script>
+        
         </div>
              {% else%}
                 <div class="container mt-4">

@@ -10,7 +10,7 @@
                 <p>My Vehicles</p>
                 <h2>Vehicle List</h2>
                 <ul class="nav justify-content-end">
-                    <li class="nav-item">
+                    <li class="nav-item me-2">
                       <a class="btn btn-success btn-sm" href="{% url "index" %}">< Go Back</a>
                     </li>
                     
@@ -23,8 +23,8 @@
             </div>
             <div class="row">
                 <table class="table  table-sm" id="vehicleTable">
-                    <thead class="thead-primary">
-                        <tr>
+                    <thead class="thead-d">
+                        <tr class="table-dark"> 
                             <th>Img</th>
                             <th>Vehicle</th>
                             <th>RegNo</th>
@@ -34,10 +34,10 @@
                     <tbody>
                         {% for vehicle in vehicles %}
                             <tr>
-                                <td><img src="{{ vehicle.model_variant.model.model_Image.url }}" class="img-fluid zoom-modimage" alt="Your Image" width="150"></td>
-                                <td>{{ vehicle.model_variant }}</td>
-                                <td>{{ vehicle.vehicle_Regno }}</td>
-                                <td><a href="{% url 'history' vehicle_Regno=vehicle.vehicle_Regno %}" class="btn btn-danger btn-sm">History</a></td>
+                                <td><img src="{{ vehicle.model_variant.model.model_Image.url }}" class="img-fluid zoom-modimage" alt="Your Image" width="100"></td>
+                                <td class="p-5">{{ vehicle.model_variant }}</td>
+                                <td class="p-5">{{ vehicle.vehicle_Regno }}</td>
+                                <td><a href="{% url 'history' vehicle_Regno=vehicle.vehicle_Regno %}" class="btn btn-danger btn-sm mt-5">History</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>

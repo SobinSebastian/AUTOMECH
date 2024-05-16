@@ -14,8 +14,20 @@ from django.contrib.auth.decorators import login_required
 def mechanic_dashboard (request):
     mech = request.user
     center_details = mechanicList.objects.get(mechanic =mech)
+    slot= ServicesSlots.objects.get(allocated_mech=request.user)
+    orders_no=ServiceOrder.objects.filter(service_slot=slot).count()
+    closed_orders_no = ServiceOrder.objects.filter(service_slot=slot,status = 'closed').count()
+    pending_orders_no = ServiceOrder.objects.filter(service_slot=slot).exclude(status = 'closed').count()
+    rsa = orders_no=ServiceOrder.objects.filter(service_center = center_details.service_center,service_type = 'rsa').count()
+    non_rsa = orders_no=ServiceOrder.objects.filter(service_slot=slot,service_type = 'normal').count()
     context ={
-        'center_details':center_details
+        'center_details':center_details,
+        'orders_no' :orders_no,
+        'closed_orders_no' : closed_orders_no,
+        'pending_orders_no' : pending_orders_no,
+        'rsa' : rsa,
+        'non_rsa' : non_rsa
+
     }
     return render (request,'mechanic/dashboard.html',context)
 @login_required

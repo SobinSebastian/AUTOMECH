@@ -10,27 +10,27 @@ from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 import time
-# class LoginTest(LiveServerTestCase):
-#     def setUp(self):
-#         self.driver  = webdriver.Chrome()
-#     def tearDown(self):
-#         self.driver.quit()
-#     def test_login(self):
-#         expected_url = 'http://127.0.0.1:8000/' 
-#         print('Testing Started')
-#         self.driver.get('http://127.0.0.1:8000//accounts/login/')
+class LoginTest(LiveServerTestCase):
+    def setUp(self):
+        self.driver  = webdriver.Chrome()
+    def tearDown(self):
+        self.driver.quit()
+    def test_login(self):
+        expected_url = 'http://127.0.0.1:8000/' 
+        print('Testing Started')
+        self.driver.get('http://127.0.0.1:8000//accounts/login/')
         
-#         self.driver.find_element("id", "id_login")
-#         email_field = self.driver.find_element("id", "id_login")
-#         password_field = self.driver.find_element("id","id_password")
-#         email_field.send_keys('snehajose2024b@mca.ajce.in')
-#         password_field.send_keys('!Mynameis22')
-#         submit = self.driver.find_element("id","log_sub")
-#         submit.click()
-#         current_url = self.driver.current_url
-#         print(current_url)
-#         print(expected_url)
-#         self.assertEqual(current_url, expected_url)
+        self.driver.find_element("id", "id_login")
+        email_field = self.driver.find_element("id", "id_login")
+        password_field = self.driver.find_element("id","id_password")
+        email_field.send_keys('snehajose2024b@mca.ajce.in')
+        password_field.send_keys('!Mynameis22')
+        submit = self.driver.find_element("id","log_sub")
+        submit.click()
+        current_url = self.driver.current_url
+        print(current_url)
+        print(expected_url)
+        self.assertEqual(current_url, expected_url)
 
 '''
 class AddtoCartTest(LiveServerTestCase):
@@ -46,11 +46,11 @@ class AddtoCartTest(LiveServerTestCase):
         self.driver.find_element("id", "id_login")
         email_field = self.driver.find_element("id", "id_login")
         password_field = self.driver.find_element("id","id_password")
-        email_field.send_keys('snehajose2024b@mca.ajce.in')
+        email_field.send_keys('sebastiansoniya0@gmail.com')
         password_field.send_keys('!Mynameis22')
         submit = self.driver.find_element("id","log_sub")
         submit.click()
-        time.sleep(5)
+        time.sleep(10)
         cartbutton = self.driver.find_element("id","standard-service")
         cartbutton.click()
         wait = WebDriverWait(self.driver, 10)  
@@ -94,14 +94,13 @@ class AddtoCartTest(LiveServerTestCase):
 #         register.click()
 
 '''
-class Addnewcat(LiveServerTestCase):
+class AddServiceCategoryTest(LiveServerTestCase):
     def setUp(self):
         self.driver  = webdriver.Chrome()
     def tearDown(self):
         self.driver.quit()
     def test_Add_Category(self):
         self.driver.get('http://127.0.0.1:8000//accounts/login/')
-        
         self.driver.find_element("id", "id_login")
         email_field = self.driver.find_element("id", "id_login")
         password_field = self.driver.find_element("id","id_password")
@@ -113,10 +112,9 @@ class Addnewcat(LiveServerTestCase):
         time.sleep(5) 
         self.driver.find_element("id","Category_Modal").click()
         time.sleep(2)
-        self.driver.find_element("id", "id_category_name").send_keys('Periodic Service')
+        self.driver.find_element("id", "id_category_name").send_keys('Wash Service')
         self.driver.find_element("id","sub_category_name").click()
         wait = WebDriverWait(self.driver, 10)  
-
         try:
             toast_message = wait.until(EC.presence_of_element_located((By.ID, "swal2-title")))
             toast_text = toast_message.text
@@ -137,7 +135,6 @@ class AddnewMech(LiveServerTestCase):
         self.driver.quit()
     def test_Add_Category(self):
         self.driver.get('http://127.0.0.1:8000//accounts/login/')
-        
         self.driver.find_element("id", "id_login")
         email_field = self.driver.find_element("id", "id_login")
         password_field = self.driver.find_element("id","id_password")
@@ -149,12 +146,11 @@ class AddnewMech(LiveServerTestCase):
         time.sleep(2) 
         self.driver.find_element("id","bt_add_mech").click()
         time.sleep(2) 
-        self.driver.find_element("id", "id_email").send_keys('Ram2196@gmail.com')
-        self.driver.find_element("id", "id_first_name").send_keys('Ram')
-        self.driver.find_element("id", "id_last_name").send_keys('Raj')
+        self.driver.find_element("id", "id_email").send_keys('sreeharij2024b@mca.ajce.in')
+        self.driver.find_element("id", "id_first_name").send_keys('Sree')
+        self.driver.find_element("id", "id_last_name").send_keys('Hari')
         self.driver.find_element("id","new_mech").click()
         wait = WebDriverWait(self.driver, 10)  
-
         try:
             toast_message = wait.until(EC.presence_of_element_located((By.ID, "swal2-title")))
             toast_text = toast_message.text
@@ -163,38 +159,30 @@ class AddnewMech(LiveServerTestCase):
             else:
                 print("Unexpected toast message:", toast_text)
         except TimeoutException:
-            print("Toast message not found within 10 seconds") '''
+            print("Toast message not found within 10 seconds") 
 '''
-class addnewcar(LiveServerTestCase):
+'''
+class addVehicleTest(LiveServerTestCase):
     def setUp(self):
         self.driver  = webdriver.Chrome()
     def tearDown(self):
         self.driver.quit()
-    def test_login(self):
+    def test_addVehicle(self):
         expected_url = 'http://127.0.0.1:8000/' 
         print('Testing Started')
-        self.driver.get('http://127.0.0.1:8000//accounts/login/')
-        
-        self.driver.find_element("id", "id_login")
-        email_field = self.driver.find_element("id", "id_login")
-        password_field = self.driver.find_element("id","id_password")
-        email_field.send_keys('snehajose2024b@mca.ajce.in')
-        password_field.send_keys('!Mynameis22')
-        submit = self.driver.find_element("id","log_sub")
-        submit.click()
+        self.driver.get('http://127.0.0.1:8000//accounts/login/') 
+        self.driver.find_element("id", "id_login").send_keys('sebastiansoniya0@gmail.com')
+        self.driver.find_element("id","id_password").send_keys('!Mynameis22')
+        self.driver.find_element("id","log_sub").click()
         time.sleep(2) 
         self.driver.get('http://127.0.0.1:8000/Vehicles')
         time.sleep(2)
         self.driver.find_element("id","c_new_add").click()
         time.sleep(2)
-        vregno = self.driver.find_element("id","id_vehicle_Regno")
-        vregno.send_keys('KL05AE3019')
-        make_company= self.driver.find_element("id","id_make_company")
-        model_name = self.driver.find_element("id","id_model_name")
-        model_variant = self.driver.find_element("id","id_model_variant")
-        make_company.send_keys('Maruti Suzuki')
-        model_name.send_keys('WagonR')
-        model_variant.send_keys('LXI')
+        self.driver.find_element("id","id_vehicle_Regno").send_keys('KL05As8719')
+        make_company= self.driver.find_element("id","id_make_company").send_keys('Maruti Suzuki')
+        model_name = self.driver.find_element("id","id_model_name").send_keys('WagonR')
+        model_variant = self.driver.find_element("id","id_model_variant").send_keys('LXI')
         self.driver.find_element("id","Add_v").click()
         wait = WebDriverWait(self.driver, 10)  
         try:
@@ -202,8 +190,11 @@ class addnewcar(LiveServerTestCase):
             toast_text = toast_message.text
             if toast_text == "New Vehicle is Added":
                 print("Toast message verified: 'New Vehicle is Added'")
+                print("Test Passed")
             else:
                 print("Unexpected toast message:", toast_text)
+                print("Test Failed")
         except TimeoutException:
-            print("Toast message not found within 10 seconds")
-'''
+            print("Toast message not found within 10 seconds")'''
+
+
