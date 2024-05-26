@@ -101,11 +101,14 @@
 
         </div>
     </div>
+    {% if rsa.status == "completed"%}
+    <a class="btn btn-success btn-sm"  href="{% url 'service_details' service_slug=rsa.service_order.slug %}">View service order</a>
+    {% else %}
     <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
                 <p class="card-title text-danger"> Service Request Location</p>
-                <a class="btn btn-success btn-sm"  href="{% url 'service_details' service_slug=rsa.service_order.slug %}">service order</a>
+                <a class="btn btn-success btn-sm"  href="{% url 'service_details' service_slug=rsa.service_order.slug %}">View service order</a>
                 <div id="map" style="height: 400px;"></div>
                 <div id="routing" style="margin-top: 10px;"></div>
             </div>
@@ -146,4 +149,5 @@
       }).addTo(map);
     });
   </script>
+  {% endif %}
 {%endblock%}

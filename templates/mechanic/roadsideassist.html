@@ -17,11 +17,10 @@
         <div class="alert alert-warning" role="alert">
           <b>Road Side Assistance Requests </b>  </div>
         
-        {% if rsa_detials%}
-        {{rsa_detials}}
-       
-      </div>
-      </div>
+        {% if rsa_detials %}
+        
+      
+     
       <div class="col-md-12 grid-margin stretch-card">
         <div class="card">
           <div class="card-body">
@@ -52,7 +51,7 @@
               {%endfor%}
             </tbody>
           </table>
-          {% else %}
+           {% else  %} 
            <h3 class="text-danger"> No  Road Side Assistance Request is  Found</h3>
           {% endif %}
           <br>
@@ -86,7 +85,7 @@
             </tbody>
           </table>
           {% else %}
-           <h3 class="text-danger"> No  Road Side Assistance Request is  Found</h3>
+           <h3 class="text-danger"> No  Completed Road Side Assistance Request is  Found</h3>
           {% endif %}
 
           </div>

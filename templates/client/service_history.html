@@ -19,7 +19,7 @@
             <h3>{{ vehicle.vehicle_Regno }} ( {{ vehicle.model_variant }})</h3>
             <ul class="nav justify-content-end">
                 <li class="nav-item">
-                  <a class="btn btn-success btn-sm" href="{% url "index" %}">< Go Back</a>
+                  <a class="btn btn-success btn-sm" href="{% url "my_vehicles" %}">< Go Back</a>
                 </li>
             </ul>
         </div>
@@ -27,7 +27,6 @@
         <table class="table" id="serviceHistoryTable">
             <thead>
                 <tr>
-                    <th scope="col">Sl No</th>
                     <th scope="col">Date & time</th>
                     <th scope="col">Service Center</th>
                     <th scope="col">View </th>
@@ -36,7 +35,6 @@
             <tbody>
             {% for order in orders %}
                 <tr data-toggle="collapse" data-target="#details{{order.slug}}" class="clickable">
-                    <td></td>
                     <td>{{order.date}} ,{{order.time}}</td>
                     <td>{{order.service_center.place}},{{order.service_center.city}}</td>
                     <td> View More</td>

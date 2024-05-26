@@ -307,7 +307,8 @@ def servicecost_estimation(request):
         'services_with_prices': services_with_prices,
         'make_companys': make_companys,
         'model_names' : model_names,
-        'model_variants' : model_variants 
+        'model_variants' : model_variants, 
+        'resvariant': variant
     }
     return render(request, 'client/servicecost_estimation.html', context)
 
@@ -393,6 +394,7 @@ def rsadetails(request):
             if i.service_list == p.service :
                 p_total = p_total + p.price 
     od = orderitem.first()
+    
     return render(request,'client/rsa_details.html',{'v':rsa,'order':orderitem ,'service_prices': service_prices,'p_total' : p_total,'od':od})
 
 #////////////////////////// BLOG START //////////////////////////////////////////////////////////

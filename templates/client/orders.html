@@ -45,6 +45,8 @@
                       </div>
                       {%endif%}
                       </div>
+
+                       {% if rec_details%}
                       <B><u>Service Recommendation</u></B> <br>
                       <table>
                         <thead>
@@ -73,6 +75,8 @@
                          {% endfor %}
                            </tbody>
                          </table>  
+                         {% endif %}
+                         <br>
                          <B><u>Service Order Details</u></B>
                          <table class="table table-info">
                              <thead>
