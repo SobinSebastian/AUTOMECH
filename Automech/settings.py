@@ -165,8 +165,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS =True
-EMAIL_HOST_USER = 'auto.mech.rsa@gmail.com'
-EMAIL_HOST_PASSWORD = 'hsmn jnws qxxo zrey'
+EMAIL_HOST_USER = ''
+EMAIL_HOST_PASSWORD = ''
 
 ACCOUNT_FORMS = {
    'signup': 'client.forms.CustomSignupForm',
@@ -174,8 +174,7 @@ ACCOUNT_FORMS = {
 
 # possible options: 'sweetalert', 'sweetalert2' - default is 'sweetalert2'
 SWEETIFY_SWEETALERT_LIBRARY = 'sweetalert2'
-razor_pay_key_id='rzp_test_LWLCjtUNBImDaB'
-
+razor_pay_key_id=''
 TINYMCE_DEFAULT_CONFIG = {
     'height': 360,
     'width': 960,
